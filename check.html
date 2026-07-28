@@ -482,47 +482,65 @@ function buildSubmissionHTML(d){
     var rows="";
     sec.items.forEach(function(it){
       var rz=(d.reason&&d.reason[it.id])||"";
+      var chip="";
       if(sec.type==="scale"){
         var v=d.scale[it.id]||DEFAULT; if(v==="normal" && !rz) return;
         var sym=SMAP[v].sym; if(v==="love"){var n=d.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);}
-        rows+='<tr><td>'+esc(it.label)+rzHtml(it)+'</td><td class="v '+v+'">'+esc(sym)+'</td></tr>';
+        chip='<span class="chip '+v+'">'+esc(sym)+'</span>';
       } else {
         var idx=d.choice[it.id]; if(idx==null && !rz) return;
-        rows+='<tr><td>'+esc(it.label)+rzHtml(it)+'</td><td class="v choice">'+esc(idx==null?"—":it.options[idx])+'</td></tr>';
+        chip='<span class="chip choice">'+esc(idx==null?"—":it.options[idx])+'</span>';
       }
+      rows+='<div class="item"><div class="lb">'+esc(it.label)+rzHtml(it)+'</div><div class="val">'+chip+'</div></div>';
     });
-    return rows? '<h2>'+esc(sec.title)+'</h2><table>'+rows+'</table>' : '';
+    return rows? '<div class="sec"><div class="sechd"><span class="dot"></span><h2>'+esc(sec.title)+'</h2></div>'+rows+'</div>' : '';
   }
   var body=""; SECTIONS.forEach(function(sec){ body+=rowsFor(sec); });
+  var legend=SCALE.map(function(s){ return '<span class="lp"><span class="s '+s.v+'">'+esc(s.sym)+'</span>'+esc(s.t)+'</span>'; }).join('');
   var freeHtml=""; [["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]].forEach(function(f){
     if(f[1]) freeHtml+='<div class="free"><div class="ft">'+esc(f[0])+'</div><div class="fb">'+esc(f[1])+'</div></div>';
   });
+  var mqu=""; for(var i=0;i<16;i++){ mqu+='JIRAI CHECK <span class="q">✦</span> '; }
   return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'+
   '<title>地雷チェックシート：'+esc(d.name||'無名')+'</title>'+
   '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'+
-  '<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=WDXL+Lubrifont+JP+N&display=swap" rel="stylesheet">'+
+  '<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=WDXL+Lubrifont+JP+N&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">'+
   '<script type="application/json" id="mogu-jirai-data">'+json+'<\/script>'+
-  '<style>body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:#eceae4;color:#161513;line-height:1.75;margin:0;padding:22px}'+
-  '.sheet{max-width:680px;margin:0 auto;background:#fbfaf6;border:3px solid #161513;border-radius:16px;box-shadow:6px 6px 0 #161513;padding:24px 26px}'+
-  '.sheettop{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:12px}'+
-  '.stitle{min-width:0}.brand{text-align:right;flex-shrink:0;line-height:1}'+
-  '.bk{font-family:"Archivo Black",sans-serif;font-size:9px;letter-spacing:.06em;color:#ff5533}'+
+  '<style>*{box-sizing:border-box}body{font-family:"Zen Kaku Gothic New",-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;color:#161513;line-height:1.75;margin:0;padding:26px 18px;'+
+  'background-color:#eceae4;background-image:radial-gradient(#e3e0d7 1.3px,transparent 1.4px);background-size:22px 22px}'+
+  '.sheet{max-width:680px;margin:0 auto;background:#fbfaf6;border:3px solid #161513;border-radius:18px;box-shadow:7px 7px 0 #161513;padding:22px 24px;overflow:hidden}'+
+  '.accent{display:flex;height:9px;border:2.5px solid #161513;border-radius:6px;overflow:hidden;margin:-2px 0 14px}.accent i{flex:1}.accent i:nth-child(1){background:#ff5533}.accent i:nth-child(2){background:#ffce1c}.accent i:nth-child(3){background:#27c05a}.accent i:nth-child(4){background:#2f6bff}'+
+  '.sheettop{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:10px}'+
+  '.stitle{min-width:0}h1{font-size:23px;font-weight:900;margin:0 0 2px}.meta{font-family:"DM Mono",monospace;font-size:12px;color:#8a857a}'+
+  '.brand{text-align:right;flex-shrink:0;line-height:1}.bk{font-family:"Archivo Black",sans-serif;font-size:9px;letter-spacing:.06em;color:#ff5533}'+
   '.bt{font-family:"WDXL Lubrifont JP N",sans-serif;font-size:21px;color:#161513;margin-top:3px}.bt .cc{color:#ff5533}'+
-  'h1{font-size:24px;margin:0 0 2px}.meta{font-size:12px;color:#8a857a;margin-bottom:0}'+
-  'h2{font-size:15px;margin:18px 0 4px;color:#ff5533;border-bottom:2px solid #161513;padding-bottom:3px}'+
-  'table{width:100%;border-collapse:collapse}td{padding:5px 4px;font-size:13.5px;border-bottom:1px dashed #d8d3c7;vertical-align:top}'+
-  'td.v{width:70px;text-align:center;font-weight:700;white-space:nowrap}'+
-  '.love{color:#c02e6a}.meh{color:#7c776c}.weak{color:#b8860b}.never{color:#ff5533}.choice{color:#2f6bff;font-size:12px}'+
+  '.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}'+
+  '.lp{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;background:#eceae4;border:2px solid #161513;border-radius:8px;padding:3px 8px}'+
+  '.lp .s{font-family:"Archivo Black",sans-serif;font-size:11px;border-radius:5px;padding:0 5px}'+
+  '.s.love{background:#ff77aa}.s.normal{background:#fff}.s.meh{background:#cfcabd}.s.weak{background:#ffce1c}.s.never{background:#ff5533;color:#fff}'+
+  '.sec{margin-top:16px}.sechd{display:flex;align-items:center;gap:9px;margin-bottom:4px}'+
+  '.dot{width:11px;height:11px;background:#ff5533;border:2px solid #161513;transform:rotate(45deg);flex-shrink:0}'+
+  '.sechd h2{font-size:16px;font-weight:900;margin:0;line-height:1.2}'+
+  '.item{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:7px 2px;border-top:1.5px dashed #d8d3c7}'+
+  '.item:first-of-type{border-top:none}.lb{font-size:13.5px;font-weight:500;min-width:0}.val{flex-shrink:0}'+
   '.rz{font-size:11.5px;color:#8a857a;margin-top:1px;white-space:pre-wrap}'+
-  '.free{margin-top:12px}.ft{font-weight:700;font-size:12.5px;color:#ff5533}.fb{white-space:pre-wrap;font-size:13.5px;color:#4a463f}'+
-  '.legend{font-size:11.5px;color:#8a857a;margin:6px 0 10px}'+
-  '.note{margin-top:16px;font-size:11px;color:#8a857a;border-top:1.5px dashed #d8d3c7;padding-top:10px}</style></head>'+
+  '.chip{display:inline-block;font-weight:700;font-size:12px;border:2.5px solid #161513;border-radius:999px;padding:2px 11px;white-space:nowrap}'+
+  '.chip.love{background:#ff77aa}.chip.meh{background:#cfcabd}.chip.weak{background:#ffce1c}.chip.never{background:#ff5533;color:#fff}.chip.choice{background:#2f6bff;color:#fff;font-size:11.5px}'+
+  '.free{margin-top:12px;background:#eceae4;border:2.5px solid #161513;border-radius:12px;box-shadow:3px 3px 0 #161513;padding:11px 14px}'+
+  '.ft{font-weight:900;font-size:12.5px;color:#ff5533}.fb{white-space:pre-wrap;font-size:13.5px;color:#4a463f}'+
+  '.empty{color:#8a857a;font-size:13px;margin-top:10px}'+
+  '.mqwrap{margin-top:18px;background:#161513;border:2.5px solid #161513;border-radius:10px;overflow:hidden;padding:7px 0}'+
+  '.mqtrack{display:inline-block;white-space:nowrap;font-family:"Archivo Black",sans-serif;font-size:11px;letter-spacing:.08em;color:#eceae4;animation:mqm 24s linear infinite}'+
+  '.mqtrack .q{color:#ff5533;margin:0 8px}@keyframes mqm{from{transform:translateX(0)}to{transform:translateX(-50%)}}'+
+  '.note{margin-top:14px;font-size:11px;color:#8a857a;border-top:1.5px dashed #d8d3c7;padding-top:10px}</style></head>'+
   '<body><div class="sheet">'+
+  '<div class="accent"><i></i><i></i><i></i><i></i></div>'+
   '<div class="sheettop"><div class="stitle"><h1>'+esc(d.name||'無名')+' の地雷チェックシート</h1>'+
   '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日 '+esc(d.date||d.createdAt)+'</div></div>'+
   '<div class="brand"><div class="bk">JIRAI CHECK SHEET — FOR PLAYERS</div><div class="bt">地雷<span class="cc">チェックシート</span></div></div></div>'+
-  '<div class="legend">◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略して表示）</div>'+
-  (body||'<p style="color:#8a857a">特筆する項目なし（すべて〇）</p>')+freeHtml+
+  '<div class="legend">'+legend+'<span class="lp" style="border-style:dashed">〇は省略して表示</span></div>'+
+  (body||'<p class="empty">特筆する項目なし（すべて〇）</p>')+freeHtml+
+  '<div class="mqwrap"><div class="mqtrack">'+mqu+'</div></div>'+
   '<div class="note">このファイルにはKP用ページで読み込めるデータが埋め込まれています。KPに渡してください。</div>'+
   '</div></body></html>';
 }
@@ -545,77 +563,140 @@ document.getElementById("btn-img").addEventListener("click",function(){
   if(!d.name){ alert("ハンドルネーム（HO）を入力してください。"); document.getElementById("f-name").focus(); return; }
   drawImage(d);
 });
+// スマホ縦画面向けにポートレート判型で分割出力
 function drawImage(d){
-  var cv=document.getElementById("cv"), W=1200, pad=64, ctx=cv.getContext("2d");
-  cv.width=W; cv.height=4000; ctx.clearRect(0,0,W,4000);
-  ctx.fillStyle="#fbfaf6"; ctx.fillRect(0,0,W,4000);
-  ctx.fillStyle="#161513"; ctx.fillRect(0,0,W,14); ctx.fillStyle="#ff5533"; ctx.fillRect(0,0,W/3,14);
-  var contentW=W-pad*2, y=pad+8; ctx.textBaseline="top";
-  // タイトルロゴ（右上・入力ページと同じフォント）
-  ctx.textAlign="right";
-  ctx.font="700 16px 'Archivo Black','Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#ff5533";
-  ctx.fillText("JIRAI CHECK SHEET — FOR PLAYERS", W-pad, pad);
-  var kW=ctx.measureText("JIRAI CHECK SHEET — FOR PLAYERS").width;
-  ctx.font="400 38px 'WDXL Lubrifont JP N','Zen Kaku Gothic New',sans-serif";
-  var w2=ctx.measureText("チェックシート").width;
-  ctx.fillStyle="#ff5533"; ctx.fillText("チェックシート", W-pad, pad+24);
-  ctx.fillStyle="#161513"; ctx.fillText("地雷", W-pad-w2, pad+24);
-  var logoW=Math.max(kW, ctx.measureText("地雷").width+w2);
-  ctx.textAlign="left";
-  // メインタイトル（左・ロゴと重ならない幅に制限）
-  ctx.fillStyle="#161513"; ctx.font="900 50px 'Zen Kaku Gothic New',sans-serif";
-  y=wrap(ctx,d.name+" の地雷チェック",pad,y,contentW-logoW-30,58);
-  y=Math.max(y, pad+70)+8;
-  ctx.font="500 20px 'DM Mono',monospace"; ctx.fillStyle="#8a857a";
-  ctx.fillText((d.session?d.session+"  ":"")+"記入日 "+(d.date||d.createdAt),pad,y); y+=30;
-  ctx.font="400 18px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#8a857a";
-  ctx.fillText("◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略）",pad,y); y+=44;
+  var ZK="'Zen Kaku Gothic New',sans-serif", AB="'Archivo Black','Zen Kaku Gothic New',sans-serif",
+      WD="'WDXL Lubrifont JP N','Zen Kaku Gothic New',sans-serif", DM="'DM Mono',monospace";
+  var CHIPBG={love:"#ff77aa",meh:"#cfcabd",weak:"#ffce1c",never:"#ff5533",choice:"#2f6bff"};
+  var CHIPFG={love:"#161513",meh:"#161513",weak:"#161513",never:"#ffffff",choice:"#ffffff"};
+  // 判型（9:16 縦長フルスクリーン）
+  var PW=1080, PH=1920, M=20, SH=8, IP=34, BAND=48;
+  var cardW=PW-M*2-SH, cardH=PH-M*2-SH, cardBottom=M+cardH;
+  var cX=M+IP, cW=cardW-IP*2;
+  var cTop=M+BAND+20;            // 上帯の下からコンテンツ開始
+  var botBandY=cardBottom-BAND;  // 下帯の上端
+  var indY=botBandY-32;          // ページ番号（下帯の上）
+  var cBottom=indY-8;            // コンテンツ下限
 
-  var groups=nonNormal();
-  var symColor={love:"#c02e6a",meh:"#7c776c",weak:"#b8860b",never:"#ff5533",choice:"#2f6bff"};
-  if(!groups.length){
-    ctx.font="900 28px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#27c05a";
-    ctx.fillText("● 特筆する項目なし（すべて〇）",pad,y); y+=48;
+  var mctx=document.createElement("canvas").getContext("2d"); mctx.textBaseline="top";
+
+  // ---- ヘッダー ----
+  function fullHeader(o,x,y,w,dry){
+    var yy=y;
+    o.textAlign="right"; o.font="700 17px "+AB; if(!dry){o.fillStyle="#ff5533"; o.fillText("JIRAI CHECK SHEET — FOR PLAYERS",x+w,yy);}
+    var kW=o.measureText("JIRAI CHECK SHEET — FOR PLAYERS").width;
+    o.font="400 42px "+WD; var w2=o.measureText("チェックシート").width;
+    if(!dry){o.fillStyle="#ff5533"; o.fillText("チェックシート",x+w,yy+24); o.fillStyle="#161513"; o.fillText("地雷",x+w-w2,yy+24);}
+    var logoW=Math.max(kW,o.measureText("地雷").width+w2); o.textAlign="left";
+    o.font="900 46px "+ZK; if(!dry)o.fillStyle="#161513";
+    var ty=wrap(o,d.name+" の地雷チェック",x,yy,w-logoW-28,54,dry); var y2=Math.max(ty,yy+62)+8;
+    o.font="500 22px "+DM; if(!dry){o.fillStyle="#8a857a"; o.fillText((d.session?d.session+"  ":"")+"記入日 "+(d.date||d.createdAt),x,y2);} y2+=32;
+    o.font="400 21px "+ZK; if(!dry){o.fillStyle="#8a857a"; o.fillText("◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略）",x,y2);} y2+=44;
+    return y2;
   }
-  groups.forEach(function(g){
-    ctx.font="900 26px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#161513";
-    ctx.fillText("■ "+g.title,pad,y); y+=38;
-    g.entries.forEach(function(e){
-      ctx.font="700 24px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle=symColor[e.cls]||"#161513";
-      var sym=e.sym; ctx.fillText(sym,pad+8,y);
-      var sw=Math.max(ctx.measureText(sym).width,54);
-      ctx.font="400 24px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#4a463f";
-      y=wrap(ctx,e.label,pad+8+sw+12,y,contentW-sw-20,34)+4;
-      if(e.reason){ ctx.font="400 19px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#8a857a";
-        y=wrap(ctx,"理由："+e.reason,pad+8+sw+12,y,contentW-sw-20,28)+4; }
-    });
-    y+=18;
+  function compactHeader(o,x,y,w,dry){
+    o.font="900 32px "+ZK; if(!dry){o.fillStyle="#161513"; o.fillText(d.name+" の地雷チェック",x,y);}
+    o.textAlign="right"; o.font="700 15px "+AB; if(!dry){o.fillStyle="#ff5533"; o.fillText("JIRAI CHECK SHEET",x+w,y+6);} o.textAlign="left";
+    var yy=y+44; if(!dry){o.fillStyle="#ff5533"; o.fillRect(x,yy,w,4);} return yy+20;
+  }
+
+  // ---- ブロック ----
+  function headerBlock(t){ return {type:"header",render:function(o,x,y,w,dry){ diamond(o,x,y+16,"#ff5533",dry); o.font="900 31px "+ZK; if(!dry){o.fillStyle="#161513"; o.fillText(t,x+28,y);} return y+46; }}; }
+  function itemBlock(e){ return {type:"item",render:function(o,x,y,w,dry){
+    var ch=chip(o,x,y,e.sym,e.cls,CHIPBG,CHIPFG,dry); var lx=x+ch.w+16;
+    o.font="400 27px "+ZK; if(!dry)o.fillStyle="#3a3833";
+    var ly=wrap(o,e.label,lx,y+Math.max(0,(ch.h-29)/2),w-(lx-x),37,dry); var yy=Math.max(y+ch.h,ly)+4;
+    if(e.reason){ o.font="400 22px "+ZK; if(!dry)o.fillStyle="#8a857a"; yy=wrap(o,"理由："+e.reason,lx,yy+2,w-(lx-x),31,dry)+2; }
+    return yy+11; }}; }
+  function noneBlock(){ return {type:"none",render:function(o,x,y,w,dry){ diamond(o,x,y+14,"#27c05a",dry); o.font="900 30px "+ZK; if(!dry){o.fillStyle="#27c05a"; o.fillText("特筆する項目なし（すべて〇）",x+28,y);} return y+52; }}; }
+  function freeBlock(label,text){ return {type:"free",render:function(o,x,y,w,dry){
+    diamond(o,x,y+14,"#ff5533",dry); o.font="900 27px "+ZK; if(!dry){o.fillStyle="#ff5533"; o.fillText(label,x+28,y);} var yy=y+40;
+    o.font="400 26px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,text,x,yy,w,37,dry); return yy+20; }}; }
+
+  var blocks=[]; var groups=nonNormal();
+  if(!groups.length) blocks.push(noneBlock());
+  groups.forEach(function(g){ blocks.push(headerBlock(g.title)); g.entries.forEach(function(e){ blocks.push(itemBlock(e)); }); });
+  [["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]].forEach(function(f){ if(f[1]) blocks.push(freeBlock(f[0],f[1])); });
+  blocks.forEach(function(b){ b.h=b.render(mctx,0,0,cW,true); });
+
+  // ---- ページ分割 ----
+  var fullH=fullHeader(mctx,0,0,cW,true), compH=compactHeader(mctx,0,0,cW,true);
+  var availFirst=cBottom-(cTop+fullH), availRest=cBottom-(cTop+compH);
+  var pages=[[]], pi=0, used=0;
+  blocks.forEach(function(b){
+    var cap=(pi===0?availFirst:availRest);
+    if(pages[pi].length && used+b.h>cap){ pi++; pages[pi]=[]; used=0; }
+    pages[pi].push(b); used+=b.h;
   });
-  [["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]].forEach(function(f){
-    if(!f[1])return;
-    ctx.font="900 26px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#ff5533"; ctx.fillText("● "+f[0],pad,y); y+=38;
-    ctx.font="400 24px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#4a463f"; y=wrap(ctx,f[1],pad,y,contentW,34)+22;
+  // 見出しがページ末尾に孤立しないよう次ページへ
+  for(var i=0;i<pages.length-1;i++){ var pg=pages[i]; if(pg.length && pg[pg.length-1].type==="header"){ pages[i+1].unshift(pg.pop()); } }
+  var total=pages.length;
+
+  // ---- 黒帯（カード全幅・上下）----
+  function band(o,by){
+    o.fillStyle="#161513"; o.fillRect(M,by,cardW,BAND);
+    o.save(); o.beginPath(); o.rect(M,by,cardW,BAND); o.clip();
+    o.textBaseline="middle"; o.font="700 17px "+AB; var mx=M+18, my=by+BAND/2+1;
+    while(mx<M+cardW){ o.fillStyle="#eceae4"; o.fillText("JIRAI CHECK",mx,my); mx+=o.measureText("JIRAI CHECK").width+13; o.fillStyle="#ff5533"; o.fillText("✦",mx,my); mx+=o.measureText("✦").width+13; }
+    o.restore(); o.textBaseline="top";
+  }
+
+  // ---- 1ページ描画 ----
+  function renderPage(idx,blks,isFirst){
+    var cvp=document.createElement("canvas"); cvp.width=PW; cvp.height=PH;
+    var o=cvp.getContext("2d"); o.textBaseline="top";
+    o.fillStyle="#eceae4"; o.fillRect(0,0,PW,PH);
+    o.fillStyle="#e3e0d7"; for(var dy=13;dy<PH;dy+=22){ for(var dx=13;dx<PW;dx+=22){ o.beginPath(); o.arc(dx,dy,1.3,0,7); o.fill(); } }
+    o.fillStyle="#161513"; roundRect(o,M+SH,M+SH,cardW,cardH,22); o.fill();
+    o.save(); roundRect(o,M,M,cardW,cardH,22); o.clip();
+    o.fillStyle="#fbfaf6"; o.fillRect(M,M,cardW,cardH);
+    band(o,M);            // 上帯（角丸に沿ってクリップ）
+    band(o,botBandY);     // 下帯
+    var y = isFirst? fullHeader(o,cX,cTop,cW,false) : compactHeader(o,cX,cTop,cW,false);
+    blks.forEach(function(b){ y=b.render(o,cX,y,cW,false); });
+    if(total>1){ o.textAlign="center"; o.font="700 20px "+AB; o.fillStyle="#161513"; o.fillText((idx+1)+" / "+total, PW/2, indY); o.textAlign="left"; }
+    o.restore();
+    o.lineWidth=5; o.strokeStyle="#161513"; roundRect(o,M,M,cardW,cardH,22); o.stroke();
+    return cvp;
+  }
+
+  // ---- 出力（複数枚）----
+  pages.forEach(function(blks,i){
+    var cvp=renderPage(i,blks,i===0);
+    setTimeout(function(){
+      cvp.toBlob(function(blob){
+        var url=URL.createObjectURL(blob), a=document.createElement("a");
+        a.href=url; a.download="地雷_"+safeName(d.name)+(total>1?("_"+(i+1)):"")+".png";
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+      },"image/png");
+    }, i*500);
   });
-  y+=pad; var finalH=Math.max(y,560);
-  var out=document.createElement("canvas"); out.width=W; out.height=finalH;
-  var octx=out.getContext("2d"); octx.drawImage(cv,0,0,W,finalH,0,0,W,finalH);
-  octx.strokeStyle="#161513"; octx.lineWidth=8; octx.strokeRect(4,4,W-8,finalH-8);
-  out.toBlob(function(blob){
-    var url=URL.createObjectURL(blob), a=document.createElement("a");
-    a.href=url; a.download="地雷_"+safeName(d.name)+".png"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); },1000);
-  },"image/png");
+  var sn=document.getElementById("savednote"); if(sn) sn.textContent = total>1? ("縦長"+total+"枚の画像を保存します…"):"画像を保存します…";
 }
-function wrap(ctx,text,x,y,maxW,lh){
+function roundRect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function diamond(ctx,x,cy,color,dry){ if(dry)return; ctx.save(); ctx.translate(x+7,cy); ctx.rotate(Math.PI/4);
+  ctx.fillStyle=color||"#ff5533"; ctx.fillRect(-7,-7,14,14);
+  ctx.strokeStyle="#161513"; ctx.lineWidth=2.5; ctx.strokeRect(-7,-7,14,14); ctx.restore(); }
+function chip(ctx,x,y,text,cls,BG,FG,dry){
+  ctx.font="700 26px 'Zen Kaku Gothic New',sans-serif";
+  var tw=ctx.measureText(text).width, padx=15, h=40, w=tw+padx*2;
+  if(!dry){ ctx.fillStyle=(BG[cls]||"#ffffff"); roundRect(ctx,x,y,w,h,20); ctx.fill();
+    ctx.strokeStyle="#161513"; ctx.lineWidth=2.5; roundRect(ctx,x,y,w,h,20); ctx.stroke();
+    ctx.fillStyle=(FG[cls]||"#161513"); ctx.fillText(text,x+padx,y+7); }
+  return {w:w,h:h};
+}
+function wrap(ctx,text,x,y,maxW,lh,dry){
   var lines=String(text).split("\n");
   for(var li=0;li<lines.length;li++){
     var chars=lines[li].split(""), cur="";
     for(var i=0;i<chars.length;i++){
       var test=cur+chars[i];
-      if(ctx.measureText(test).width>maxW && cur!==""){ ctx.fillText(cur,x,y); y+=lh; cur=chars[i]; }
+      if(ctx.measureText(test).width>maxW && cur!==""){ if(!dry)ctx.fillText(cur,x,y); y+=lh; cur=chars[i]; }
       else cur=test;
     }
-    ctx.fillText(cur,x,y); y+=lh;
+    if(!dry)ctx.fillText(cur,x,y); y+=lh;
   }
   return y;
 }
