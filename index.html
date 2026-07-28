@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>モグ卓 ハウスルール｜Call of Cthulhu</title>
   <meta property="og:type" content="website">
   <meta property="og:title" content="モグ卓 ハウスルール｜Call of Cthulhu">
@@ -72,6 +76,12 @@ nav.open{display:block}
 .navwrap a:hover{background:var(--yellow)}
 .navwrap a.on{background:var(--ink);color:#fff}
 .navwrap a.on .n{color:var(--yellow)}
+.pageswitch{max-width:1180px;margin:0 auto;padding:12px 18px 0;display:flex;gap:9px;flex-wrap:wrap}
+.psbtn{white-space:nowrap;font-weight:900;font-size:14px;text-decoration:none;color:var(--ink);border:2.5px solid var(--ink);border-radius:12px;padding:8px 18px;background:var(--white);box-shadow:3px 3px 0 var(--ink);display:flex;align-items:center;gap:7px}
+.psbtn .pi{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
+.psbtn:hover{background:var(--yellow)}
+.psbtn.on{background:var(--coral);color:#fff}
+.psbtn.on .pi{color:#fff}
 
 /* marquee */
 .marquee{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;border-bottom:3px solid var(--ink);padding:8px 0}
@@ -251,6 +261,10 @@ summary .pg{margin-left:auto}
 </header>
 
 <nav id="nav">
+  <div class="pageswitch">
+    <a class="psbtn on" href="index.html"><span class="pi">RULES</span>ハウスルール</a>
+    <a class="psbtn" href="jirai.html"><span class="pi">JIRAI</span>地雷チェック</a>
+  </div>
   <div class="navwrap" id="navwrap">
     <a href="#s-welcome"><span class="n">00</span>ようこそ</a>
     <a href="#s-pc"><span class="n">01</span>新規PC作成</a>
@@ -329,7 +343,7 @@ summary .pg{margin-left:auto}
 
     <div class="sub">事前準備<span class="badge">BEFORE</span></div>
     <div class="grid">
-      <div class="card" data-item><div class="card-h"><span class="tag t-blue">配慮</span><h3>配慮事項に関して</h3></div><p>配慮して欲しいことがあれば、参加前に <strong>地雷チェックシートのリンク</strong> をサーバーに共有するなどして教えてください。</p></div>
+      <div class="card" data-item><div class="card-h"><span class="tag t-blue">配慮</span><h3>配慮事項に関して</h3></div><p>配慮して欲しいことがあれば、参加前に <a href="jirai.html">地雷チェックシート</a> に記入し、そのリンクやファイルをサーバーに共有するなどして教えてください。</p><div class="pills" style="margin-top:8px"><a class="chip copyall" href="jirai.html" style="text-decoration:none">→ 地雷チェックシートへ</a></div></div>
       <div class="card black" data-item><div class="card-h"><span class="tag t-coral">NOTE</span><h3>未成年探索者について</h3></div><p>残酷な要素・R-18展開があるシナリオに未成年の探索者を連れてこないでください。基本的にお断りします。</p><p class="small">（シナリオで年齢指定がある場合は大丈夫です）</p></div>
       <div class="card" data-item><div class="card-h"><span class="tag t-pink">画像</span><h3>画像の扱い（卓報告）</h3></div><p>卓報告での立ち絵画像の投稿がNGな人は教えてください。<strong>モグラはOKです。</strong></p></div>
       <div class="card" data-item><div class="card-h"><span class="tag t-yellow">参加</span><h3>既読通過</h3></div><p>読んでるけど回りたい！って人も歓迎。同卓者が良ければ <strong>複数人でも可</strong>。</p></div>

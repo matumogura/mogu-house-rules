@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>地雷チェックシート 集約｜モグ卓（KP用）</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=WDXL+Lubrifont+JP+N&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eceae4;--paper-2:#e3e0d7;--ink:#161513;--ink-soft:#4a463f;--white:#fbfaf6;
+  --green:#27c05a;--blue:#2f6bff;--yellow:#ffce1c;--coral:#ff5533;--pink:#ff77aa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Zen Kaku Gothic New',sans-serif;color:var(--ink);background:var(--paper);
+  line-height:1.8;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(var(--paper-2) 1.3px,transparent 1.4px);background-size:22px 22px;opacity:.6}
+a{color:var(--blue);font-weight:700;text-decoration:none}
+
+header{position:sticky;top:0;z-index:50;background:var(--ink);border-bottom:3px solid var(--ink)}
+.hbar{max-width:1080px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:10px}
+.logo{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:21px;line-height:1;white-space:nowrap;color:var(--paper)}
+.logo b{color:var(--coral)}
+.kpbadge{font-family:'Archivo Black';font-size:11px;background:var(--coral);color:#fff;padding:3px 9px;border-radius:6px}
+.hbar .sp{margin-left:auto}
+.pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--paper);border-radius:999px;padding:5px 13px;background:var(--white);white-space:nowrap}
+.pill.y{background:var(--yellow)}
+
+main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 70px}
+.phead{padding:30px 0 6px}
+.phead .kick{font-family:'Archivo Black';font-size:12px;letter-spacing:.14em;color:var(--coral)}
+.phead h1{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:clamp(28px,5.5vw,46px);line-height:1.05;margin:6px 0 0}
+.phead h1 .cc{color:var(--coral)}
+.phead .lead{font-size:15px;margin-top:12px;color:var(--ink-soft)}
+
+.card{background:var(--white);border:3px solid var(--ink);border-radius:16px;padding:20px 22px;box-shadow:5px 5px 0 var(--ink);margin:16px 0}
+.card>.lab{display:inline-block;font-family:'Archivo Black';font-size:11px;letter-spacing:.1em;background:var(--coral);color:#fff;padding:3px 10px;border-radius:7px;margin-bottom:14px}
+
+.drop{border:3px dashed var(--ink);border-radius:16px;background:var(--paper);padding:26px 20px;text-align:center;cursor:pointer;transition:.12s}
+.drop.hover{background:var(--yellow)}
+.drop b{font-size:16px}
+.drop p{font-size:13px;color:var(--ink-soft);margin-top:4px}
+.drop .big{font-family:'WDXL Lubrifont JP N';font-size:22px;color:var(--coral)}
+
+.roster{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.person{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;background:var(--paper);border:2.5px solid var(--ink);border-radius:999px;padding:4px 6px 4px 13px;box-shadow:2px 2px 0 var(--ink)}
+.person .rm{cursor:pointer;border:none;background:var(--ink);color:#fff;width:20px;height:20px;border-radius:50%;font-size:12px;line-height:1}
+.counter{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-soft);margin-top:8px}
+
+.btn{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:15px;cursor:pointer;color:#fff;background:var(--coral);
+  border:3px solid var(--ink);border-radius:13px;padding:11px 18px;box-shadow:4px 4px 0 var(--ink);display:inline-flex;align-items:center;gap:9px}
+.btn:active{transform:translate(4px,4px);box-shadow:none}
+.btn.blue{background:var(--blue)}.btn.dark{background:var(--ink)}.btn.ghost{background:var(--white);color:var(--ink)}
+.btn.sm{font-size:13px;padding:8px 14px;box-shadow:3px 3px 0 var(--ink)}
+.btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+.tab{cursor:pointer;font-weight:700;font-size:14px;border:2.5px solid var(--ink);border-radius:999px;padding:7px 16px;background:var(--white);box-shadow:2px 2px 0 var(--ink)}
+.tab.on{background:var(--ink);color:#fff}
+.view{display:none}.view.on{display:block}
+
+/* aggregation */
+.gtitle{font-weight:900;font-size:17px;margin:20px 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gtitle .badge{font-family:'Archivo Black';font-size:11px;padding:3px 9px;border-radius:6px}
+.badge.red{background:var(--coral);color:#fff}.badge.blue{background:var(--blue);color:#fff}.badge.gray{background:#cfcabd}.badge.pink{background:var(--pink)}
+.arow{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1.5px dashed #d8d3c7}
+.arow:first-child{border-top:none}
+.arow .ck{flex-shrink:0;margin-top:3px}
+.arow .ck input{width:22px;height:22px;accent-color:var(--coral);cursor:pointer}
+.arow .amain{flex:1;min-width:0}
+.arow .alabel{font-weight:700;font-size:14.5px}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.wtag{font-weight:700;font-size:12px;border:2px solid var(--ink);border-radius:999px;padding:2px 9px;background:var(--white)}
+.wtag .s{font-family:'Archivo Black';margin-right:4px}
+.wtag.never{background:var(--coral);color:#fff}.wtag.weak{background:var(--yellow)}
+.wtag.meh{background:#cfcabd}.wtag.love{background:var(--pink)}.wtag.choice{background:var(--blue);color:#fff}
+.seclabel{font-family:'Archivo Black';font-size:10px;letter-spacing:.08em;color:var(--ink-soft);background:var(--paper-2);border:2px solid var(--ink);border-radius:6px;padding:1px 7px;margin-left:8px}
+.reasons{margin-top:5px;font-size:12px;color:var(--ink-soft)}
+.reasons .rzline{padding:1px 0}.reasons .rzline b{color:var(--ink)}
+.empty{color:#8a857a;font-size:13.5px;padding:10px 0}
+
+/* person cards */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:14px}
+.pcard{background:var(--white);border:3px solid var(--ink);border-radius:14px;padding:16px 18px;box-shadow:5px 5px 0 var(--ink)}
+.pcard h3{font-family:'WDXL Lubrifont JP N';font-size:22px}
+.pcard .pm{font-family:'DM Mono',monospace;font-size:11px;color:#8a857a;margin-bottom:8px}
+.pcard .pln{margin:9px 0}
+.pcard .plt{font-weight:900;font-size:12px;color:var(--coral)}
+.pcard .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
+.pchip{font-weight:700;font-size:11.5px;border:2px solid var(--ink);border-radius:999px;padding:2px 9px}
+.pchip.love{background:var(--pink)}.pchip.meh{background:#cfcabd}.pchip.weak{background:var(--yellow)}
+.pchip.never{background:var(--coral);color:#fff}.pchip.choice{background:var(--blue);color:#fff}
+.pcard .fb{white-space:pre-wrap;font-size:13px;color:var(--ink-soft)}
+
+/* output */
+.opts{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+.opts label{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px;cursor:pointer}
+.opts input{width:18px;height:18px;accent-color:var(--blue)}
+textarea#out{width:100%;min-height:280px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);background:var(--paper);
+  border:2.5px solid var(--ink);border-radius:12px;padding:14px;line-height:1.7;resize:vertical}
+.callout{border:3px solid var(--ink);border-radius:14px;background:var(--yellow);padding:12px 16px;margin:12px 0;font-size:13.5px;font-weight:500}
+.callout .l{font-family:'Archivo Black';font-size:11px;background:var(--ink);color:var(--yellow);padding:2px 9px;border-radius:6px;margin-right:8px}
+
+footer{background:var(--ink);color:var(--paper);text-align:center;padding:34px 20px;margin-top:20px}
+footer .f1{font-family:'WDXL Lubrifont JP N';font-size:22px}
+footer .f1 b{color:var(--coral)}
+footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-top:6px}
+@media(max-width:640px){.logo{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="logo">モグ<b>卓</b></div>
+    <span class="kpbadge">KP</span>
+    <span class="sp"></span>
+    <a class="pill y" href="check.html">PL用ページ →</a>
+    <a class="pill" href="jirai.html">地雷トップ</a>
+    <a class="pill" href="index.html">ハウスルール</a>
+  </div>
+</header>
+
+<main>
+  <div class="phead">
+    <div class="kick">JIRAI CHECK SHEET — FOR KEEPERS</div>
+    <h1>地雷<span class="cc">集約</span>シート</h1>
+    <p class="lead">PLから受け取った提出ファイル（HTML／JSON）を読み込むと、全員の地雷を横断で確認できます。周知が必要な項目にチェックを入れ、PL共有用の注意文をまとめてコピーできます。読み込んだデータは外部に送信されません。</p>
+  </div>
+
+  <div class="card">
+    <span class="lab">よみこみ</span>
+    <div class="drop" id="drop">
+      <div class="big">ここにファイルをドロップ</div>
+      <b>または クリックして選択</b>
+      <p>PLが保存した「地雷_〇〇.html」または JSON ファイル（複数可・最大<span id="maxn">30</span>人）</p>
+      <input type="file" id="file" accept=".html,.htm,.json,application/json,text/html" multiple style="display:none">
+    </div>
+    <div class="roster" id="roster"></div>
+    <div class="counter" id="counter"></div>
+    <div class="btnrow" style="margin-top:12px">
+      <button class="btn ghost sm" id="btn-clear"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>全部クリア</button>
+    </div>
+  </div>
+
+  <div id="workspace" style="display:none">
+    <div class="tabs">
+      <div class="tab on" data-view="agg">要注意まとめ</div>
+      <div class="tab" data-view="people">個人カード</div>
+      <div class="tab" data-view="matrix">一覧表</div>
+    </div>
+
+    <!-- 集約ビュー -->
+    <div class="view on" id="view-agg">
+      <div class="card">
+        <div class="btnrow" style="margin-bottom:6px">
+          <button class="btn sm" id="ck-all"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>× ×× を全てチェック</button>
+          <button class="btn ghost sm" id="ck-none">チェック解除</button>
+        </div>
+        <p style="font-size:13px;color:var(--ink-soft)">チェックした項目が下の「注意文」に入ります。◎や△は参考情報です。</p>
+        <div id="agg"></div>
+      </div>
+
+      <div class="card">
+        <span class="lab">ちゅういぶん</span>
+        <div class="opts">
+          <label><input type="checkbox" id="op-names" checked>PL名を載せる</label>
+          <label><input type="checkbox" id="op-meh">△（好みじゃない）も含める</label>
+          <label><input type="checkbox" id="op-notice" checked>お知らせ・自衛も載せる</label>
+        </div>
+        <div class="btnrow" style="margin-bottom:10px">
+          <button class="btn blue" id="btn-copy"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>注意文をコピー</button>
+          <span id="copynote" style="font-size:12.5px;color:#8a857a"></span>
+        </div>
+        <textarea id="out" readonly></textarea>
+      </div>
+    </div>
+
+    <!-- 個人カード -->
+    <div class="view" id="view-people"><div class="pgrid" id="pgrid"></div></div>
+
+    <!-- 一覧表 -->
+    <div class="view" id="view-matrix">
+      <div class="card" style="overflow-x:auto">
+        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px">◎〇△×× と選択式の回答一覧（〇は空欄）。横スクロールできます。</p>
+        <div id="matrix"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="f1">モグ<b>卓</b> 地雷チェックシート（KP用）</div>
+  <div class="f2">読み込んだデータはブラウザ内のみで処理されます / no data is sent anywhere</div>
+</footer>
+
+<script src="check-schema.js"></script>
+<script>
+var SCALE=window.JIRAI_SCALE, SECTIONS=window.JIRAI_SECTIONS, SMAP=window.JIRAI.scaleMap(), esc=window.JIRAI.esc;
+var DEFAULT=window.JIRAI_SCALE_DEFAULT;
+var MAX=30;
+var people=[]; // {name, session, date, scale, loveN, choice, free, _fname}
+var checked={}; // key -> true
+
+document.getElementById("maxn").textContent=MAX;
+
+// ---- ファイル読み込み ----
+var drop=document.getElementById("drop"), fileInput=document.getElementById("file");
+drop.addEventListener("click",function(){ fileInput.click(); });
+fileInput.addEventListener("change",function(e){ handleFiles(e.target.files); fileInput.value=""; });
+["dragenter","dragover"].forEach(function(ev){ drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.add("hover"); }); });
+["dragleave","drop"].forEach(function(ev){ drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.remove("hover"); }); });
+drop.addEventListener("drop",function(e){ if(e.dataTransfer&&e.dataTransfer.files) handleFiles(e.dataTransfer.files); });
+
+function handleFiles(list){
+  var files=[].slice.call(list); var errs=[];
+  var pending=files.length;
+  if(!pending) return;
+  files.forEach(function(f){
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        var data=parseData(reader.result, f.name);
+        if(data){ if(people.length>=MAX){ errs.push(f.name+"（上限"+MAX+"人を超えるため無視）"); }
+          else { data._fname=f.name; people.push(data); } }
+        else errs.push(f.name+"（データが見つかりません）");
+      }catch(err){ errs.push(f.name+"（読み込みエラー）"); }
+      if(--pending===0){ render(); if(errs.length) alert("一部のファイルを読み込めませんでした:\n"+errs.join("\n")); }
+    };
+    reader.onerror=function(){ errs.push(f.name+"（読み込み失敗）"); if(--pending===0){ render(); if(errs.length) alert(errs.join("\n")); } };
+    reader.readAsText(f);
+  });
+}
+function parseData(text,fname){
+  var d=null;
+  if(/\.json$/i.test(fname)){ d=JSON.parse(text); }
+  else {
+    var doc=new DOMParser().parseFromString(text,"text/html");
+    var s=doc.getElementById("mogu-jirai-data");
+    if(s){ d=JSON.parse(s.textContent); }
+    else { var m=text.match(/id=["']mogu-jirai-data["'][^>]*>([\s\S]*?)<\/script>/i); if(m) d=JSON.parse(m[1]); }
+  }
+  if(!d||d._type!=="mogu-jirai-sheet") return null;
+  d.scale=d.scale||{}; d.loveN=d.loveN||{}; d.choice=d.choice||{}; d.free=d.free||{}; d.reason=d.reason||{};
+  d.name=d.name||"（無名）";
+  return d;
+}
+
+// ---- レンダリング ----
+function render(){
+  var roster=document.getElementById("roster"); roster.innerHTML="";
+  people.forEach(function(p,i){
+    var el=document.createElement("div"); el.className="person";
+    el.innerHTML='<span>'+esc(p.name)+'</span><button class="rm" data-i="'+i+'" title="削除">×</button>';
+    roster.appendChild(el);
+  });
+  roster.querySelectorAll(".rm").forEach(function(b){ b.addEventListener("click",function(){ people.splice(parseInt(b.dataset.i,10),1); render(); }); });
+  document.getElementById("counter").textContent = people.length? (people.length+" / "+MAX+" 人 読み込み済み") : "";
+  document.getElementById("workspace").style.display = people.length? "block":"none";
+  if(people.length){ renderAgg(); renderPeople(); renderMatrix(); buildOutput(); }
+}
+
+// ---- 集約 ----
+function scaleEntriesForItem(itemId, levels){
+  var out=[];
+  people.forEach(function(p){
+    var v=p.scale[itemId]||DEFAULT;
+    if(levels.indexOf(v)>=0){
+      var sym=SMAP[v].sym; if(v==="love"){ var n=p.loveN[itemId]||1; if(n>1) sym="◎".repeat(n); }
+      out.push({name:p.name, v:v, sym:sym, reason:(p.reason&&p.reason[itemId])||""});
+    }
+  });
+  return out;
+}
+function choiceAttEntries(sec,item){
+  var out=[];
+  people.forEach(function(p){
+    var idx=p.choice[item.id];
+    if(idx!=null && sec.attentionFrom!=null && idx>=sec.attentionFrom) out.push({name:p.name, v:"choice", sym:item.options[idx], reason:(p.reason&&p.reason[item.id])||""});
+  });
+  return out;
+}
+function renderAgg(){
+  var wrap=document.getElementById("agg"); wrap.innerHTML="";
+  // 1) 要注意（× ××）＋選択式の配慮
+  var g1=document.createElement("div");
+  g1.innerHTML='<div class="gtitle"><span class="badge red">要注意</span>× 苦手・×× 絶対NG・配慮希望</div>';
+  var any=false;
+  SECTIONS.forEach(function(sec){
+    sec.items.forEach(function(it){
+      var entries = sec.type==="scale" ? scaleEntriesForItem(it.id,["weak","never"]) : choiceAttEntries(sec,it);
+      if(entries.length){ any=true; g1.appendChild(arow(sec,it,entries,true)); }
+    });
+  });
+  if(!any) g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
+  wrap.appendChild(g1);
+
+  // 2) △ 参考（チェック可）
+  var g2=document.createElement("div");
+  g2.innerHTML='<div class="gtitle"><span class="badge gray">参考</span>△ 好みじゃない</div>';
+  var any2=false;
+  SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
+    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["meh"]); if(e.length){ any2=true; g2.appendChild(arow(sec,it,e,true)); } });
+  });
+  if(!any2) g2.appendChild(emptyEl("△ はありません。"));
+  wrap.appendChild(g2);
+
+  // 3) ◎ 好み（参考・チェック不要）
+  var g3=document.createElement("div");
+  g3.innerHTML='<div class="gtitle"><span class="badge pink">参考</span>◎ 好きな要素（盛れると喜ばれる）</div>';
+  var any3=false;
+  SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
+    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["love"]); if(e.length){ any3=true; g3.appendChild(arow(sec,it,e,false)); } });
+  });
+  if(!any3) g3.appendChild(emptyEl("◎ はありません。"));
+  wrap.appendChild(g3);
+}
+function arow(sec,item,entries,withCheck){
+  var key=sec.id+"::"+item.id;
+  var row=document.createElement("div"); row.className="arow";
+  var ck="";
+  if(withCheck) ck='<div class="ck"><input type="checkbox" data-key="'+key+'" '+(checked[key]?"checked":"")+'></div>';
+  var who=entries.map(function(e){ return '<span class="wtag '+e.v+'"'+(e.reason?' title="'+esc(e.reason)+'"':'')+'><span class="s">'+esc(e.sym)+'</span>'+esc(e.name)+'</span>'; }).join("");
+  var rzs=entries.filter(function(e){return e.reason;}).map(function(e){ return '<div class="rzline"><b>'+esc(e.name)+'</b>：'+esc(e.reason)+'</div>'; }).join("");
+  row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(item.label)+'<span class="seclabel">'+esc(sec.title)+'</span></div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
+  if(withCheck){ row.querySelector("input").addEventListener("change",function(){ checked[key]=this.checked; buildOutput(); }); }
+  return row;
+}
+function emptyEl(t){ var d=document.createElement("div"); d.className="empty"; d.textContent=t; return d; }
+
+document.getElementById("ck-all").addEventListener("click",function(){
+  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
+    var entries=sec.type==="scale"?scaleEntriesForItem(it.id,["weak","never"]):choiceAttEntries(sec,it);
+    if(entries.length) checked[sec.id+"::"+it.id]=true;
+  }); });
+  renderAgg(); buildOutput();
+});
+document.getElementById("ck-none").addEventListener("click",function(){ checked={}; renderAgg(); buildOutput(); });
+["op-names","op-meh","op-notice"].forEach(function(id){ document.getElementById(id).addEventListener("change",buildOutput); });
+
+// ---- 個人カード ----
+function renderPeople(){
+  var g=document.getElementById("pgrid"); g.innerHTML="";
+  people.forEach(function(p){
+    var card=document.createElement("div"); card.className="pcard";
+    var h='<h3>'+esc(p.name)+'</h3><div class="pm">'+(p.session?esc(p.session)+' ／ ':'')+'記入日 '+esc(p.date||p.createdAt||"")+'</div>';
+    // grouped non-normal
+    var groups=[];
+    SECTIONS.forEach(function(sec){
+      var ents=[];
+      sec.items.forEach(function(it){
+        var rz=(p.reason&&p.reason[it.id])||"";
+        if(sec.type==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v==="normal"&&!rz)return; var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} ents.push({label:it.label,sym:sym,cls:v,reason:rz}); }
+        else { var idx=p.choice[it.id]; if(idx==null&&!rz)return; ents.push({label:it.label,sym:(idx==null?"—":it.options[idx]),cls:"choice",reason:rz}); }
+      });
+      if(ents.length) groups.push({title:sec.title,ents:ents});
+    });
+    groups.forEach(function(gr){
+      h+='<div class="pln"><div class="plt">'+esc(gr.title)+'</div><div class="chips">';
+      gr.ents.forEach(function(e){ h+='<span class="pchip '+e.cls+'">'+esc(e.sym)+' '+esc(e.label)+(e.reason?'：'+esc(e.reason):'')+'</span>'; });
+      h+='</div></div>';
+    });
+    if(!groups.length) h+='<div class="pln" style="color:#8a857a;font-size:13px">特筆項目なし（すべて〇）</div>';
+    [["苦手なことメモ",p.free.free_dislike],["お知らせしたい事項",p.free.free_notice],["好きな要素など",p.free.free_likes]].forEach(function(f){
+      if(f[1]) h+='<div class="pln"><div class="plt">'+esc(f[0])+'</div><div class="fb">'+esc(f[1])+'</div></div>';
+    });
+    card.innerHTML=h; g.appendChild(card);
+  });
+}
+
+// ---- 一覧表 ----
+function renderMatrix(){
+  var host=document.getElementById("matrix");
+  var html='<table style="border-collapse:collapse;font-size:12.5px;min-width:100%">';
+  html+='<thead><tr><th style="text-align:left;position:sticky;left:0;background:var(--white);border-bottom:2.5px solid var(--ink);padding:6px 8px">項目</th>';
+  people.forEach(function(p){ html+='<th style="border-bottom:2.5px solid var(--ink);padding:6px 8px;white-space:nowrap">'+esc(p.name)+'</th>'; });
+  html+='</tr></thead><tbody>';
+  SECTIONS.forEach(function(sec){
+    html+='<tr><td colspan="'+(people.length+1)+'" style="font-weight:900;color:var(--coral);padding:8px 8px 2px">'+esc(sec.title)+'</td></tr>';
+    sec.items.forEach(function(it){
+      html+='<tr><td style="position:sticky;left:0;background:var(--white);padding:4px 8px;border-bottom:1px dashed #d8d3c7">'+esc(it.label)+'</td>';
+      people.forEach(function(p){
+        var cell="",color="";
+        if(sec.type==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v!=="normal"){ var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} cell=sym; color=v==="never"?"#ff5533":v==="weak"?"#b8860b":v==="love"?"#c02e6a":"#7c776c"; } }
+        else { var idx=p.choice[it.id]; if(idx!=null){ cell=(sec.attentionFrom!=null&&idx>=sec.attentionFrom?"▲":"○"); color="#2f6bff"; } }
+        html+='<td title="'+esc(cell)+'" style="text-align:center;padding:4px 8px;border-bottom:1px dashed #d8d3c7;font-weight:700;color:'+color+'">'+esc(cell)+'</td>';
+      });
+      html+='</tr>';
+    });
+  });
+  html+='</tbody></table>';
+  host.innerHTML=html;
+}
+
+// ---- 注意文 ----
+function buildOutput(){
+  var withNames=document.getElementById("op-names").checked;
+  var withMeh=document.getElementById("op-meh").checked;
+  var withNotice=document.getElementById("op-notice").checked;
+  var L=[];
+  L.push("【卓の事前共有・お願い】");
+  L.push("提出いただいた地雷チェックをもとに、本卓では以下に配慮します。");
+  L.push("");
+  var lines=[];
+  SECTIONS.forEach(function(sec){
+    sec.items.forEach(function(it){
+      var key=sec.id+"::"+it.id;
+      if(!checked[key]) return;
+      var entries = sec.type==="scale" ? scaleEntriesForItem(it.id, withMeh?["weak","never","meh"]:["weak","never"]) : choiceAttEntries(sec,it);
+      if(!entries.length) return;
+      var detail = entries.map(function(e){ return withNames ? e.sym+" "+e.name+(e.reason?"（"+e.reason+"）":"") : e.sym; }).join("／");
+      lines.push("・"+it.label+"："+detail);
+    });
+  });
+  if(lines.length){ L.push("＜配慮する項目＞"); L=L.concat(lines); L.push(""); }
+  else { L.push("（チェックされた配慮項目はありません）"); L.push(""); }
+
+  if(withNotice){
+    var nt=[];
+    people.forEach(function(p){
+      var parts=[];
+      if(p.free.free_notice) parts.push(p.free.free_notice);
+      if(p.free.free_dislike) parts.push("苦手："+p.free.free_dislike);
+      if(parts.length) nt.push("・"+p.name+"："+parts.join(" ／ "));
+    });
+    if(nt.length){ L.push("＜各PLからのお知らせ・自衛＞"); L=L.concat(nt); L.push(""); }
+  }
+  L.push("みなさんが安心して楽しめるよう、ご協力をお願いします。");
+  document.getElementById("out").value=L.join("\n");
+}
+document.getElementById("btn-copy").addEventListener("click",function(){
+  var ta=document.getElementById("out"); ta.select();
+  var ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+  if(navigator.clipboard){ navigator.clipboard.writeText(ta.value).catch(function(){}); ok=true; }
+  document.getElementById("copynote").textContent = ok? "コピーしました。":"上の欄を選択してコピーしてください。";
+  setTimeout(function(){ document.getElementById("copynote").textContent=""; },2500);
+});
+
+// ---- タブ ----
+document.querySelectorAll(".tab").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});
+    document.querySelectorAll(".view").forEach(function(x){x.classList.remove("on");});
+    t.classList.add("on"); document.getElementById("view-"+t.dataset.view).classList.add("on");
+  });
+});
+document.getElementById("btn-clear").addEventListener("click",function(){
+  if(!people.length) return;
+  if(!confirm("読み込んだファイルをすべてクリアします。よろしいですか？")) return;
+  people=[]; checked={}; render();
+});
+</script>
+</body>
+</html>

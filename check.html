@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>地雷チェックシート 入力｜モグ卓</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=WDXL+Lubrifont+JP+N&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eceae4;--paper-2:#e3e0d7;--ink:#161513;--ink-soft:#4a463f;--white:#fbfaf6;
+  --green:#27c05a;--blue:#2f6bff;--yellow:#ffce1c;--coral:#ff5533;--pink:#ff77aa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Zen Kaku Gothic New',sans-serif;color:var(--ink);background:var(--paper);
+  line-height:1.8;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(var(--paper-2) 1.3px,transparent 1.4px);background-size:22px 22px;opacity:.6}
+img{display:block}
+a{color:var(--blue);font-weight:700;text-decoration:none}
+
+.stickytop{position:sticky;top:0;z-index:50;background:var(--paper)}
+header{background:var(--paper);border-bottom:3px solid var(--ink)}
+.hbar{max-width:1000px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:10px}
+.legendbar{background:var(--paper-2);border-bottom:3px solid var(--ink);display:none}
+.legendbar.show{display:block}
+.legendbar-inner{max-width:1000px;margin:0 auto;padding:7px 18px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.legendbar .lbtitle{font-family:'Archivo Black';font-size:10px;letter-spacing:.06em;color:var(--ink-soft);margin-right:2px}
+.legendbar .lg{padding:3px 9px;font-size:12px;background:var(--white)}
+.logo{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:21px;line-height:1;white-space:nowrap}
+.logo b{color:var(--coral)}
+.hbar .sp{margin-left:auto}
+.pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;background:var(--white);box-shadow:2px 2px 0 var(--ink);white-space:nowrap}
+.pill.y{background:var(--yellow)}
+
+main{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 20px 70px}
+
+.phead{padding:32px 0 6px}
+.phead .kick{font-family:'Archivo Black';font-size:12px;letter-spacing:.14em;color:var(--coral)}
+.phead h1{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:clamp(30px,6vw,50px);line-height:1.04;margin:6px 0 0}
+.phead h1 .cc{color:var(--coral)}
+.phead .lead{font-size:15px;margin-top:14px;color:var(--ink-soft)}
+
+.steps{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+.step{flex:1;min-width:170px;background:var(--white);border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);padding:12px 15px}
+.step .sn{font-family:'Archivo Black';font-size:11px;background:var(--ink);color:var(--yellow);padding:2px 8px;border-radius:6px}
+.step b{display:block;font-weight:900;font-size:15px;margin-top:8px}
+.step p{font-size:13px;color:var(--ink-soft);margin-top:2px}
+
+.card{background:var(--white);border:3px solid var(--ink);border-radius:16px;padding:20px 22px;box-shadow:5px 5px 0 var(--ink);margin:16px 0}
+.card>.lab{display:inline-block;font-family:'Archivo Black';font-size:11px;letter-spacing:.1em;background:var(--coral);color:#fff;padding:3px 10px;border-radius:7px;margin-bottom:14px}
+
+.field{margin:14px 0}
+.field:first-child{margin-top:0}
+.field label{display:block;font-weight:900;font-size:14.5px;margin-bottom:2px}
+.field .hint{font-size:12.5px;color:#8a857a;margin-bottom:6px}
+input[type=text],textarea{width:100%;font-family:inherit;font-size:14.5px;color:var(--ink);background:var(--paper);
+  border:2.5px solid var(--ink);border-radius:11px;padding:9px 13px;outline:none;line-height:1.7}
+input[type=text]:focus,textarea:focus{background:var(--white);box-shadow:3px 3px 0 var(--ink)}
+textarea{resize:vertical;min-height:70px}
+.metagrid{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;align-items:stretch}
+.metagrid .field{display:flex;flex-direction:column;margin:0}
+.metagrid .field input{margin-top:auto}
+@media(max-width:620px){.metagrid{grid-template-columns:1fr}}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.legend .lg{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;background:var(--paper);border:2.5px solid var(--ink);border-radius:10px;padding:5px 11px}
+.sym{font-family:'Archivo Black';min-width:26px;text-align:center;border-radius:6px;padding:1px 5px;font-size:13px}
+.sym.love{background:var(--pink)}.sym.normal{background:var(--white)}.sym.meh{background:#cfcabd}
+.sym.weak{background:var(--yellow)}.sym.never{background:var(--coral);color:#fff}
+
+/* section (collapsible) */
+.jsec{border:3px solid var(--ink);border-radius:14px;background:var(--white);box-shadow:5px 5px 0 var(--ink);margin:14px 0;overflow:hidden}
+.jsec>summary{list-style:none;cursor:pointer;font-weight:900;font-size:16px;padding:14px 18px;display:flex;align-items:center;gap:10px;background:var(--paper-2)}
+.jsec>summary::-webkit-details-marker{display:none}
+.jsec>summary::before{content:"\25B8";color:var(--coral);font-family:'Archivo Black';transition:transform .2s}
+.jsec[open]>summary::before{transform:rotate(90deg)}
+.jsec>summary .cnt{margin-left:auto;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-soft);background:var(--white);border:2px solid var(--ink);border-radius:999px;padding:1px 9px}
+.jbody{padding:6px 18px 14px}
+
+.item{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 0;border-top:1.5px dashed #d8d3c7}
+.item:first-child{border-top:none}
+.iname{flex:1;min-width:160px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none}
+.iname:hover{color:var(--coral)}
+.iname .rmark{font-size:12px;color:var(--coral);opacity:.35;flex-shrink:0}
+.iname:hover .rmark{opacity:.7}
+.iname.hasreason{color:var(--coral)}
+.iname.hasreason .rmark{opacity:1}
+.reasonwrap{width:100%;margin-top:6px;display:none}
+.reasonwrap.open{display:block}
+.reasonbox{width:100%;font-family:inherit;font-size:13px;color:var(--ink);background:var(--paper);border:2.5px solid var(--ink);border-radius:10px;padding:7px 11px;line-height:1.6;resize:vertical;min-height:42px;outline:none}
+.reasonbox:focus{background:var(--white);box-shadow:2px 2px 0 var(--ink)}
+.pchip.normal{background:var(--white)}
+.scale{display:flex;gap:5px;flex-shrink:0}
+.sbtn{cursor:pointer;font-family:'Archivo Black';font-size:14px;min-width:38px;text-align:center;border:2.5px solid var(--ink);border-radius:9px;padding:5px 6px;background:var(--white);user-select:none;transition:.08s;line-height:1.1}
+.sbtn:hover{background:var(--paper-2)}
+.sbtn.on.s-love{background:var(--pink);box-shadow:2px 2px 0 var(--ink)}
+.sbtn.on.s-normal{background:var(--green);color:#063d17;box-shadow:2px 2px 0 var(--ink)}
+.sbtn.on.s-meh{background:#cfcabd;box-shadow:2px 2px 0 var(--ink)}
+.sbtn.on.s-weak{background:var(--yellow);box-shadow:2px 2px 0 var(--ink)}
+.sbtn.on.s-never{background:var(--coral);color:#fff;box-shadow:2px 2px 0 var(--ink)}
+
+/* choice */
+.choices{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.cbtn{cursor:pointer;font-weight:700;font-size:12.5px;border:2.5px solid var(--ink);border-radius:999px;padding:4px 12px;background:var(--white);user-select:none;transition:.08s}
+.cbtn:hover{background:var(--paper-2)}
+.cbtn.on{background:var(--blue);color:#fff;box-shadow:2px 2px 0 var(--ink)}
+.cbtn.on.att{background:var(--coral)}
+
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:2px}
+.btn{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:15px;cursor:pointer;color:#fff;background:var(--coral);
+  border:3px solid var(--ink);border-radius:13px;padding:12px 20px;box-shadow:4px 4px 0 var(--ink);display:inline-flex;align-items:center;gap:9px}
+.btn:active{transform:translate(4px,4px);box-shadow:none}
+.btn.blue{background:var(--blue)}.btn.dark{background:var(--ink)}.btn.ghost{background:var(--white);color:var(--ink)}
+.btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.savednote{font-size:12.5px;color:#8a857a;margin-top:12px}
+.qfill{font-weight:700;font-size:12px;color:var(--ink-soft);cursor:pointer;border:2px solid var(--ink);background:var(--white);border-radius:8px;padding:2px 9px;margin-left:6px}
+
+.callout{border:3px solid var(--ink);border-radius:14px;background:var(--yellow);padding:12px 16px;margin:14px 0;font-size:13.5px;font-weight:500}
+.callout .l{font-family:'Archivo Black';font-size:11px;background:var(--ink);color:var(--yellow);padding:2px 9px;border-radius:6px;margin-right:8px}
+
+.previewsheet{background:var(--white);border:3px solid var(--ink);border-radius:16px;padding:20px 22px;box-shadow:5px 5px 0 var(--ink)}
+.previewsheet h3{font-family:'WDXL Lubrifont JP N';font-size:24px}
+.previewsheet .pmeta{font-family:'DM Mono',monospace;font-size:12px;color:#8a857a;margin-bottom:8px}
+.pline{margin:12px 0}
+.pl-t{font-weight:900;font-size:13px;color:var(--coral)}
+.pl-b{font-size:14px;color:var(--ink-soft);white-space:pre-wrap;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.pchip{font-weight:700;font-size:12px;border:2.5px solid var(--ink);border-radius:999px;padding:2px 10px}
+.pchip.love{background:var(--pink)}.pchip.meh{background:#cfcabd}.pchip.weak{background:var(--yellow)}
+.pchip.never{background:var(--coral);color:#fff}.pchip.choice{background:var(--blue);color:#fff}
+
+textarea#txtout{min-height:150px;font-family:'DM Mono',monospace;font-size:12.5px;background:var(--paper);margin-top:10px}
+
+footer{background:var(--ink);color:var(--paper);text-align:center;padding:34px 20px;margin-top:20px}
+footer .f1{font-family:'WDXL Lubrifont JP N';font-size:22px}
+footer .f1 b{color:var(--coral)}
+footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-top:6px}
+canvas{display:none}
+@media(max-width:640px){.logo{font-size:18px}.iname{min-width:100%}}
+</style>
+</head>
+<body>
+<div class="stickytop">
+  <header>
+    <div class="hbar">
+      <div class="logo">モグ<b>卓</b></div>
+      <span class="sp"></span>
+      <a class="pill y" href="check-kp.html">KP用ページ →</a>
+      <a class="pill" href="jirai.html">地雷トップ</a>
+      <a class="pill" href="index.html">ハウスルール</a>
+    </div>
+  </header>
+  <div class="legendbar"><div class="legendbar-inner"><span class="lbtitle">こたえかた</span><div class="legend" id="legend" style="display:contents"></div></div></div>
+</div>
+
+<main>
+  <div class="phead">
+    <div class="kick">JIRAI CHECK SHEET — FOR PLAYERS</div>
+    <h1>地雷<span class="cc">チェックシート</span></h1>
+    <p class="lead">自分の「地雷（苦手・NG要素）」や好きな要素をまとめて、卓に提出するファイルと、SNSで共有しやすい画像・テキストを作れます。入力内容はこの端末のブラウザに自動保存され、外部には一切送信されません。</p>
+    <div class="steps">
+      <div class="step"><span class="sn">STEP 1</span><b>回答する</b><p>各項目を ◎〇△×× で選択。選択式の欄は当てはまるものを選ぶ。</p></div>
+      <div class="step"><span class="sn">STEP 2</span><b>提出ファイルを保存</b><p>「提出用HTMLを保存」でファイルをKPに渡す。</p></div>
+      <div class="step"><span class="sn">STEP 3</span><b>画像・テキストで共有</b><p>SNS用画像や、コピー用テキストも作れる。</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lab">つかいかた</span>
+    <p style="font-size:13px;color:var(--ink-soft)">未操作の項目は自動的に「〇（普通）」扱いになります。気になる項目だけ変更すればOK。◎はもう一度押すと好き度（◎◎◎）が上がります。<strong>項目名をクリック</strong>すると、その項目の理由・補足を入力できます（任意）。凡例は上部に常に表示されています。</p>
+  </div>
+
+  <div class="card">
+    <span class="lab">きほん</span>
+    <div class="field"><label for="f-name">ハンドルネーム（HO）<span style="color:var(--coral)">*</span></label><div class="hint">卓での呼び名。ファイル名・一覧の見出しになります。</div><input type="text" id="f-name" placeholder="例：モグラ" maxlength="40"></div>
+    <div class="metagrid">
+      <div class="field"><label for="f-session">セッション名／シナリオ名</label><div class="hint">任意。</div><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
+      <div class="field"><label for="f-date">記入日</label><div class="hint">任意。既定は今日の日付。</div><input type="text" id="f-date" placeholder="2026-07-28" maxlength="20"></div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="card">
+    <span class="lab">じゆうきにゅう</span>
+    <div id="freefields"></div>
+  </div>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn" id="btn-html"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>提出用HTMLを保存</button>
+      <button class="btn blue" id="btn-img"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 16-5-5-9 9"/></svg>SNS用画像を保存</button>
+      <button class="btn dark" id="btn-txt"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>テキストをコピー</button>
+      <button class="btn ghost" id="btn-reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>リセット</button>
+    </div>
+    <div class="savednote" id="savednote">入力は自動保存されます。</div>
+    <div class="callout"><span class="l">HINT</span>提出用HTMLは、開くと内容が見やすく表示され、KP用ページにそのまま読み込めます（データが埋め込まれています）。</div>
+    <textarea id="txtout" style="display:none" readonly></textarea>
+  </div>
+
+  <div class="sub" style="font-weight:900;font-size:19px;margin:26px 0 4px">プレビュー</div>
+  <p style="font-size:13px;color:var(--ink-soft);margin-bottom:12px">◎/△/×/×× と選択式の回答をまとめて表示します（〇は省略）。</p>
+  <div class="previewsheet" id="preview"></div>
+</main>
+
+<footer>
+  <div class="f1">モグ<b>卓</b> 地雷チェックシート</div>
+  <div class="f2">入力データはブラウザ内のみに保存されます / no data is sent anywhere</div>
+</footer>
+
+<canvas id="cv"></canvas>
+
+<script src="check-schema.js"></script>
+<script>
+var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
+var SMAP = window.JIRAI.scaleMap(), esc = window.JIRAI.esc;
+var STORE_KEY = "mogu-jirai-input-v2";
+var DEFAULT = window.JIRAI_SCALE_DEFAULT;
+
+var state = { scale:{}, loveN:{}, choice:{}, reason:{} };
+
+// ---- 凡例 ----
+(function(){
+  var L = document.getElementById("legend");
+  SCALE.forEach(function(s){
+    var d=document.createElement("div"); d.className="lg";
+    d.innerHTML='<span class="sym '+s.v+'">'+s.sym+'</span>'+s.t;
+    L.appendChild(d);
+  });
+})();
+
+// ---- セクション描画 ----
+var secWrap = document.getElementById("sections");
+SECTIONS.forEach(function(sec){
+  var det=document.createElement("details"); det.className="jsec"; det.open=true;
+  det.id="sec-"+sec.id; det.dataset.type=sec.type;
+  var sum=document.createElement("summary");
+  sum.innerHTML=esc(sec.title)+'<span class="cnt" id="cnt-'+sec.id+'"></span>';
+  det.appendChild(sum);
+  var body=document.createElement("div"); body.className="jbody";
+
+  if(sec.type==="scale"){
+    var qf=document.createElement("div"); qf.style.cssText="text-align:right;margin:2px 0 4px";
+    qf.innerHTML='<span class="qfill" data-sec="'+sec.id+'" data-v="normal">全て〇</span>';
+    body.appendChild(qf);
+  }
+
+  sec.items.forEach(function(it){
+    var row=document.createElement("div"); row.className="item";
+    var nm=document.createElement("div"); nm.className="iname"; nm.dataset.item=it.id;
+    nm.title="クリックで理由・補足を入力";
+    nm.innerHTML='<span>'+esc(it.label)+'</span><span class="rmark" title="理由・補足">✎</span>';
+    nm.addEventListener("click",function(){ toggleReason(it.id); });
+    row.appendChild(nm);
+    if(sec.type==="scale"){
+      var sc=document.createElement("div"); sc.className="scale";
+      SCALE.forEach(function(s){
+        var b=document.createElement("div"); b.className="sbtn s-"+s.v; b.textContent=s.sym;
+        b.dataset.item=it.id; b.dataset.v=s.v;
+        b.addEventListener("click",function(){ onScale(it.id,s.v); });
+        sc.appendChild(b);
+      });
+      row.appendChild(sc);
+    } else {
+      var ch=document.createElement("div"); ch.className="choices";
+      it.options.forEach(function(opt,idx){
+        var b=document.createElement("div"); b.className="cbtn"; b.textContent=opt;
+        if(sec.attentionFrom!=null && idx>=sec.attentionFrom) b.dataset.att="1";
+        b.dataset.item=it.id; b.dataset.idx=idx;
+        b.addEventListener("click",function(){ onChoice(it.id,idx,sec); });
+        ch.appendChild(b);
+      });
+      row.appendChild(ch);
+    }
+    var rw=document.createElement("div"); rw.className="reasonwrap"; rw.dataset.item=it.id;
+    var ta=document.createElement("textarea"); ta.className="reasonbox"; ta.dataset.item=it.id;
+    ta.placeholder="「"+it.label+"」について理由・補足（任意）";
+    ta.addEventListener("input",function(){ onReason(it.id,ta.value); });
+    rw.appendChild(ta); row.appendChild(rw);
+    body.appendChild(row);
+  });
+  det.appendChild(body); secWrap.appendChild(det);
+});
+
+// ---- 自由記入 ----
+(function(){
+  var F=document.getElementById("freefields");
+  FREE.forEach(function(f){
+    var d=document.createElement("div"); d.className="field";
+    d.innerHTML='<label for="'+f.id+'">'+esc(f.label)+'</label><textarea id="'+f.id+'" placeholder="'+esc(f.ph||"")+'"></textarea>';
+    F.appendChild(d);
+  });
+  FREE.forEach(function(f){ document.getElementById(f.id).addEventListener("input", onChange); });
+})();
+["f-name","f-session","f-date"].forEach(function(id){ document.getElementById(id).addEventListener("input", onChange); });
+
+// ---- 操作 ----
+function onScale(itemId,v){
+  if(state.scale[itemId]===v && v==="love"){
+    state.loveN[itemId]=(state.loveN[itemId]||1)%3+1; // 1->2->3->1
+  } else {
+    state.scale[itemId]=v;
+    if(v==="love"){ if(!state.loveN[itemId]) state.loveN[itemId]=1; } else { delete state.loveN[itemId]; }
+  }
+  refreshScale(); onChange();
+}
+function onChoice(itemId,idx,sec){
+  state.choice[itemId] = (state.choice[itemId]===idx) ? undefined : idx;
+  if(state.choice[itemId]===undefined) delete state.choice[itemId];
+  refreshChoice(); onChange();
+}
+function onReason(itemId,v){
+  v=(v||"").trim();
+  if(v) state.reason[itemId]=v; else delete state.reason[itemId];
+  var nm=document.querySelector('.iname[data-item="'+itemId+'"]');
+  if(nm) nm.classList.toggle("hasreason", !!v);
+  onChange();
+}
+function toggleReason(itemId){
+  var rw=document.querySelector('.reasonwrap[data-item="'+itemId+'"]');
+  if(!rw) return;
+  var open=rw.classList.toggle("open");
+  if(open){ var ta=rw.querySelector("textarea"); if(ta) ta.focus(); }
+}
+function applyReasons(){
+  document.querySelectorAll(".reasonbox").forEach(function(ta){
+    var v=state.reason[ta.dataset.item]||"";
+    ta.value=v;
+    var rw=ta.closest(".reasonwrap"); if(v && rw) rw.classList.add("open");
+    var nm=document.querySelector('.iname[data-item="'+ta.dataset.item+'"]');
+    if(nm) nm.classList.toggle("hasreason", !!v);
+  });
+}
+function refreshScale(){
+  document.querySelectorAll(".sbtn").forEach(function(b){
+    var cur=state.scale[b.dataset.item]||DEFAULT;
+    var on=(cur===b.dataset.v);
+    b.classList.toggle("on",on);
+    if(b.dataset.v==="love"){
+      var n=state.loveN[b.dataset.item]||1;
+      b.textContent = on && n>1 ? "◎".repeat(n) : "◎";
+    }
+  });
+  SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
+    var c=0; sec.items.forEach(function(it){ var v=state.scale[it.id]; if(v && v!==DEFAULT) c++; });
+    var el=document.getElementById("cnt-"+sec.id); if(el) el.textContent = c? c+"件変更":"";
+  });
+}
+function refreshChoice(){
+  document.querySelectorAll(".cbtn").forEach(function(b){
+    b.classList.toggle("on", state.choice[b.dataset.item]===parseInt(b.dataset.idx,10));
+  });
+  SECTIONS.forEach(function(sec){ if(sec.type!=="choice")return;
+    var c=0; sec.items.forEach(function(it){ if(state.choice[it.id]!=null) c++; });
+    var el=document.getElementById("cnt-"+sec.id); if(el) el.textContent = c? c+"/"+sec.items.length+"回答":"";
+  });
+}
+document.querySelectorAll(".qfill").forEach(function(q){
+  q.addEventListener("click",function(){
+    var sec=SECTIONS.filter(function(s){return s.id===q.dataset.sec;})[0];
+    sec.items.forEach(function(it){ state.scale[it.id]=q.dataset.v; delete state.loveN[it.id]; });
+    refreshScale(); onChange();
+  });
+});
+
+// ---- データ ----
+function collect(){
+  return {
+    _type:"mogu-jirai-sheet", _version:2,
+    name:val("f-name"), session:val("f-session"), date:val("f-date"),
+    scale:JSON.parse(JSON.stringify(state.scale)),
+    loveN:JSON.parse(JSON.stringify(state.loveN)),
+    choice:JSON.parse(JSON.stringify(state.choice)),
+    reason:JSON.parse(JSON.stringify(state.reason)),
+    free:{ free_dislike:val("free_dislike"), free_notice:val("free_notice"), free_likes:val("free_likes") },
+    createdAt:new Date().toISOString().slice(0,10)
+  };
+}
+function val(id){ var e=document.getElementById(id); return e?e.value.trim():""; }
+
+// ---- 保存/復元 ----
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(collect())); }catch(e){} }
+function restore(){
+  try{
+    var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
+    var d=JSON.parse(raw);
+    setV("f-name",d.name); setV("f-session",d.session); setV("f-date",d.date);
+    if(d.scale) state.scale=d.scale; if(d.loveN) state.loveN=d.loveN; if(d.choice) state.choice=d.choice; if(d.reason) state.reason=d.reason;
+    if(d.free){ setV("free_dislike",d.free.free_dislike); setV("free_notice",d.free.free_notice); setV("free_likes",d.free.free_likes); }
+  }catch(e){}
+}
+function setV(id,v){ var e=document.getElementById(id); if(e&&v!=null) e.value=v; }
+
+var saveTimer;
+function onChange(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){ save(); document.getElementById("savednote").textContent="自動保存しました（"+new Date().toLocaleTimeString('ja-JP')+"）"; },400);
+  renderPreview();
+}
+
+// ---- プレビュー ----
+function nonNormal(){
+  // returns {sectionTitle, entries:[{label, sym, cls, reason}]}
+  var out=[];
+  SECTIONS.forEach(function(sec){
+    var entries=[];
+    sec.items.forEach(function(it){
+      var rz=state.reason[it.id]||"";
+      if(sec.type==="scale"){
+        var v=state.scale[it.id]||DEFAULT;
+        if(v==="normal" && !rz) return;
+        var sym=SMAP[v].sym;
+        if(v==="love"){ var n=state.loveN[it.id]||1; if(n>1) sym="◎".repeat(n); }
+        entries.push({label:it.label, sym:sym, cls:v, reason:rz});
+      } else {
+        var idx=state.choice[it.id];
+        if(idx==null && !rz) return;
+        entries.push({label:it.label, sym:(idx==null?"—":it.options[idx]), cls:"choice", reason:rz});
+      }
+    });
+    if(entries.length) out.push({title:sec.title, entries:entries});
+  });
+  return out;
+}
+function renderPreview(){
+  var d=collect(), p=document.getElementById("preview");
+  var html='<h3>'+(esc(d.name)||'（HO未入力）')+'</h3>';
+  html+='<div class="pmeta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日 '+esc(d.date||d.createdAt)+'</div>';
+  var groups=nonNormal();
+  groups.forEach(function(g){
+    html+='<div class="pline"><div class="pl-t">'+esc(g.title)+'</div><div class="chips">';
+    g.entries.forEach(function(e){ html+='<span class="pchip '+e.cls+'">'+esc(e.sym)+' '+esc(e.label)+(e.reason?'：'+esc(e.reason):'')+'</span>'; });
+    html+='</div></div>';
+  });
+  if(!groups.length) html+='<p style="color:#8a857a;font-size:13px">◎/△/×/×× や選択式の回答がまだありません。</p>';
+  [["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]].forEach(function(f){
+    if(f[1]) html+='<div class="pline"><div class="pl-t">'+esc(f[0])+'</div><div class="pl-b">'+esc(f[1])+'</div></div>';
+  });
+  p.innerHTML=html;
+}
+
+// ---- テキスト出力 ----
+function buildText(d){
+  var L=[]; L.push("【地雷チェックシート】"+(d.name||"無名"));
+  if(d.session) L.push("セッション："+d.session);
+  L.push("記入日："+(d.date||d.createdAt));
+  L.push("凡例：◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略）");
+  L.push("");
+  nonNormal().forEach(function(g){
+    L.push("■"+g.title);
+    g.entries.forEach(function(e){ L.push("　"+e.sym+"　"+e.label+(e.reason?"（理由："+e.reason+"）":"")); });
+    L.push("");
+  });
+  var fmap=[["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]];
+  fmap.forEach(function(f){ if(f[1]){ L.push("■"+f[0]); L.push("　"+f[1]); L.push(""); } });
+  return L.join("\n").trim()+"\n";
+}
+document.getElementById("btn-txt").addEventListener("click",function(){
+  var d=collect();
+  if(!d.name){ alert("ハンドルネーム（HO）を入力してください。"); document.getElementById("f-name").focus(); return; }
+  var t=buildText(d), ta=document.getElementById("txtout");
+  ta.style.display="block"; ta.value=t; ta.select();
+  var ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+  if(navigator.clipboard){ navigator.clipboard.writeText(t).catch(function(){}); ok=true; }
+  document.getElementById("savednote").textContent = ok? "テキストをコピーしました。":"下の欄のテキストを選択してコピーしてください。";
+});
+
+// ---- 提出用HTML ----
+function buildSubmissionHTML(d){
+  var json=JSON.stringify(d).replace(/</g,"\\u003c");
+  function rzHtml(it){ var rz=(d.reason&&d.reason[it.id])||""; return rz? '<div class="rz">理由：'+esc(rz)+'</div>':''; }
+  function rowsFor(sec){
+    var rows="";
+    sec.items.forEach(function(it){
+      var rz=(d.reason&&d.reason[it.id])||"";
+      if(sec.type==="scale"){
+        var v=d.scale[it.id]||DEFAULT; if(v==="normal" && !rz) return;
+        var sym=SMAP[v].sym; if(v==="love"){var n=d.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);}
+        rows+='<tr><td>'+esc(it.label)+rzHtml(it)+'</td><td class="v '+v+'">'+esc(sym)+'</td></tr>';
+      } else {
+        var idx=d.choice[it.id]; if(idx==null && !rz) return;
+        rows+='<tr><td>'+esc(it.label)+rzHtml(it)+'</td><td class="v choice">'+esc(idx==null?"—":it.options[idx])+'</td></tr>';
+      }
+    });
+    return rows? '<h2>'+esc(sec.title)+'</h2><table>'+rows+'</table>' : '';
+  }
+  var body=""; SECTIONS.forEach(function(sec){ body+=rowsFor(sec); });
+  var freeHtml=""; [["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]].forEach(function(f){
+    if(f[1]) freeHtml+='<div class="free"><div class="ft">'+esc(f[0])+'</div><div class="fb">'+esc(f[1])+'</div></div>';
+  });
+  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'+
+  '<title>地雷チェックシート：'+esc(d.name||'無名')+'</title>'+
+  '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'+
+  '<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=WDXL+Lubrifont+JP+N&display=swap" rel="stylesheet">'+
+  '<script type="application/json" id="mogu-jirai-data">'+json+'<\/script>'+
+  '<style>body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:#eceae4;color:#161513;line-height:1.75;margin:0;padding:22px}'+
+  '.sheet{max-width:680px;margin:0 auto;background:#fbfaf6;border:3px solid #161513;border-radius:16px;box-shadow:6px 6px 0 #161513;padding:24px 26px}'+
+  '.sheettop{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:12px}'+
+  '.stitle{min-width:0}.brand{text-align:right;flex-shrink:0;line-height:1}'+
+  '.bk{font-family:"Archivo Black",sans-serif;font-size:9px;letter-spacing:.06em;color:#ff5533}'+
+  '.bt{font-family:"WDXL Lubrifont JP N",sans-serif;font-size:21px;color:#161513;margin-top:3px}.bt .cc{color:#ff5533}'+
+  'h1{font-size:24px;margin:0 0 2px}.meta{font-size:12px;color:#8a857a;margin-bottom:0}'+
+  'h2{font-size:15px;margin:18px 0 4px;color:#ff5533;border-bottom:2px solid #161513;padding-bottom:3px}'+
+  'table{width:100%;border-collapse:collapse}td{padding:5px 4px;font-size:13.5px;border-bottom:1px dashed #d8d3c7;vertical-align:top}'+
+  'td.v{width:70px;text-align:center;font-weight:700;white-space:nowrap}'+
+  '.love{color:#c02e6a}.meh{color:#7c776c}.weak{color:#b8860b}.never{color:#ff5533}.choice{color:#2f6bff;font-size:12px}'+
+  '.rz{font-size:11.5px;color:#8a857a;margin-top:1px;white-space:pre-wrap}'+
+  '.free{margin-top:12px}.ft{font-weight:700;font-size:12.5px;color:#ff5533}.fb{white-space:pre-wrap;font-size:13.5px;color:#4a463f}'+
+  '.legend{font-size:11.5px;color:#8a857a;margin:6px 0 10px}'+
+  '.note{margin-top:16px;font-size:11px;color:#8a857a;border-top:1.5px dashed #d8d3c7;padding-top:10px}</style></head>'+
+  '<body><div class="sheet">'+
+  '<div class="sheettop"><div class="stitle"><h1>'+esc(d.name||'無名')+' の地雷チェックシート</h1>'+
+  '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日 '+esc(d.date||d.createdAt)+'</div></div>'+
+  '<div class="brand"><div class="bk">JIRAI CHECK SHEET — FOR PLAYERS</div><div class="bt">地雷<span class="cc">チェックシート</span></div></div></div>'+
+  '<div class="legend">◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略して表示）</div>'+
+  (body||'<p style="color:#8a857a">特筆する項目なし（すべて〇）</p>')+freeHtml+
+  '<div class="note">このファイルにはKP用ページで読み込めるデータが埋め込まれています。KPに渡してください。</div>'+
+  '</div></body></html>';
+}
+function download(filename,text,mime){
+  var blob=new Blob([text],{type:mime||"text/plain;charset=utf-8"});
+  var url=URL.createObjectURL(blob), a=document.createElement("a");
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+}
+function safeName(s){ return (s||"無名").replace(/[\\/:*?"<>|\s]+/g,"_").slice(0,30); }
+document.getElementById("btn-html").addEventListener("click",function(){
+  var d=collect();
+  if(!d.name){ alert("ハンドルネーム（HO）を入力してください。"); document.getElementById("f-name").focus(); return; }
+  download("地雷_"+safeName(d.name)+".html", buildSubmissionHTML(d), "text/html;charset=utf-8");
+});
+
+// ---- SNS画像 ----
+document.getElementById("btn-img").addEventListener("click",function(){
+  var d=collect();
+  if(!d.name){ alert("ハンドルネーム（HO）を入力してください。"); document.getElementById("f-name").focus(); return; }
+  drawImage(d);
+});
+function drawImage(d){
+  var cv=document.getElementById("cv"), W=1200, pad=64, ctx=cv.getContext("2d");
+  cv.width=W; cv.height=4000; ctx.clearRect(0,0,W,4000);
+  ctx.fillStyle="#fbfaf6"; ctx.fillRect(0,0,W,4000);
+  ctx.fillStyle="#161513"; ctx.fillRect(0,0,W,14); ctx.fillStyle="#ff5533"; ctx.fillRect(0,0,W/3,14);
+  var contentW=W-pad*2, y=pad+8; ctx.textBaseline="top";
+  // タイトルロゴ（右上・入力ページと同じフォント）
+  ctx.textAlign="right";
+  ctx.font="700 16px 'Archivo Black','Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#ff5533";
+  ctx.fillText("JIRAI CHECK SHEET — FOR PLAYERS", W-pad, pad);
+  var kW=ctx.measureText("JIRAI CHECK SHEET — FOR PLAYERS").width;
+  ctx.font="400 38px 'WDXL Lubrifont JP N','Zen Kaku Gothic New',sans-serif";
+  var w2=ctx.measureText("チェックシート").width;
+  ctx.fillStyle="#ff5533"; ctx.fillText("チェックシート", W-pad, pad+24);
+  ctx.fillStyle="#161513"; ctx.fillText("地雷", W-pad-w2, pad+24);
+  var logoW=Math.max(kW, ctx.measureText("地雷").width+w2);
+  ctx.textAlign="left";
+  // メインタイトル（左・ロゴと重ならない幅に制限）
+  ctx.fillStyle="#161513"; ctx.font="900 50px 'Zen Kaku Gothic New',sans-serif";
+  y=wrap(ctx,d.name+" の地雷チェック",pad,y,contentW-logoW-30,58);
+  y=Math.max(y, pad+70)+8;
+  ctx.font="500 20px 'DM Mono',monospace"; ctx.fillStyle="#8a857a";
+  ctx.fillText((d.session?d.session+"  ":"")+"記入日 "+(d.date||d.createdAt),pad,y); y+=30;
+  ctx.font="400 18px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#8a857a";
+  ctx.fillText("◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略）",pad,y); y+=44;
+
+  var groups=nonNormal();
+  var symColor={love:"#c02e6a",meh:"#7c776c",weak:"#b8860b",never:"#ff5533",choice:"#2f6bff"};
+  if(!groups.length){
+    ctx.font="900 28px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#27c05a";
+    ctx.fillText("● 特筆する項目なし（すべて〇）",pad,y); y+=48;
+  }
+  groups.forEach(function(g){
+    ctx.font="900 26px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#161513";
+    ctx.fillText("■ "+g.title,pad,y); y+=38;
+    g.entries.forEach(function(e){
+      ctx.font="700 24px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle=symColor[e.cls]||"#161513";
+      var sym=e.sym; ctx.fillText(sym,pad+8,y);
+      var sw=Math.max(ctx.measureText(sym).width,54);
+      ctx.font="400 24px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#4a463f";
+      y=wrap(ctx,e.label,pad+8+sw+12,y,contentW-sw-20,34)+4;
+      if(e.reason){ ctx.font="400 19px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#8a857a";
+        y=wrap(ctx,"理由："+e.reason,pad+8+sw+12,y,contentW-sw-20,28)+4; }
+    });
+    y+=18;
+  });
+  [["苦手なことメモ",d.free.free_dislike],["お知らせしたい事項",d.free.free_notice],["好きな要素など",d.free.free_likes]].forEach(function(f){
+    if(!f[1])return;
+    ctx.font="900 26px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#ff5533"; ctx.fillText("● "+f[0],pad,y); y+=38;
+    ctx.font="400 24px 'Zen Kaku Gothic New',sans-serif"; ctx.fillStyle="#4a463f"; y=wrap(ctx,f[1],pad,y,contentW,34)+22;
+  });
+  y+=pad; var finalH=Math.max(y,560);
+  var out=document.createElement("canvas"); out.width=W; out.height=finalH;
+  var octx=out.getContext("2d"); octx.drawImage(cv,0,0,W,finalH,0,0,W,finalH);
+  octx.strokeStyle="#161513"; octx.lineWidth=8; octx.strokeRect(4,4,W-8,finalH-8);
+  out.toBlob(function(blob){
+    var url=URL.createObjectURL(blob), a=document.createElement("a");
+    a.href=url; a.download="地雷_"+safeName(d.name)+".png"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+  },"image/png");
+}
+function wrap(ctx,text,x,y,maxW,lh){
+  var lines=String(text).split("\n");
+  for(var li=0;li<lines.length;li++){
+    var chars=lines[li].split(""), cur="";
+    for(var i=0;i<chars.length;i++){
+      var test=cur+chars[i];
+      if(ctx.measureText(test).width>maxW && cur!==""){ ctx.fillText(cur,x,y); y+=lh; cur=chars[i]; }
+      else cur=test;
+    }
+    ctx.fillText(cur,x,y); y+=lh;
+  }
+  return y;
+}
+
+// ---- リセット ----
+document.getElementById("btn-reset").addEventListener("click",function(){
+  if(!confirm("入力内容をすべて消去します。よろしいですか？")) return;
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  state={scale:{},loveN:{},choice:{},reason:{}};
+  ["f-name","f-session","f-date","free_dislike","free_notice","free_likes"].forEach(function(id){ var e=document.getElementById(id); if(e)e.value=""; });
+  document.querySelectorAll(".reasonbox").forEach(function(ta){ ta.value=""; });
+  document.querySelectorAll(".reasonwrap").forEach(function(w){ w.classList.remove("open"); });
+  document.querySelectorAll(".iname").forEach(function(n){ n.classList.remove("hasreason"); });
+  document.getElementById("txtout").style.display="none";
+  refreshScale(); refreshChoice(); renderPreview();
+  document.getElementById("savednote").textContent="リセットしました。";
+});
+
+// ---- こたえかたバーの表示制御（スケール項目の入力中のみ表示）----
+var scaleSecIds = SECTIONS.filter(function(s){return s.type==="scale";}).map(function(s){return s.id;});
+function updateLegendBar(){
+  var bar=document.querySelector(".legendbar");
+  var header=document.querySelector("header");
+  if(!bar||!header||!scaleSecIds.length) return;
+  var first=document.getElementById("sec-"+scaleSecIds[0]);
+  var last=document.getElementById("sec-"+scaleSecIds[scaleSecIds.length-1]);
+  if(!first||!last) return;
+  var line=header.getBoundingClientRect().bottom; // ヘッダー直下のライン
+  var top=first.getBoundingClientRect().top;
+  var bottom=last.getBoundingClientRect().bottom;
+  bar.classList.toggle("show", top<=line && bottom>=line);
+}
+var lbTick=false;
+function onScrollLB(){ if(lbTick) return; lbTick=true; requestAnimationFrame(function(){ updateLegendBar(); lbTick=false; }); }
+window.addEventListener("scroll", onScrollLB, {passive:true});
+window.addEventListener("resize", onScrollLB);
+document.getElementById("sections").addEventListener("toggle", updateLegendBar, true);
+
+// ---- 初期化 ----
+(function(){
+  document.getElementById("f-date").value=new Date().toISOString().slice(0,10);
+  restore();
+  refreshScale(); refreshChoice(); applyReasons(); renderPreview();
+  updateLegendBar();
+})();
+</script>
+</body>
+</html>
