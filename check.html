@@ -508,8 +508,10 @@ function buildSubmissionHTML(d){
   '<script type="application/json" id="mogu-jirai-data">'+json+'<\/script>'+
   '<style>*{box-sizing:border-box}body{font-family:"Zen Kaku Gothic New",-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;color:#161513;line-height:1.75;margin:0;padding:26px 18px;'+
   'background-color:#eceae4;background-image:radial-gradient(#e3e0d7 1.3px,transparent 1.4px);background-size:22px 22px}'+
-  '.sheet{max-width:680px;margin:0 auto;background:#fbfaf6;border:3px solid #161513;border-radius:18px;box-shadow:7px 7px 0 #161513;padding:22px 24px;overflow:hidden}'+
-  '.accent{display:flex;height:9px;border:2.5px solid #161513;border-radius:6px;overflow:hidden;margin:-2px 0 14px}.accent i{flex:1}.accent i:nth-child(1){background:#ff5533}.accent i:nth-child(2){background:#ffce1c}.accent i:nth-child(3){background:#27c05a}.accent i:nth-child(4){background:#2f6bff}'+
+  '.sheet{max-width:680px;margin:0 auto;background:#fbfaf6;border:3px solid #161513;border-radius:18px;box-shadow:7px 7px 0 #161513;padding:0;overflow:hidden}'+
+  '.body{padding:20px 24px}'+
+  '.band{background:#161513;overflow:hidden;white-space:nowrap;padding:9px 0}'+
+  '.bandtrack{display:inline-block;white-space:nowrap;font-family:"Archivo Black",sans-serif;font-size:12px;letter-spacing:.08em;color:#eceae4;animation:mqm 24s linear infinite}.bandtrack .q{color:#ff5533;margin:0 9px}@keyframes mqm{from{transform:translateX(0)}to{transform:translateX(-50%)}}'+
   '.sheettop{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:10px}'+
   '.stitle{min-width:0}h1{font-size:23px;font-weight:900;margin:0 0 2px}.meta{font-family:"DM Mono",monospace;font-size:12px;color:#8a857a}'+
   '.brand{text-align:right;flex-shrink:0;line-height:1}.bk{font-family:"Archivo Black",sans-serif;font-size:9px;letter-spacing:.06em;color:#ff5533}'+
@@ -529,19 +531,18 @@ function buildSubmissionHTML(d){
   '.free{margin-top:12px;background:#eceae4;border:2.5px solid #161513;border-radius:12px;box-shadow:3px 3px 0 #161513;padding:11px 14px}'+
   '.ft{font-weight:900;font-size:12.5px;color:#ff5533}.fb{white-space:pre-wrap;font-size:13.5px;color:#4a463f}'+
   '.empty{color:#8a857a;font-size:13px;margin-top:10px}'+
-  '.mqwrap{margin-top:18px;background:#161513;border:2.5px solid #161513;border-radius:10px;overflow:hidden;padding:7px 0}'+
-  '.mqtrack{display:inline-block;white-space:nowrap;font-family:"Archivo Black",sans-serif;font-size:11px;letter-spacing:.08em;color:#eceae4;animation:mqm 24s linear infinite}'+
-  '.mqtrack .q{color:#ff5533;margin:0 8px}@keyframes mqm{from{transform:translateX(0)}to{transform:translateX(-50%)}}'+
   '.note{margin-top:14px;font-size:11px;color:#8a857a;border-top:1.5px dashed #d8d3c7;padding-top:10px}</style></head>'+
   '<body><div class="sheet">'+
-  '<div class="accent"><i></i><i></i><i></i><i></i></div>'+
+  '<div class="band"><div class="bandtrack">'+mqu+'</div></div>'+
+  '<div class="body">'+
   '<div class="sheettop"><div class="stitle"><h1>'+esc(d.name||'無名')+' の地雷チェックシート</h1>'+
   '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日 '+esc(d.date||d.createdAt)+'</div></div>'+
   '<div class="brand"><div class="bk">JIRAI CHECK SHEET — FOR PLAYERS</div><div class="bt">地雷<span class="cc">チェックシート</span></div></div></div>'+
   '<div class="legend">'+legend+'<span class="lp" style="border-style:dashed">〇は省略して表示</span></div>'+
   (body||'<p class="empty">特筆する項目なし（すべて〇）</p>')+freeHtml+
-  '<div class="mqwrap"><div class="mqtrack">'+mqu+'</div></div>'+
   '<div class="note">このファイルにはKP用ページで読み込めるデータが埋め込まれています。KPに渡してください。</div>'+
+  '</div>'+
+  '<div class="band"><div class="bandtrack">'+mqu+'</div></div>'+
   '</div></body></html>';
 }
 function download(filename,text,mime){
