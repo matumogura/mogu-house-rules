@@ -464,7 +464,7 @@ function buildText(d){
   var L=[]; L.push("【地雷チェックシート】"+(d.name||"無名"));
   if(d.session) L.push("セッション："+d.session);
   L.push("記入日："+(d.date||d.createdAt));
-  L.push("凡例：◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略）");
+  L.push("凡例：◎好き 〇普通 △微妙 ×苦手 ××絶対NG（〇は省略）");
   L.push("");
   nonNormal().forEach(function(g){
     L.push("■"+g.title);
@@ -603,7 +603,7 @@ function drawImage(d){
     o.font="900 46px "+ZK; if(!dry)o.fillStyle="#161513";
     var ty=wrap(o,d.name+" の地雷チェック",x,yy,w-logoW-28,54,dry); var y2=Math.max(ty,yy+62)+8;
     o.font="500 22px "+DM; if(!dry){o.fillStyle="#8a857a"; o.fillText((d.session?d.session+"  ":"")+"記入日 "+(d.date||d.createdAt),x,y2);} y2+=32;
-    o.font="400 21px "+ZK; if(!dry){o.fillStyle="#8a857a"; o.fillText("◎好き 〇普通 △好みじゃない ×苦手 ××絶対NG（〇は省略）",x,y2);} y2+=44;
+    o.font="400 21px "+ZK; if(!dry){o.fillStyle="#8a857a"; o.fillText("◎好き 〇普通 △微妙 ×苦手 ××絶対NG（〇は省略）",x,y2);} y2+=44;
     return y2;
   }
   function compactHeader(o,x,y,w,dry){
@@ -761,6 +761,8 @@ function updateLegendBar(){
     var el=document.getElementById("sec-"+allSecIds[i]);
     if(el && el.getBoundingClientRect().top<=line+1) curId=allSecIds[i];
   }
+  var curEl=document.getElementById("sec-"+curId);
+  if(!curEl || !curEl.open){ bar.classList.remove("show"); return; } // 開いているカテゴリのときだけバーを表示
   var sec=secById[curId];
   document.getElementById("lbsec").textContent=sec?sec.title:"";
   bar.classList.toggle("nolegend", !sec || sec.type!=="scale"); // 選択式は◎〇△の凡例を隠す

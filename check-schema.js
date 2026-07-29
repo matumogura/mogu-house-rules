@@ -8,7 +8,7 @@
 window.JIRAI_SCALE = [
   { v: "love",   sym: "◎",  t: "好き",       love: true },
   { v: "normal", sym: "〇",  t: "普通" },
-  { v: "meh",    sym: "△",  t: "好みじゃない" },
+  { v: "meh",    sym: "△",  t: "微妙" },
   { v: "weak",   sym: "×",  t: "苦手",       attention: true },
   { v: "never",  sym: "××", t: "絶対NG",     attention: true, strong: true }
 ];
@@ -18,7 +18,7 @@ window.JIRAI_SCALE_DEFAULT = "normal"; // 未操作時の既定値（〇）
 window.JIRAI_LEGEND = [
   "◎：好き（好き度は◎の数で表せます）",
   "〇：普通",
-  "△：好みじゃない",
+  "△：微妙",
   "×：苦手",
   "××：何があっても通りたくない"
 ];
