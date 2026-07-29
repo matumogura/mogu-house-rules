@@ -669,18 +669,30 @@ function drawImage(d){
   }
 
   // ---- 出力（複数枚）----
-  pages.forEach(function(blks,i){
-    var cvp=renderPage(i,blks,i===0);
-    setTimeout(function(){
-      cvp.toBlob(function(blob){
-        var url=URL.createObjectURL(blob), a=document.createElement("a");
-        a.href=url; a.download="地雷_"+safeName(d.name)+(total>1?("_"+(i+1)):"")+".png";
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(function(){ URL.revokeObjectURL(url); },1000);
-      },"image/png");
-    }, i*500);
+  var sn=document.getElementById("savednote");
+  function fname(i){ return "地雷_"+safeName(d.name)+(total>1?("_"+(i+1)):"")+".png"; }
+  function download(blob,i){ var url=URL.createObjectURL(blob), a=document.createElement("a");
+    a.href=url; a.download=fname(i); document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); },1000); }
+  // 全ページを画像(Blob)化
+  var jobs=pages.map(function(blks,i){ return new Promise(function(res){
+    renderPage(i,blks,i===0).toBlob(function(blob){ res(blob); },"image/png"); }); });
+  Promise.all(jobs).then(function(blobs){
+    var files=blobs.map(function(b,i){ return new File([b],fname(i),{type:"image/png"}); });
+    // 対応端末（スマホ）では共有シート経由で写真アプリに保存できるようにする
+    if(navigator.canShare && navigator.canShare({files:files})){
+      navigator.share({files:files,title:"地雷チェックシート"}).then(function(){
+        if(sn) sn.textContent="共有メニューの「画像を保存」で写真に保存できます。";
+      }).catch(function(err){
+        if(err && err.name==="AbortError"){ if(sn) sn.textContent="保存をキャンセルしました。"; return; }
+        blobs.forEach(download); if(sn) sn.textContent="画像を保存しました。"; // 共有不可時はダウンロード
+      });
+    } else {
+      blobs.forEach(download); // PC等：従来通りダウンロード
+      if(sn) sn.textContent = total>1? ("縦長"+total+"枚の画像を保存しました。"):"画像を保存しました。";
+    }
   });
-  var sn=document.getElementById("savednote"); if(sn) sn.textContent = total>1? ("縦長"+total+"枚の画像を保存します…"):"画像を保存します…";
+  if(sn) sn.textContent = total>1? ("縦長"+total+"枚の画像を生成中…"):"画像を生成中…";
 }
 function roundRect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y);
   ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
@@ -692,7 +704,8 @@ function chip(ctx,x,y,text,cls,BG,FG,dry){
   var tw=ctx.measureText(text).width, padx=15, h=40, w=tw+padx*2;
   if(!dry){ ctx.fillStyle=(BG[cls]||"#ffffff"); roundRect(ctx,x,y,w,h,20); ctx.fill();
     ctx.strokeStyle="#161513"; ctx.lineWidth=2.5; roundRect(ctx,x,y,w,h,20); ctx.stroke();
-    ctx.fillStyle=(FG[cls]||"#161513"); ctx.fillText(text,x+padx,y+7); }
+    ctx.fillStyle=(FG[cls]||"#161513");
+    var pb=ctx.textBaseline; ctx.textBaseline="middle"; ctx.fillText(text,x+padx,y+h/2+1); ctx.textBaseline=pb; } // 中央基準にして端末差で下にズレるのを防ぐ
   return {w:w,h:h};
 }
 function wrap(ctx,text,x,y,maxW,lh,dry){
