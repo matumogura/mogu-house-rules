@@ -29,121 +29,6 @@ window.JIRAI_LEGEND = [
    choice は attentionFrom 以上の index を「要配慮」とみなす */
 window.JIRAI_SECTIONS = [
   {
-    id: "theme", title: "シナリオで扱うテーマや描写", type: "scale",
-    items: [
-      { id: "r18",         label: "R-18描写" },
-      { id: "gore",        label: "グロ・ゴアなど猟奇的な描写" },
-      { id: "jumpscare",   label: "びっくり演出" },
-      { id: "insect",      label: "虫" },
-      { id: "crime",       label: "犯罪" },
-      { id: "lifeethics",  label: "人の生死や蘇生に関わる倫理的なテーマ" },
-      { id: "pregnancy",   label: "妊娠・中絶・未成年の性行為に関わる描写やテーマ" },
-      { id: "bully",       label: "いじめ・パワハラ" },
-      { id: "suicide",     label: "自殺" },
-      { id: "war",         label: "戦争" },
-      { id: "realdisease", label: "実在の病気" },
-      { id: "fakedisease", label: "架空の病気" },
-      { id: "realcase",    label: "実際に起きた事件" },
-      { id: "horror",      label: "ホラー（創作）" },
-      { id: "urbanhorror", label: "都市伝説などをモチーフとしたホラー" },
-      { id: "animaldeath", label: "動物の死亡描写" },
-      { id: "animalabuse", label: "動物への虐待描写" },
-      { id: "incest",      label: "近親相姦" },
-      { id: "sexviolence", label: "性暴力・強姦などの描写" },
-      { id: "minorcruel",  label: "未成年キャラへの残酷・犯罪描写" },
-      { id: "vomit",       label: "嘔吐・排泄の描写" },
-      { id: "drug",        label: "薬物" },
-      { id: "cannibal",    label: "カニバリズム" },
-      { id: "gendershift", label: "性転換" },
-      { id: "fetish",      label: "特殊性癖・異常性癖" },
-      { id: "lowneta",     label: "下ネタ" },
-      { id: "mental",      label: "精神疾患・発達障害の描写" },
-      { id: "realreligion",label: "実在の宗教" },
-      { id: "realperson",  label: "実在の人物（偉人・犯罪者など）" },
-      { id: "disaster",    label: "自然災害" },
-      { id: "gendernorm",  label: "男尊女卑・女尊男卑" },
-      { id: "cluster",     label: "集合体（トライポフォビア）" }
-    ]
-  },
-  {
-    id: "npc", title: "NPC・KPCについて", type: "scale",
-    items: [
-      { id: "npc_kill",      label: "NPC・KPCを殺さなければいけない状況" },
-      { id: "npc_death",     label: "確定死亡NPC・KPC" },
-      { id: "npc_many",      label: "大人数のNPC・KPC（名前付き5人以上）" },
-      { id: "kpc_alt",       label: "別世界軸のKPC（もしくはPC）の存在" },
-      { id: "npc_imposter",  label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
-      { id: "npc_sacrifice", label: "NPC・KPCのためにPCが犠牲になる場面" },
-      { id: "npc_denounce",  label: "NPC・KPCから強く（特に集団で）糾弾されること" },
-      { id: "npc_wasteddeath", label: "演出のためだけにNPC・KPCが死ぬ" },
-      { id: "npc_overshadow",  label: "NPC・KPCが活躍しすぎてPCの存在意義が薄れる" },
-      { id: "npc_marysue",     label: "メアリー・スー的なNPC・KPCの登場" }
-    ]
-  },
-  {
-    id: "pvp", title: "PvPについて", type: "scale",
-    items: [
-      { id: "pvp_verbal",         label: "口論・議論など肉体的被害を伴わないもの" },
-      { id: "pvp_physical",       label: "PC同士の肉体的被害を伴う争い" },
-      { id: "pvp_decide",         label: "特定PCに決断権がある場面" },
-      { id: "pvp_forced",         label: "洗脳・発狂などPCの意思によらないPvP" }
-    ]
-  },
-  {
-    id: "ho", title: "HOなどによる設定介入", type: "scale",
-    items: [
-      { id: "ho_pre_crime",  label: "事前HOの設定介入：犯罪歴" },
-      { id: "ho_pre_blood",  label: "事前HOの設定介入：血縁関係" },
-      { id: "ho_pre_dear",   label: "事前HOの設定介入：大切な人" },
-      { id: "ho_mid_crime",  label: "シナリオ中に発覚するHO：犯罪歴" },
-      { id: "ho_mid_blood",  label: "シナリオ中に発覚するHO：血縁関係" },
-      { id: "ho_mid_dear",   label: "シナリオ中に発覚するHO：大切な人" },
-      { id: "emo_in_obsess", label: "他者から感情を向けられる：過度の執着・恨み" },
-      { id: "emo_in_crime",  label: "他者から感情を向けられる：監禁などの犯罪手段" },
-      { id: "emo_out_love",  label: "自PCが感情を向ける：恋愛感情" },
-      { id: "emo_out_obsess",label: "自PCが感情を向ける：過度の執着・恨み" },
-      { id: "emo_out_crime", label: "自PCが感情を向ける：監禁などの犯罪手段" },
-      { id: "fixed_dice",    label: "確定描写：出目によるもの" },
-      { id: "fixed_set",     label: "確定描写：出目によらず決められているもの" }
-    ]
-  },
-  {
-    id: "lost", title: "ロスト・欠損について", type: "scale",
-    items: [
-      { id: "lost_fixed",  label: "確定ロスト" },
-      { id: "lost_san0",   label: "SAN0ロスト" },
-      { id: "lost_body",   label: "肉体的ロスト" },
-      { id: "lost_mid",    label: "途中ロスト（クライマックス前）" },
-      { id: "lost_none",   label: "ロストがないシナリオ" },
-      { id: "lost_dice",   label: "出目のギミックによるロスト" },
-      { id: "lost_choice", label: "自らの選択によるロスト" },
-      { id: "lost_known",  label: "ロストと分かっていてその選択をする行為" },
-      { id: "lost_limb",   label: "欠損：四肢の欠損" },
-      { id: "lost_sense",  label: "欠損：失明・聴覚の喪失" },
-      { id: "lost_organ",  label: "欠損：内蔵の喪失や機能障害" },
-      { id: "lost_instadeath", label: "ヒントや忠告のない即死トラップ" },
-      { id: "lost_high",       label: "序盤・中盤から死にやすい高ロスト" },
-      { id: "lost_aftereffect",label: "確定でPCに余命・重い後遺症が残る" }
-    ]
-  },
-  {
-    id: "table", title: "その他：同卓時の注意", type: "scale",
-    items: [
-      { id: "tbl_sexual",  label: "自PC・同卓PCへの性的な発言" },
-      { id: "tbl_fixedrp", label: "同卓者による確定RP" },
-      { id: "tbl_strong",  label: "極端に強いステータス" },
-      { id: "tbl_weak",    label: "極端に弱いステータス" },
-      { id: "tbl_unreal",  label: "現実味のない設定" },
-      { id: "tbl_crime",   label: "犯罪歴を持つPC" },
-      { id: "tbl_age",     label: "極端な年齢のPC（子供・老人）" },
-      { id: "tbl_eatweet", label: "卓中の飲食・Twitter" },
-      { id: "tbl_longrp",  label: "長めのRP" },
-      { id: "tbl_bgm",     label: "苦手BGM" },
-      { id: "tbl_record",  label: "セッションの録画・配信・見学" },
-      { id: "tbl_pldiscuss", label: "PL発言（メタ相談）の多用" }
-    ]
-  },
-  {
     id: "trend", title: "シナリオの傾向・展開", type: "scale",
     items: [
       { id: "tr_pvp",       label: "PvP前提のシナリオ" },
@@ -187,6 +72,61 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
+    id: "theme", title: "シナリオで扱うテーマや描写", type: "scale",
+    items: [
+      { id: "r18",         label: "R-18描写" },
+      { id: "gore",        label: "グロ・ゴアなど猟奇的な描写" },
+      { id: "jumpscare",   label: "びっくり演出" },
+      { id: "insect",      label: "虫" },
+      { id: "crime",       label: "犯罪" },
+      { id: "lifeethics",  label: "人の生死や蘇生に関わる倫理的なテーマ" },
+      { id: "pregnancy",   label: "妊娠・中絶・未成年の性行為に関わる描写やテーマ" },
+      { id: "bully",       label: "いじめ・パワハラ" },
+      { id: "suicide",     label: "自殺" },
+      { id: "war",         label: "戦争" },
+      { id: "realdisease", label: "実在の病気" },
+      { id: "fakedisease", label: "架空の病気" },
+      { id: "realcase",    label: "実際に起きた事件" },
+      { id: "horror",      label: "ホラー（創作）" },
+      { id: "urbanhorror", label: "都市伝説などをモチーフとしたホラー" },
+      { id: "animaldeath", label: "動物の死亡描写" },
+      { id: "animalabuse", label: "動物への虐待描写" },
+      { id: "incest",      label: "近親相姦" },
+      { id: "sexviolence", label: "性暴力・強姦などの描写" },
+      { id: "minorcruel",  label: "未成年キャラへの残酷・犯罪描写" },
+      { id: "vomit",       label: "嘔吐・排泄の描写" },
+      { id: "drug",        label: "薬物" },
+      { id: "cannibal",    label: "カニバリズム" },
+      { id: "gendershift", label: "性転換" },
+      { id: "fetish",      label: "特殊性癖・異常性癖" },
+      { id: "lowneta",     label: "下ネタ" },
+      { id: "mental",      label: "精神疾患・発達障害の描写" },
+      { id: "realreligion",label: "実在の宗教" },
+      { id: "realperson",  label: "実在の人物（偉人・犯罪者など）" },
+      { id: "disaster",    label: "自然災害" },
+      { id: "gendernorm",  label: "男尊女卑・女尊男卑" },
+      { id: "cluster",     label: "集合体（トライポフォビア）" }
+    ]
+  },
+  {
+    id: "ho", title: "HOなどによる設定介入", type: "scale",
+    items: [
+      { id: "ho_pre_crime",  label: "事前HOの設定介入：犯罪歴" },
+      { id: "ho_pre_blood",  label: "事前HOの設定介入：血縁関係" },
+      { id: "ho_pre_dear",   label: "事前HOの設定介入：大切な人" },
+      { id: "ho_mid_crime",  label: "シナリオ中に発覚するHO：犯罪歴" },
+      { id: "ho_mid_blood",  label: "シナリオ中に発覚するHO：血縁関係" },
+      { id: "ho_mid_dear",   label: "シナリオ中に発覚するHO：大切な人" },
+      { id: "emo_in_obsess", label: "他者から感情を向けられる：過度の執着・恨み" },
+      { id: "emo_in_crime",  label: "他者から感情を向けられる：監禁などの犯罪手段" },
+      { id: "emo_out_love",  label: "自PCが感情を向ける：恋愛感情" },
+      { id: "emo_out_obsess",label: "自PCが感情を向ける：過度の執着・恨み" },
+      { id: "emo_out_crime", label: "自PCが感情を向ける：監禁などの犯罪手段" },
+      { id: "fixed_dice",    label: "確定描写：出目によるもの" },
+      { id: "fixed_set",     label: "確定描写：出目によらず決められているもの" }
+    ]
+  },
+  {
     id: "secretho", title: "秘匿HOの内容・処理", type: "scale",
     items: [
       { id: "sh_amnesia",   label: "PCが記憶喪失である" },
@@ -213,6 +153,20 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
+    id: "npc", title: "NPC・KPCについて", type: "scale",
+    items: [
+      { id: "npc_kill",      label: "NPC・KPCを殺さなければいけない状況" },
+      { id: "npc_death",     label: "確定死亡NPC・KPC" },
+      { id: "npc_many",      label: "大人数のNPC・KPC（名前付き5人以上）" },
+      { id: "kpc_alt",       label: "別世界軸のKPC（もしくはPC）の存在" },
+      { id: "npc_imposter",  label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
+      { id: "npc_sacrifice", label: "NPC・KPCのためにPCが犠牲になる場面" },
+      { id: "npc_denounce",  label: "NPC・KPCから強く（特に集団で）糾弾されること" },
+      { id: "npc_wasteddeath", label: "演出のためだけにNPC・KPCが死ぬ" },
+      { id: "npc_overshadow",  label: "NPC・KPCが活躍しすぎてPCの存在意義が薄れる" }
+    ]
+  },
+  {
     id: "pcreceive", title: "PCが受ける行動・設定", type: "scale",
     items: [
       { id: "rcv_bully",    label: "PCがいじめを受ける" },
@@ -231,6 +185,15 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
+    id: "pvp", title: "PvPについて", type: "scale",
+    items: [
+      { id: "pvp_verbal",         label: "口論・議論など肉体的被害を伴わないもの" },
+      { id: "pvp_physical",       label: "PC同士の肉体的被害を伴う争い" },
+      { id: "pvp_decide",         label: "特定PCに決断権がある場面" },
+      { id: "pvp_forced",         label: "洗脳・発狂などPCの意思によらないPvP" }
+    ]
+  },
+  {
     id: "forcedrp", title: "強制されるRP（自主的ではなく強制される場合）", type: "scale",
     items: [
       { id: "frp_child",    label: "子供RP" },
@@ -245,6 +208,25 @@ window.JIRAI_SECTIONS = [
       { id: "frp_love_h",   label: "恋愛RP（異性）" },
       { id: "frp_love_s",   label: "恋愛RP（同性）" },
       { id: "frp_sensitive",label: "センシティブRP" }
+    ]
+  },
+  {
+    id: "lost", title: "ロスト・欠損について", type: "scale",
+    items: [
+      { id: "lost_fixed",  label: "確定ロスト" },
+      { id: "lost_san0",   label: "SAN0ロスト" },
+      { id: "lost_body",   label: "肉体的ロスト" },
+      { id: "lost_mid",    label: "途中ロスト（クライマックス前）" },
+      { id: "lost_none",   label: "ロストがないシナリオ" },
+      { id: "lost_dice",   label: "出目のギミックによるロスト" },
+      { id: "lost_choice", label: "自らの選択によるロスト" },
+      { id: "lost_known",  label: "ロストと分かっていてその選択をする行為" },
+      { id: "lost_limb",   label: "欠損：四肢の欠損" },
+      { id: "lost_sense",  label: "欠損：失明・聴覚の喪失" },
+      { id: "lost_organ",  label: "欠損：内蔵の喪失や機能障害" },
+      { id: "lost_instadeath", label: "ヒントや忠告のない即死トラップ" },
+      { id: "lost_high",       label: "序盤・中盤から死にやすい高ロスト" },
+      { id: "lost_aftereffect",label: "確定でPCに余命・重い後遺症が残る" }
     ]
   },
   {
@@ -271,6 +253,23 @@ window.JIRAI_SECTIONS = [
       { id: "ed_onedice",   label: "1回のダイスロールでのED分岐" },
       { id: "ed_choice",    label: "探索者の決断によるED分岐" },
       { id: "ed_kp",        label: "KPの裁量による分岐（NPCへの説得や好感度等）" }
+    ]
+  },
+  {
+    id: "table", title: "その他：同卓時の注意", type: "scale",
+    items: [
+      { id: "tbl_sexual",  label: "自PC・同卓PCへの性的な発言" },
+      { id: "tbl_fixedrp", label: "同卓者による確定RP" },
+      { id: "tbl_strong",  label: "極端に強いステータス" },
+      { id: "tbl_weak",    label: "極端に弱いステータス" },
+      { id: "tbl_unreal",  label: "現実味のない設定" },
+      { id: "tbl_crime",   label: "犯罪歴を持つPC" },
+      { id: "tbl_age",     label: "極端な年齢のPC（子供・老人）" },
+      { id: "tbl_eatweet", label: "卓中の飲食・Twitter" },
+      { id: "tbl_longrp",  label: "長めのRP" },
+      { id: "tbl_bgm",     label: "苦手BGM" },
+      { id: "tbl_record",  label: "セッションの録画・配信・見学" },
+      { id: "tbl_pldiscuss", label: "PL発言（メタ相談）の多用" }
     ]
   },
   {
