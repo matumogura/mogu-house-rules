@@ -241,7 +241,13 @@ summary .pg{margin-left:auto}
   .mole.head{max-width:70px}
   .card{box-shadow:4px 4px 0 var(--ink)}
 }
-@media(max-width:640px){.logo{display:none}.current{max-width:52vw}}
+@media(max-width:640px){
+  .logo{display:none}
+  .current{max-width:46vw}
+  .search input{font-size:16px} /* iOSのタップ時自動ズームを防ぐ */
+  .search:focus-within{width:min(74vw,320px)}
+  .hbar:focus-within .current{display:none} /* 検索を広げたら現在地表示を隠して幅を確保 */
+}
 @media(max-width:480px){
   .logo{font-size:18px}.menuhint{display:none}
   .search{width:104px}
