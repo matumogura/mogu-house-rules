@@ -34,6 +34,10 @@ header{background:var(--paper);border-bottom:3px solid var(--ink)}
 .legendbar-inner{max-width:1000px;margin:0 auto;padding:7px 18px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .legendbar .lbtitle{font-family:'Archivo Black';font-size:10px;letter-spacing:.06em;color:var(--ink-soft);margin-right:2px}
 .legendbar .lg{padding:3px 9px;font-size:12px;background:var(--white)}
+.legendbar .lbsec{display:flex;align-items:center;gap:6px;font-weight:900;font-size:13px;color:var(--ink);margin-right:6px}
+.legendbar .lbsec:empty{display:none}
+.legendbar .lbsec::before{content:"";width:9px;height:9px;flex-shrink:0;background:var(--coral);border:2px solid var(--ink);transform:rotate(45deg)}
+.legendbar.nolegend .lbtitle,.legendbar.nolegend .legend{display:none!important}
 .logo{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:21px;line-height:1;white-space:nowrap}
 .logo b{color:var(--coral)}
 .hbar .sp{margin-left:auto}
@@ -166,7 +170,7 @@ canvas{display:none}
       <a class="pill" href="index.html">ハウスルール</a>
     </div>
   </header>
-  <div class="legendbar"><div class="legendbar-inner"><span class="lbtitle">こたえかた</span><div class="legend" id="legend" style="display:contents"></div></div></div>
+  <div class="legendbar"><div class="legendbar-inner"><span class="lbsec" id="lbsec"></span><span class="lbtitle">こたえかた</span><div class="legend" id="legend" style="display:contents"></div></div></div>
 </div>
 
 <main>
@@ -248,7 +252,7 @@ var state = { scale:{}, loveN:{}, choice:{}, reason:{} };
 // ---- セクション描画 ----
 var secWrap = document.getElementById("sections");
 SECTIONS.forEach(function(sec){
-  var det=document.createElement("details"); det.className="jsec"; det.open=true;
+  var det=document.createElement("details"); det.className="jsec"; det.open=(sec.id==="media"||sec.id==="mastering");
   det.id="sec-"+sec.id; det.dataset.type=sec.type;
   var sum=document.createElement("summary");
   sum.innerHTML=esc(sec.title)+'<span class="cnt" id="cnt-'+sec.id+'"></span>';
@@ -737,18 +741,30 @@ document.getElementById("btn-reset").addEventListener("click",function(){
 });
 
 // ---- こたえかたバーの表示制御（スケール項目の入力中のみ表示）----
-var scaleSecIds = SECTIONS.filter(function(s){return s.type==="scale";}).map(function(s){return s.id;});
+var allSecIds = SECTIONS.map(function(s){return s.id;});
+var secById = {}; SECTIONS.forEach(function(s){ secById[s.id]=s; });
 function updateLegendBar(){
   var bar=document.querySelector(".legendbar");
   var header=document.querySelector("header");
-  if(!bar||!header||!scaleSecIds.length) return;
-  var first=document.getElementById("sec-"+scaleSecIds[0]);
-  var last=document.getElementById("sec-"+scaleSecIds[scaleSecIds.length-1]);
-  if(!first||!last) return;
+  if(!bar||!header||!allSecIds.length) return;
   var line=header.getBoundingClientRect().bottom; // ヘッダー直下のライン
-  var top=first.getBoundingClientRect().top;
-  var bottom=last.getBoundingClientRect().bottom;
-  bar.classList.toggle("show", top<=line && bottom>=line);
+  var firstEl=document.getElementById("sec-"+allSecIds[0]);
+  var lastEl=document.getElementById("sec-"+allSecIds[allSecIds.length-1]);
+  if(!firstEl||!lastEl) return;
+  // セクション範囲の外（フォーム上部やプレビュー以降）なら隠す
+  if(firstEl.getBoundingClientRect().top>line || lastEl.getBoundingClientRect().bottom<line){
+    bar.classList.remove("show"); return;
+  }
+  // 線を最後に越えたセクション＝いま回答中のカテゴリ
+  var curId=allSecIds[0];
+  for(var i=0;i<allSecIds.length;i++){
+    var el=document.getElementById("sec-"+allSecIds[i]);
+    if(el && el.getBoundingClientRect().top<=line+1) curId=allSecIds[i];
+  }
+  var sec=secById[curId];
+  document.getElementById("lbsec").textContent=sec?sec.title:"";
+  bar.classList.toggle("nolegend", !sec || sec.type!=="scale"); // 選択式は◎〇△の凡例を隠す
+  bar.classList.add("show");
 }
 var lbTick=false;
 function onScrollLB(){ if(lbTick) return; lbTick=true; requestAnimationFrame(function(){ updateLegendBar(); lbTick=false; }); }

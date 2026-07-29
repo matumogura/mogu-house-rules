@@ -40,7 +40,6 @@ window.JIRAI_SECTIONS = [
       { id: "pregnancy",   label: "妊娠・中絶・未成年の性行為に関わる描写やテーマ" },
       { id: "bully",       label: "いじめ・パワハラ" },
       { id: "suicide",     label: "自殺" },
-      { id: "meta",        label: "メタフィクション" },
       { id: "war",         label: "戦争" },
       { id: "realdisease", label: "実在の病気" },
       { id: "fakedisease", label: "架空の病気" },
@@ -49,20 +48,36 @@ window.JIRAI_SECTIONS = [
       { id: "urbanhorror", label: "都市伝説などをモチーフとしたホラー" },
       { id: "animaldeath", label: "動物の死亡描写" },
       { id: "animalabuse", label: "動物への虐待描写" },
-      { id: "incest",      label: "近親相姦" }
+      { id: "incest",      label: "近親相姦" },
+      { id: "sexviolence", label: "性暴力・強姦などの描写" },
+      { id: "minorcruel",  label: "未成年キャラへの残酷・犯罪描写" },
+      { id: "vomit",       label: "嘔吐・排泄の描写" },
+      { id: "drug",        label: "薬物" },
+      { id: "cannibal",    label: "カニバリズム" },
+      { id: "gendershift", label: "性転換" },
+      { id: "fetish",      label: "特殊性癖・異常性癖" },
+      { id: "lowneta",     label: "下ネタ" },
+      { id: "mental",      label: "精神疾患・発達障害の描写" },
+      { id: "realreligion",label: "実在の宗教" },
+      { id: "realperson",  label: "実在の人物（偉人・犯罪者など）" },
+      { id: "disaster",    label: "自然災害" },
+      { id: "gendernorm",  label: "男尊女卑・女尊男卑" },
+      { id: "cluster",     label: "集合体（トライポフォビア）" }
     ]
   },
   {
     id: "npc", title: "NPC・KPCについて", type: "scale",
     items: [
-      { id: "npc_kill",      label: "NPCを殺さなければいけない状況" },
-      { id: "npc_death",     label: "確定死亡NPC" },
-      { id: "npc_many",      label: "大人数のNPC（名前付き5人以上）" },
+      { id: "npc_kill",      label: "NPC・KPCを殺さなければいけない状況" },
+      { id: "npc_death",     label: "確定死亡NPC・KPC" },
+      { id: "npc_many",      label: "大人数のNPC・KPC（名前付き5人以上）" },
       { id: "kpc_alt",       label: "別世界軸のKPC（もしくはPC）の存在" },
-      { id: "kpc_altdeath",  label: "別世界軸のKPC（もしくはPC）の死亡" },
-      { id: "npc_imposter",  label: "NPC本人だと思っていたら別人（成り代わりなど）" },
+      { id: "npc_imposter",  label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
       { id: "npc_sacrifice", label: "NPC・KPCのためにPCが犠牲になる場面" },
-      { id: "npc_denounce",  label: "NPCから強く（特に集団で）糾弾されること" }
+      { id: "npc_denounce",  label: "NPC・KPCから強く（特に集団で）糾弾されること" },
+      { id: "npc_wasteddeath", label: "演出のためだけにNPC・KPCが死ぬ" },
+      { id: "npc_overshadow",  label: "NPC・KPCが活躍しすぎてPCの存在意義が薄れる" },
+      { id: "npc_marysue",     label: "メアリー・スー的なNPC・KPCの登場" }
     ]
   },
   {
@@ -70,8 +85,8 @@ window.JIRAI_SECTIONS = [
     items: [
       { id: "pvp_verbal",         label: "口論・議論など肉体的被害を伴わないもの" },
       { id: "pvp_physical",       label: "PC同士の肉体的被害を伴う争い" },
-      { id: "pvp_decide_noloss",  label: "特定PCに決断権がある場面：ロストが存在しない" },
-      { id: "pvp_decide_loss",    label: "特定PCに決断権がある場面：ロストが存在する" }
+      { id: "pvp_decide",         label: "特定PCに決断権がある場面" },
+      { id: "pvp_forced",         label: "洗脳・発狂などPCの意思によらないPvP" }
     ]
   },
   {
@@ -83,7 +98,6 @@ window.JIRAI_SECTIONS = [
       { id: "ho_mid_crime",  label: "シナリオ中に発覚するHO：犯罪歴" },
       { id: "ho_mid_blood",  label: "シナリオ中に発覚するHO：血縁関係" },
       { id: "ho_mid_dear",   label: "シナリオ中に発覚するHO：大切な人" },
-      { id: "emo_in_love",   label: "他者から感情を向けられる：恋愛感情" },
       { id: "emo_in_obsess", label: "他者から感情を向けられる：過度の執着・恨み" },
       { id: "emo_in_crime",  label: "他者から感情を向けられる：監禁などの犯罪手段" },
       { id: "emo_out_love",  label: "自PCが感情を向ける：恋愛感情" },
@@ -106,7 +120,10 @@ window.JIRAI_SECTIONS = [
       { id: "lost_known",  label: "ロストと分かっていてその選択をする行為" },
       { id: "lost_limb",   label: "欠損：四肢の欠損" },
       { id: "lost_sense",  label: "欠損：失明・聴覚の喪失" },
-      { id: "lost_organ",  label: "欠損：内蔵の喪失や機能障害" }
+      { id: "lost_organ",  label: "欠損：内蔵の喪失や機能障害" },
+      { id: "lost_instadeath", label: "ヒントや忠告のない即死トラップ" },
+      { id: "lost_high",       label: "序盤・中盤から死にやすい高ロスト" },
+      { id: "lost_aftereffect",label: "確定でPCに余命・重い後遺症が残る" }
     ]
   },
   {
@@ -121,7 +138,139 @@ window.JIRAI_SECTIONS = [
       { id: "tbl_age",     label: "極端な年齢のPC（子供・老人）" },
       { id: "tbl_eatweet", label: "卓中の飲食・Twitter" },
       { id: "tbl_longrp",  label: "長めのRP" },
-      { id: "tbl_bgm",     label: "苦手BGM" }
+      { id: "tbl_bgm",     label: "苦手BGM" },
+      { id: "tbl_record",  label: "セッションの録画・配信・見学" },
+      { id: "tbl_pldiscuss", label: "PL発言（メタ相談）の多用" }
+    ]
+  },
+  {
+    id: "trend", title: "シナリオの傾向・展開", type: "scale",
+    items: [
+      { id: "tr_pvp",       label: "PvP前提のシナリオ" },
+      { id: "tr_romance",   label: "恋愛要素が多い" },
+      { id: "tr_emo",       label: "エモ重視（作者公言のエモシ）" },
+      { id: "tr_battle",    label: "戦闘重視" },
+      { id: "tr_gag",       label: "ギャグ寄り" },
+      { id: "tr_many",      label: "大人数卓" },
+      { id: "tr_uchiyoso",  label: "うちよそ前提（既存PC/KPCとの親密な関係）" },
+      { id: "tr_realint",   label: "リアルINT・作者の脳内当てが必須の謎解き" },
+      { id: "tr_trick",     label: "叙述トリックなど、PLに罠を仕掛ける展開" },
+      { id: "tr_ntr",       label: "NTR・当て馬系の展開" },
+      { id: "tr_adlib",     label: "KPのアドリブ依存が大きい（描写例が少ない）" }
+    ]
+  },
+  {
+    id: "world", title: "シナリオ設定・世界観", type: "scale",
+    items: [
+      { id: "w_mythos",     label: "神話的事象の独自解釈" },
+      { id: "w_nyaru",      label: "雑なニャルラトホテプ黒幕設定" },
+      { id: "w_lesscoc",    label: "極端にクトゥルフ要素が少ない" },
+      { id: "w_child",      label: "学生・子供PCシナリオ" },
+      { id: "w_police",     label: "警察・刑事PCシナリオ" },
+      { id: "w_yakuza",     label: "ヤクザ・マフィアPCシナリオ" },
+      { id: "w_erajp",      label: "時代物・日本（大正等）" },
+      { id: "w_eraworld",   label: "時代物・海外（ガスライト等）" },
+      { id: "w_horror",     label: "ホラー・怪談・都市伝説メイン" },
+      { id: "w_othermyth",  label: "クトゥルフ以外の神話等がモチーフ" },
+      { id: "w_canon",      label: "アーカム等、原作準拠設定" },
+      { id: "w_steampunk",  label: "スチームパンク" },
+      { id: "w_sf",         label: "SF設定" },
+      { id: "w_future",     label: "未来・タイムスリップ" },
+      { id: "w_parallel",   label: "パラレルワールド" },
+      { id: "w_fantasy",    label: "ファンタジー" },
+      { id: "w_nichiasa",   label: "ニチアサ風" },
+      { id: "w_postworld",  label: "世界滅亡後" },
+      { id: "w_fakeworld",  label: "世界観・時代背景が実は事前情報と違う（幻覚/妄想・バーチャル等）" },
+      { id: "w_metalight",  label: "軽度なメタフィクション要素" },
+      { id: "w_metacore",   label: "シナリオの根幹にメタフィクション要素がある" },
+      { id: "w_original",   label: "原作・元ネタがある（漫画・SCP等）" }
+    ]
+  },
+  {
+    id: "secretho", title: "秘匿HOの内容・処理", type: "scale",
+    items: [
+      { id: "sh_amnesia",   label: "PCが記憶喪失である" },
+      { id: "sh_falsemem",  label: "PCが記憶を改ざんされている/している（自覚なし）" },
+      { id: "sh_addlater",  label: "秘匿情報が後から追加配布される" },
+      { id: "sh_dummy",     label: "最初に配布される秘匿情報がダミー（嘘）である" },
+      { id: "sh_unequal",   label: "特定のHOのみ情報量や行動が多い" },
+      { id: "sh_pivotal",   label: "特定のHOの行動が全体のロストやED分岐に直結する" },
+      { id: "sh_psycho",    label: "PCからPCへの心理学" },
+      { id: "sh_hostile",   label: "他PCへの敵意を抱いている" },
+      { id: "sh_lowfree",   label: "極端に自由度の低いHO" },
+      { id: "sh_common",    label: "全員がほぼ共通の秘匿内容" },
+      { id: "sh_knownby",   label: "自分の秘匿内容を事前に把握している別PCが存在する" },
+      { id: "sh_special",   label: "秘匿中に特殊な能力・技能を使う場面が用意されている" },
+      { id: "sh_sex",       label: "秘匿内で性別が指定されている" },
+      { id: "sh_age",       label: "秘匿内で年齢が指定されている" },
+      { id: "sh_look",      label: "秘匿内で外見が指定されている" },
+      { id: "sh_character", label: "秘匿内で性格が指定されている" },
+      { id: "sh_guess",     label: "他PCの秘匿を当てる必要がある" },
+      { id: "sh_hide",      label: "他PCにバレてはいけない秘匿がある" },
+      { id: "sh_surprise",  label: "秘匿と公言されていないシナリオで突然秘匿が飛んでくる" },
+      { id: "sh_mastermind",label: "秘匿と公言されていないシナリオで、PCの中に黒幕が存在する" },
+      { id: "sh_reveal",    label: "秘匿を公開するタイミングをシナリオで指定される" }
+    ]
+  },
+  {
+    id: "pcreceive", title: "PCが受ける行動・設定", type: "scale",
+    items: [
+      { id: "rcv_bully",    label: "PCがいじめを受ける" },
+      { id: "rcv_abuse",    label: "PCが虐待を受ける" },
+      { id: "rcv_sexviol",  label: "PCが性的な暴力を受ける" },
+      { id: "rcv_petcruel", label: "PCのペットに対する残虐描写が入る" },
+      { id: "rcv_torture",  label: "PCが拷問を受ける" },
+      { id: "rcv_harass",   label: "PCがハラスメント行為を受ける" },
+      { id: "rcv_denounced",label: "PCが他PCから糾弾される" },
+      { id: "rcv_ganged",   label: "PC内で1対多・ハブにされる展開がある" },
+      { id: "rcv_amnesia",  label: "PCが記憶を失う" },
+      { id: "rcv_love_nf",  label: "異性NPCに恋愛感情を持たれる" },
+      { id: "rcv_love_pf",  label: "異性PCに恋愛感情を持たれる" },
+      { id: "rcv_love_ns",  label: "同性NPCに恋愛感情を持たれる" },
+      { id: "rcv_love_ps",  label: "同性PCに恋愛感情を持たれる" }
+    ]
+  },
+  {
+    id: "forcedrp", title: "強制されるRP（自主的ではなく強制される場合）", type: "scale",
+    items: [
+      { id: "frp_child",    label: "子供RP" },
+      { id: "frp_hetero",   label: "異性RP" },
+      { id: "frp_emotion",  label: "感情的になるRP" },
+      { id: "frp_insane",   label: "発狂RP" },
+      { id: "frp_psycho",   label: "サイコパスRP" },
+      { id: "frp_violence", label: "暴力・虐待・いじめRP" },
+      { id: "frp_persuade", label: "PC/NPCへの説得RP" },
+      { id: "frp_farewell", label: "死ぬ前の別れの言葉RP" },
+      { id: "frp_emo",      label: "エモRP" },
+      { id: "frp_love_h",   label: "恋愛RP（異性）" },
+      { id: "frp_love_s",   label: "恋愛RP（同性）" },
+      { id: "frp_sensitive",label: "センシティブRP" }
+    ]
+  },
+  {
+    id: "ending", title: "ED・分岐について", type: "scale",
+    items: [
+      { id: "ed_bad",       label: "バッドエンド" },
+      { id: "ed_merrybad",  label: "メリーバッドエンド" },
+      { id: "ed_multibad",  label: "マルチバッドエンド" },
+      { id: "ed_forcedhappy", label: "ご都合ハッピーエンド" },
+      { id: "ed_bitter",    label: "後味の悪いED" },
+      { id: "ed_single",    label: "1つしか用意されていないED" },
+      { id: "ed_dream",     label: "夢オチ" },
+      { id: "ed_sequel",    label: "続編を匂わせるオチ" },
+      { id: "ed_meta",      label: "メタフィクションが関わるED" },
+      { id: "ed_timeback",  label: "時間遡行を行う" },
+      { id: "ed_parallel",  label: "パラレルワールド・別世界線へ行く" },
+      { id: "ed_epilogue",  label: "PLがエピローグを考えて自由描写" },
+      { id: "ed_memloss",   label: "PC/NPCの記憶が消える" },
+      { id: "ed_norp",      label: "RP無しで描写のみのED" },
+      { id: "ed_sparse",    label: "極端に描写の少ないED" },
+      { id: "ed_inconsistent", label: "整合性の取れない分岐条件・ED" },
+      { id: "ed_point",     label: "ポイント制でのED分岐" },
+      { id: "ed_multidice", label: "複数のダイスロールでのED分岐" },
+      { id: "ed_onedice",   label: "1回のダイスロールでのED分岐" },
+      { id: "ed_choice",    label: "探索者の決断によるED分岐" },
+      { id: "ed_kp",        label: "KPの裁量による分岐（NPCへの説得や好感度等）" }
     ]
   },
   {
