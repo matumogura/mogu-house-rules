@@ -145,7 +145,14 @@ footer .f1{font-family:'WDXL Lubrifont JP N';font-size:22px}
 footer .f1 b{color:var(--coral)}
 footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-top:6px}
 canvas{display:none}
-@media(max-width:640px){.logo{font-size:18px}.iname{min-width:100%}}
+@media(max-width:640px){
+  .logo{font-size:18px}
+  .hbar{flex-wrap:wrap;gap:8px;padding:10px 14px} /* ロゴ＝1行目、ボタン＝2行目に折り返す */
+  .pill{font-size:12px;padding:5px 11px}
+  .iname{min-width:100%}
+  .scale,.choices{width:100%;flex-shrink:1} /* 選択ボタンを全幅にして折り返す（右端切れ防止）*/
+  input[type=text],textarea,.reasonbox{font-size:16px} /* タップ時の自動ズーム防止 */
+}
 </style>
 </head>
 <body>
