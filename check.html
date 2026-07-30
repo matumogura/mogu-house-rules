@@ -193,9 +193,9 @@ canvas{display:none}
   <header>
     <div class="hbar">
       <div class="logo">モグ<b>卓</b></div>
-      <button class="tocbtn" id="tocbtn" aria-controls="toc" aria-expanded="false">≡ 目次</button>
+      <button class="tocbtn" id="tocbtn" aria-controls="toc" aria-expanded="false" aria-label="目次" title="目次">≡</button>
       <span class="sp"></span>
-      <a class="pill y" href="check-kp.html">KP用ページ →</a>
+      <a class="pill y" href="check-kp.html">KP用</a>
       <a class="pill" href="jirai.html">事前チェック</a>
       <a class="pill" href="index.html">ハウスルール</a>
     </div>
@@ -301,7 +301,7 @@ var STORE_KEY = "mogu-jirai-input-v2";
 var DEFAULT = window.JIRAI_SCALE_DEFAULT;
 
 var TIME_MIN=6, TIME_MAX=27;
-function defaultTime(){ return { dayOn:true, dayStart:13, dayEnd:18, dayFlexOn:false, dayFlexStart:11, dayFlexEnd:20, breaks:[15], nightOn:true, nightStart:21, nightEnd:24, nightFlexOn:false, nightFlexStart:20, nightFlexEnd:27, note:"" }; }
+function defaultTime(){ return { dayOn:true, dayStart:13, dayEnd:18, dayFlexOn:false, dayFlexStart:9, dayFlexEnd:21, breaks:[15], nightOn:true, nightStart:21, nightEnd:24, nightFlexOn:false, nightFlexStart:20, nightFlexEnd:27, note:"" }; }
 var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:{}, time:defaultTime() };
 function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
 function timeText(t){
