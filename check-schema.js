@@ -69,7 +69,7 @@ window.JIRAI_SECTIONS = [
       { id: "w_fakeworld",  label: "世界観・時代背景が実は事前情報と違う（幻覚/妄想・バーチャル等）" },
       { id: "w_metalight",  label: "軽度なメタフィクション要素" },
       { id: "w_metacore",   label: "シナリオの根幹にメタフィクション要素がある" },
-      { id: "w_original",   label: "原作・元ネタがある（漫画・SCP等）" }
+      { id: "w_original",   label: "原作・元ネタがある（小説・映画・漫画・SCP等）" }
     ]
   },
   {
@@ -134,6 +134,7 @@ window.JIRAI_SECTIONS = [
       { id: "sh_falsemem",  label: "PCが記憶を改ざんされている/している（自覚なし）" },
       { id: "sh_hostile",   label: "他PCへの敵意を抱いている" },
       { id: "sh_lowfree",   label: "極端に自由度の低いHO" },
+      { id: "sh_highfree",  label: "極端に自由度の高いHO" },
       { id: "sh_sex",       label: "秘匿内で性別が指定されている" },
       { id: "sh_age",       label: "秘匿内で年齢が指定されている" },
       { id: "sh_look",      label: "秘匿内で外見が指定されている" },
