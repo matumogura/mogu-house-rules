@@ -125,7 +125,7 @@ window.JIRAI_SECTIONS = [
       { id: "w_steampunk",  label: "スチームパンク" },
       { id: "w_sf",         label: "SF設定" },
       { id: "w_future",     label: "未来・タイムスリップ" },
-      { id: "w_postworld",  label: "世界滅亡後" },
+      { id: "w_postworld",  label: "アポカリプス（世界滅亡後）" },
       { id: "w_nichiasa",   label: "ニチアサ風" },
       { id: "w_parallel",   label: "パラレルワールド" },
       { id: "w_fakeworld",  label: "世界観・時代背景が実は事前情報と違う（幻覚/妄想・バーチャル等）" },
