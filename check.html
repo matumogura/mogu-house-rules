@@ -312,11 +312,16 @@ function timelineHTML(t){
   function na(){ return '<div style="flex:1;color:#8a857a;font-size:12px">参加不可</div>'; }
   var dayRow=t.dayOn?trk(flex(t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd)+bar(t.dayStart,t.dayEnd,"#2f6bff")+brks()):na();
   var nightRow=t.nightOn?trk(flex(t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd)+bar(t.nightStart,t.nightEnd,"#6b3ff2")):na();
+  var bkT=(t.breaks&&t.breaks.length)?"（休憩 "+t.breaks.slice().sort(function(a,b){return a-b;}).map(fmtHour).join("・")+"）":"";
+  function bt(l,on,s,e,fon,fs,fe,brk){ return on?l+" "+fmtHour(s)+"〜"+fmtHour(e)+(brk||"")+(fon?"（融通 "+fmtHour(fs)+"〜"+fmtHour(fe)+"）":""):l+"：参加不可"; }
+  var sched=bt("昼卓",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,bkT)+" ／ "+bt("夜卓",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,"");
   return '<div class="tl"><div class="ft" style="margin-bottom:6px">参加可能時間</div>'+
     '<div style="position:relative;height:14px;margin-left:32px;font-size:10px;color:#8a857a;font-family:\'DM Mono\',monospace">'+ticks+'</div>'+
     '<div style="display:flex;align-items:center;gap:8px;margin:3px 0"><span style="width:24px;font-size:12px;font-weight:700">昼</span>'+dayRow+'</div>'+
     '<div style="display:flex;align-items:center;gap:8px;margin:3px 0"><span style="width:24px;font-size:12px;font-weight:700">夜</span>'+nightRow+'</div>'+
-    '<div style="font-size:12.5px;margin-top:6px;color:#4a463f">'+esc(timeText(t))+(t.dayFlexOn||t.nightFlexOn?'　<span style="color:#8a857a">（点線＝融通可）</span>':'')+'</div></div>';
+    '<div style="font-size:12.5px;margin-top:6px;color:#4a463f">'+esc(sched)+(t.dayFlexOn||t.nightFlexOn?'　<span style="color:#8a857a">（点線＝融通可）</span>':'')+'</div>'+
+    (t.note?'<div style="font-size:12.5px;margin-top:3px;color:#4a463f;white-space:pre-wrap">メモ：'+esc(t.note)+'</div>':'')+
+  '</div>';
 }
 
 // ---- 凡例 ----
