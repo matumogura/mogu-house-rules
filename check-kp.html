@@ -92,6 +92,7 @@ main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 7
 .who{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
 .wtag{font-weight:700;font-size:12px;border:2px solid var(--ink);border-radius:999px;padding:2px 9px;background:var(--white)}
 .wtag .s{font-family:'Archivo Black';margin-right:4px}
+.wtag .s:only-child{margin-right:0;position:relative;top:-1px}
 .wtag.never{background:var(--coral);color:#fff}.wtag.weak{background:var(--yellow)}
 .wtag.meh{background:#cfcabd}.wtag.love{background:var(--pink)}.wtag.choice{background:var(--blue);color:#fff}
 .seclabel{font-family:'Archivo Black';font-size:10px;letter-spacing:.08em;color:var(--ink-soft);background:var(--paper-2);border:2px solid var(--ink);border-radius:6px;padding:1px 7px;margin-left:8px}
@@ -472,9 +473,17 @@ function arow(key,label,entries,withCheck){
   var row=document.createElement("div"); row.className="arow";
   var ck="";
   if(withCheck) ck='<div class="ck"><input type="checkbox" data-key="'+key+'" '+(checked[key]?"checked":"")+'></div>';
-  var who=entries.map(function(e){ return '<span class="wtag '+e.v+'"'+(e.reason?' title="'+esc(e.reason)+'"':'')+'><span class="s">'+esc(e.sym)+'</span>'+esc(e.name)+'</span>'; }).join("");
-  var rzs=entries.filter(function(e){return e.reason;}).map(function(e){ return '<div class="rzline"><b>'+esc(e.name)+'</b>：'+esc(e.reason)+'</div>'; }).join("");
-  row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(label)+'</div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
+  if(people.length===1){
+    // 1人だけ：名前を出さず、記号＋項目名だけ（理由は名前なしで併記）
+    var e=entries[0];
+    var badge='<span class="wtag '+e.v+'"><span class="s">'+esc(e.sym)+'</span></span> ';
+    var rz=e.reason?'<div class="reasons"><div class="rzline">'+esc(e.reason)+'</div></div>':'';
+    row.innerHTML=ck+'<div class="amain"><div class="alabel">'+badge+esc(label)+'</div>'+rz+'</div>';
+  } else {
+    var who=entries.map(function(e){ return '<span class="wtag '+e.v+'"'+(e.reason?' title="'+esc(e.reason)+'"':'')+'><span class="s">'+esc(e.sym)+'</span>'+esc(e.name)+'</span>'; }).join("");
+    var rzs=entries.filter(function(e){return e.reason;}).map(function(e){ return '<div class="rzline"><b>'+esc(e.name)+'</b>：'+esc(e.reason)+'</div>'; }).join("");
+    row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(label)+'</div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
+  }
   if(withCheck){ row.querySelector("input").addEventListener("change",function(){ checked[key]=this.checked; buildOutput(); }); }
   return row;
 }

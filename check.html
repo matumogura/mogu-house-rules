@@ -827,7 +827,7 @@ function drawImage(d){
     if((it.type||sec.type)!=="scale") return;
     var v=d.scale[it.id]; if(!v||v==="normal"||v==="meh") return;
     if(v==="love"){ var n=d.loveN[it.id]||1; var tag={text:(n>1?"◎"+n+" ":"")+it.label,bg:LOVE,fg:"#161513"};
-      (sec.id==="trend"||sec.id==="world") ? likeScene.push(tag) : likeOther.push(tag); }
+      (sec.id==="genre"||sec.id==="develop"||sec.id==="quality") ? likeScene.push(tag) : likeOther.push(tag); }
     else if(v==="weak") dislike.push({text:"×"+it.label,bg:"#ffce1c",fg:"#161513"});
     else if(v==="never") dislike.push({text:"××"+it.label,bg:"#ff5533",fg:"#ffffff"});
   }); });
