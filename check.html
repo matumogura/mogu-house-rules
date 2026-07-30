@@ -47,6 +47,7 @@ header{background:var(--paper);border-bottom:3px solid var(--ink)}
 .toc a:hover{background:var(--yellow)}
 .tocbtn{font-family:inherit;font-weight:700;font-size:12px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--white);box-shadow:2px 2px 0 var(--ink);cursor:pointer;white-space:nowrap}
 .tocbtn[aria-expanded="true"]{background:var(--ink);color:var(--paper)}
+.pillnav{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
 .hbar .sp{margin-left:auto}
 .pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;background:var(--white);box-shadow:2px 2px 0 var(--ink);white-space:nowrap}
 .pill.y{background:var(--yellow)}
@@ -181,7 +182,6 @@ canvas{display:none}
 @media(max-width:640px){
   .logo{font-size:18px}
   .hbar{flex-wrap:wrap;gap:8px;padding:10px 14px} /* 1行目=ロゴ+目次、2行目=各ページpill */
-  .hbar .sp{flex-basis:100%;margin:0;height:0} /* スペーサーを全幅にしてpillを丸ごと次行へ */
   .pill{font-size:12px;padding:5px 10px}
   .iname{min-width:100%}
   .scale,.choices{width:100%;flex-shrink:1} /* 選択ボタンを全幅にして折り返す（右端切れ防止）*/
@@ -195,10 +195,11 @@ canvas{display:none}
     <div class="hbar">
       <div class="logo">モグ<b>卓</b></div>
       <button class="tocbtn" id="tocbtn" aria-controls="toc" aria-expanded="false" aria-label="目次" title="目次">≡</button>
-      <span class="sp"></span>
-      <a class="pill y" href="check-kp.html">KP用</a>
-      <a class="pill" href="jirai.html">事前チェック</a>
-      <a class="pill" href="index.html">ハウスルール</a>
+      <div class="pillnav">
+        <a class="pill y" href="check-kp.html">KP用</a>
+        <a class="pill" href="jirai.html">事前チェック</a>
+        <a class="pill" href="index.html">ハウスルール</a>
+      </div>
     </div>
     <nav class="toc" id="toc">
       <a data-target="card-basic"><span class="n">01</span>基本</a>
