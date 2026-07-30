@@ -215,10 +215,7 @@ canvas{display:none}
   <div class="card">
     <span class="lab">きほん</span>
     <div class="field"><label for="f-name">ハンドルネーム（HO）<span style="color:var(--coral)">*</span></label><div class="hint">卓での呼び名。ファイル名・一覧の見出しになります。</div><input type="text" id="f-name" placeholder="例：モグラ" maxlength="40"></div>
-    <div class="metagrid">
-      <div class="field"><label for="f-session">セッション名／シナリオ名</label><div class="hint">任意。</div><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
-      <div class="field"><label for="f-date">記入日</label><div class="hint">任意。既定は今日の日付。</div><input type="text" id="f-date" placeholder="2026-07-28" maxlength="20"></div>
-    </div>
+    <div class="field"><label for="f-session">セッション名／シナリオ名</label><div class="hint">任意。記入日は出力時に自動で今日の日付が入ります。</div><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
   </div>
 
   <div class="card" id="timecard">
@@ -405,7 +402,7 @@ SECTIONS.forEach(function(sec){
   });
   FREE.forEach(function(f){ document.getElementById(f.id).addEventListener("input", onChange); });
 })();
-["f-name","f-session","f-date"].forEach(function(id){ document.getElementById(id).addEventListener("input", onChange); });
+["f-name","f-session"].forEach(function(id){ document.getElementById(id).addEventListener("input", onChange); });
 
 // ---- 操作 ----
 function onScale(itemId,v){
@@ -495,7 +492,7 @@ document.querySelectorAll(".qfill").forEach(function(q){
 function collect(){
   return {
     _type:"mogu-jirai-sheet", _version:2,
-    name:val("f-name"), session:val("f-session"), date:val("f-date"),
+    name:val("f-name"), session:val("f-session"), date:new Date().toISOString().slice(0,10),
     scale:JSON.parse(JSON.stringify(state.scale)),
     loveN:JSON.parse(JSON.stringify(state.loveN)),
     choice:JSON.parse(JSON.stringify(state.choice)),
@@ -514,7 +511,7 @@ function restore(){
   try{
     var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
     var d=JSON.parse(raw);
-    setV("f-name",d.name); setV("f-session",d.session); setV("f-date",d.date);
+    setV("f-name",d.name); setV("f-session",d.session);
     if(d.scale) state.scale=d.scale; if(d.loveN) state.loveN=d.loveN; if(d.choice) state.choice=d.choice; if(d.reason) state.reason=d.reason;
     if(d.multi) state.multi=d.multi;
     if(d.time) state.time=Object.assign(defaultTime(), d.time);
@@ -688,7 +685,8 @@ function safeName(s){ return (s||"無名").replace(/[\\/:*?"<>|\s]+/g,"_").slice
 document.getElementById("btn-html").addEventListener("click",function(){
   var d=collect();
   if(!d.name){ alert("ハンドルネーム（HO）を入力してください。"); document.getElementById("f-name").focus(); return; }
-  download("事前_"+safeName(d.name)+".html", buildSubmissionHTML(d), "text/html;charset=utf-8");
+  var ymd=(d.date&&/^\d{4}-\d{2}-\d{2}$/.test(d.date)?d.date:d.createdAt||new Date().toISOString().slice(0,10)).slice(2).replace(/-/g,"");
+  download("事前_"+safeName(d.name)+"_"+ymd+".html", buildSubmissionHTML(d), "text/html;charset=utf-8");
 });
 
 // ---- SNS画像 ----
@@ -823,7 +821,8 @@ function drawImage(d){
 
   // ---- 出力（複数枚）----
   var sn=document.getElementById("savednote");
-  function fname(i){ return "事前_"+safeName(d.name)+(total>1?("_"+(i+1)):"")+".png"; }
+  var ymd=(d.date&&/^\d{4}-\d{2}-\d{2}$/.test(d.date)?d.date:d.createdAt||new Date().toISOString().slice(0,10)).slice(2).replace(/-/g,"");
+  function fname(i){ return "事前_"+safeName(d.name)+"_"+ymd+(total>1?("_"+(i+1)):"")+".png"; }
   function download(blob,i){ var url=URL.createObjectURL(blob), a=document.createElement("a");
     a.href=url; a.download=fname(i); document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); },1000); }
@@ -884,7 +883,7 @@ document.getElementById("btn-reset").addEventListener("click",function(){
   ["day-flex","night-flex"].forEach(function(id){ var e=document.getElementById(id); if(e)e.checked=false; });
   var tn=document.getElementById("time-note"); if(tn)tn.value="";
   renderTime();
-  ["f-name","f-session","f-date"].concat(FREE.map(function(f){return f.id;})).forEach(function(id){ var e=document.getElementById(id); if(e)e.value=""; });
+  ["f-name","f-session"].concat(FREE.map(function(f){return f.id;})).forEach(function(id){ var e=document.getElementById(id); if(e)e.value=""; });
   document.querySelectorAll(".reasonbox").forEach(function(ta){ ta.value=""; });
   document.querySelectorAll(".reasonwrap").forEach(function(w){ w.classList.remove("open"); });
   document.querySelectorAll(".iname").forEach(function(n){ n.classList.remove("hasreason"); });
@@ -1012,7 +1011,6 @@ document.getElementById("sections").addEventListener("toggle", updateLegendBar, 
 
 // ---- 初期化 ----
 (function(){
-  document.getElementById("f-date").value=new Date().toISOString().slice(0,10);
   restore();
   setupTime();
   refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderPreview();
