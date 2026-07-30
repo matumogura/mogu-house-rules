@@ -313,12 +313,10 @@ function attEntries(sec,it,levels){
   var itype=it.type||sec.type;
   return itype==="scale" ? scaleEntriesForItem(it.id,levels) : itype==="multi" ? multiEntries(sec,it) : choiceAttEntries(sec,it);
 }
-function renderTimeAgg(){
-  var host=document.getElementById("timeagg"); if(!host) return;
+function timeAgg(){
   var withT=people.filter(function(p){return p.time;});
-  if(!withT.length){ host.innerHTML='<div class="empty">時間データのある提出がありません。</div>'; return; }
-  function agg(band){
-    var onK=band+"On",sK=band+"Start",eK=band+"End",foK=band+"FlexOn",fsK=band+"FlexStart",feK=band+"FlexEnd";
+  function band(b){
+    var onK=b+"On",sK=b+"Start",eK=b+"End",foK=b+"FlexOn",fsK=b+"FlexStart",feK=b+"FlexEnd";
     var parts=withT.filter(function(p){return p.time[onK];});
     var o={n:parts.length, absent:withT.filter(function(p){return !p.time[onK];}).map(function(p){return p.name;})};
     if(!parts.length) return o;
@@ -333,6 +331,12 @@ function renderTimeAgg(){
     o.common=(maxS<minE)?[maxS,minE]:null; o.flex=(fMaxS<fMinE)?[fMaxS,fMinE]:null;
     return o;
   }
+  return { withT:withT, day:band("day"), night:band("night") };
+}
+function renderTimeAgg(){
+  var host=document.getElementById("timeagg"); if(!host) return;
+  var A=timeAgg(), withT=A.withT;
+  if(!withT.length){ host.innerHTML='<div class="empty">時間データのある提出がありません。</div>'; return; }
   function band(title,a){
     var box='margin:8px 0;padding:9px 11px;background:var(--paper);border:2px solid var(--ink);border-radius:10px';
     if(!a.n) return '<div style="'+box+'"><b>'+title+'</b>：参加者なし'+(a.absent.length?'（不参加：'+a.absent.map(esc).join("、")+'）':'')+'</div>';
@@ -345,7 +349,7 @@ function renderTimeAgg(){
     if(a.absent.length) h+='<div style="font-size:12px;color:#8a857a">不参加：'+a.absent.map(esc).join("、")+'</div>';
     return h+'</div>';
   }
-  var html=band("昼卓",agg("day"))+band("夜卓",agg("night"));
+  var html=band("昼卓",A.day)+band("夜卓",A.night);
   var bt={}; withT.forEach(function(p){ (p.time.breaks||[]).forEach(function(b){ bt[b]=(bt[b]||0)+1; }); });
   var bk=Object.keys(bt).sort(function(a,b){return a-b;});
   if(bk.length) html+='<div style="font-size:12.5px;color:#6b665c;margin:4px 2px"><b>休憩の希望：</b>'+bk.map(function(k){return fmtHour(parseFloat(k))+'('+bt[k]+'人)';}).join("、")+'</div>';
@@ -497,15 +501,26 @@ function buildOutput(){
     var reasons = uniq(u.entries.map(function(e){return e.reason;}));
     lines.push("・"+u.label+(sev?"："+sev:"")+(reasons.length?" ／ 補足："+reasons.join("／"):""));
   });
-  if(lines.length){ L.push("＜配慮する項目＞（名前は伏せています）"); L=L.concat(lines); L.push(""); }
+  if(lines.length){ L.push("＜配慮する項目＞（記入者のお名前は伏せています）"); L=L.concat(lines); L.push(""); }
   else { L.push("（チェックされた配慮項目はありません）"); L.push(""); }
 
-  var tl=[];
-  people.forEach(function(p){ if(!p.time) return;
-    tl.push("・"+(withNames?p.name+"：":"")+timeText(p.time,true));
-    if(p.time.note) tl.push("　メモ："+p.time.note);
-  });
-  if(tl.length){ L.push("＜参加可能時間＞"); L=L.concat(tl); L.push(""); }
+  var A=timeAgg();
+  if(A.withT.length){
+    function bl(title,a){
+      if(!a.n) return "・"+title+"：参加者なし";
+      var s = a.common ? "全員参加可能 "+fmtHour(a.common[0])+"〜"+fmtHour(a.common[1]) : "全員共通の時間帯なし（最も遅い開始 "+fmtHour(a.maxS)+"／最も早い終了 "+fmtHour(a.minE)+"）";
+      if(a.flex) s+=" ／ 融通込み "+fmtHour(a.flex[0])+"〜"+fmtHour(a.flex[1]);
+      return "・"+title+"："+s;
+    }
+    L.push("＜参加可能時間（全員のまとめ）＞");
+    L.push(bl("昼卓",A.day));
+    L.push(bl("夜卓",A.night));
+    var bt={}; A.withT.forEach(function(p){ (p.time.breaks||[]).forEach(function(b){ bt[b]=(bt[b]||0)+1; }); });
+    var bk=Object.keys(bt).sort(function(a,b){return a-b;});
+    if(bk.length) L.push("・休憩の希望："+bk.map(function(k){return fmtHour(parseFloat(k))+"("+bt[k]+"人)";}).join("、"));
+    A.withT.forEach(function(p){ if(p.time.note) L.push("・メモ"+(withNames?"（"+p.name+"）":"")+"："+p.time.note); });
+    L.push("");
+  }
 
   if(withNotice){
     var nt=[];
