@@ -34,7 +34,7 @@ img{display:block}
 mark{background:var(--yellow);color:var(--ink);border-radius:3px;padding:0 2px}
 
 /* HEADER */
-header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:3px solid var(--ink);cursor:pointer}
+header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:3px solid var(--ink)}
 .hbar{max-width:1180px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:12px}
 .hamburger{width:44px;height:38px;flex-shrink:0;border:2.5px solid var(--ink);background:var(--yellow);
   border-radius:11px;box-shadow:3px 3px 0 var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;cursor:pointer}
@@ -45,6 +45,10 @@ header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:3p
 .menuhint{font-weight:700;font-size:12px;color:var(--ink-soft);letter-spacing:.06em}
 .logo{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:21px;line-height:1;white-space:nowrap;margin-left:2px}
 .logo b{color:var(--coral)}
+.pillnav{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
+.pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;background:var(--white);box-shadow:2px 2px 0 var(--ink);white-space:nowrap;text-decoration:none}
+.pill:hover{background:var(--yellow)}
+.pill .n{font-family:'Archivo Black';font-size:10px;color:var(--coral);margin-right:5px}
 .current{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--ink);background:var(--white);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;box-shadow:2px 2px 0 var(--ink);white-space:nowrap}
 .current .n{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
 
@@ -124,25 +128,14 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
 
 <header id="header">
   <div class="hbar">
-    <button class="hamburger" id="hamburger" aria-label="メニューを開閉" aria-expanded="false"><span></span><span></span><span></span></button>
-    <span class="menuhint">MENU</span>
     <div class="logo">モグ<b>卓</b></div>
-    <span class="current"><span class="n">JIZEN</span>事前チェック</span>
+    <div class="pillnav">
+      <a class="pill" href="check.html">PL</a>
+      <a class="pill" href="check-kp.html">KP</a>
+      <a class="pill" href="index.html">ハウスルール</a>
+    </div>
   </div>
 </header>
-
-<nav id="nav">
-  <div class="pageswitch">
-    <a class="psbtn" href="index.html"><span class="pi">RULES</span>ハウスルール</a>
-    <a class="psbtn on" href="jirai.html"><span class="pi">JIZEN</span>事前チェック</a>
-  </div>
-  <div class="navwrap" id="navwrap">
-    <a href="#top"><span class="n">◎</span>案内</a>
-    <a href="check.html"><span class="n">PL</span>事前チェックを入力する</a>
-    <a href="check-kp.html"><span class="n">KP</span>提出を集約する</a>
-    <a href="index.html"><span class="n">←</span>ハウスルールへ戻る</a>
-  </div>
-</nav>
 
 <div class="marquee"><div class="mtrack" id="mq1"></div></div>
 
@@ -186,11 +179,6 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
   var s="";for(var i=0;i<8;i++){s+='<span>'+unit+'</span>';}
   document.getElementById('mq1').innerHTML=s;
 })();
-// menu toggle: click header (except links) toggles nav
-var header=document.getElementById('header'),ham=document.getElementById('hamburger'),navEl=document.getElementById('nav');
-function setMenu(open){navEl.classList.toggle('open',open);ham.classList.toggle('open',open);ham.setAttribute('aria-expanded',open);}
-header.addEventListener('click',function(){setMenu(!navEl.classList.contains('open'));});
-document.querySelectorAll('#navwrap a[href^="#"]').forEach(function(a){a.addEventListener('click',function(){setMenu(false);});});
 </script>
 </body>
 </html>

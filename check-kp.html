@@ -32,6 +32,7 @@ header{position:sticky;top:0;z-index:50;background:var(--ink);border-bottom:3px 
 .kpbadge{font-family:'Archivo Black';font-size:11px;background:var(--coral);color:#fff;padding:3px 9px;border-radius:6px}
 .hbar .sp{margin-left:auto}
 .pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--paper);border-radius:999px;padding:5px 13px;background:var(--white);white-space:nowrap}
+.pillnav{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
 .toc{background:var(--paper);border-top:3px solid var(--ink)}
 .toc-inner{max-width:1080px;margin:0 auto;padding:10px 18px;display:flex;flex-wrap:wrap;gap:8px}
 .toc a{white-space:nowrap;font-weight:700;font-size:12.5px;text-decoration:none;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px}
@@ -124,7 +125,13 @@ footer{background:var(--ink);color:var(--paper);text-align:center;padding:34px 2
 footer .f1{font-family:'WDXL Lubrifont JP N';font-size:22px}
 footer .f1 b{color:var(--coral)}
 footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-top:6px}
-@media(max-width:640px){.logo{font-size:18px}}
+@media(max-width:640px){
+  .logo{font-size:18px}
+  .hbar{flex-wrap:wrap;gap:8px;padding:10px 14px}
+  .pill{font-size:12px;padding:5px 10px}
+  .toc-inner{padding:8px 14px;gap:6px}
+  .toc a{font-size:11.5px;padding:4px 9px}
+}
 </style>
 </head>
 <body>
@@ -132,18 +139,19 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
   <div class="hbar">
     <div class="logo">モグ<b>卓</b></div>
     <span class="kpbadge">KP</span>
-    <span class="sp"></span>
-    <a class="pill y" href="check.html">PL用ページ →</a>
-    <a class="pill" href="jirai.html">事前チェック</a>
-    <a class="pill" href="index.html">ハウスルール</a>
+    <div class="pillnav">
+      <a class="pill y" href="check.html">PL用</a>
+      <a class="pill" href="jirai.html">事前チェック</a>
+      <a class="pill" href="index.html">ハウスルール</a>
+    </div>
   </div>
   <nav class="toc" id="kptoc"><div class="toc-inner">
     <a data-target="drop"><span class="n">01</span>読み込み</a>
-    <a data-target="card-notice"><span class="n">02</span>注意文</a>
+    <a data-target="card-notice"><span class="n">02</span>おしらせ出力</a>
     <a data-target="timeagg-card"><span class="n">03</span>参加可能時間</a>
     <a data-target="grp-att" class="t-weak"><span class="n">×</span>要注意</a>
     <a data-target="grp-meh" class="t-meh"><span class="n">△</span>微妙</a>
-    <a data-target="grp-note" class="t-normal"><span class="n">〇</span>備考あり</a>
+    <a data-target="grp-note" class="t-normal"><span class="n">〇</span>備考</a>
     <a data-target="grp-love" class="t-love"><span class="n">◎</span>好きな要素</a>
   </div></nav>
 </header>
@@ -152,7 +160,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
   <div class="phead">
     <div class="kick">JIZEN CHECK SHEET — FOR KEEPERS</div>
     <h1>事前チェック<span class="cc">集約</span>シート</h1>
-    <p class="lead">PLから受け取った提出ファイル（HTML／JSON）を読み込むと、全員の地雷を横断で確認できます。周知が必要な項目にチェックを入れ、PL共有用の注意文をまとめてコピーできます。読み込んだデータは外部に送信されません。</p>
+    <p class="lead">PLから受け取った提出ファイル（HTML／JSON）を読み込むと、全員の地雷を横断で確認できます。周知が必要な項目にチェックを入れ、PL共有用のおしらせ出力をまとめてコピーできます。読み込んだデータは外部に送信されません。</p>
   </div>
 
   <div class="card">
@@ -180,14 +188,14 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
     <!-- 集約ビュー -->
     <div class="view on" id="view-agg">
       <div class="card" id="card-notice">
-        <span class="lab">ちゅういぶん</span>
+        <span class="lab">おしらせしゅつりょく</span>
         <div class="opts">
           <label><input type="checkbox" id="op-names" checked>PL名を載せる（時間・お知らせ欄。配慮項目は常に匿名）</label>
           <label><input type="checkbox" id="op-meh">△（微妙）も含める</label>
           <label><input type="checkbox" id="op-notice" checked>お知らせ・自衛も載せる</label>
         </div>
         <div class="btnrow" style="margin-bottom:10px">
-          <button class="btn blue" id="btn-copy"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>注意文をコピー</button>
+          <button class="btn blue" id="btn-copy"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>おしらせ出力をコピー</button>
           <span id="copynote" style="font-size:12.5px;color:#8a857a"></span>
         </div>
         <textarea id="out" readonly></textarea>
@@ -202,7 +210,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
           <button class="btn sm" id="ck-all"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>× ×× を全てチェック</button>
           <button class="btn ghost sm" id="ck-none">チェック解除</button>
         </div>
-        <p style="font-size:13px;color:var(--ink-soft)">下でチェックした項目が上の「注意文」に入ります。◎や△は参考情報です。</p>
+        <p style="font-size:13px;color:var(--ink-soft)">下でチェックした項目が上の「おしらせ出力」に入ります。◎や△は参考情報です。</p>
         <div id="agg"></div>
       </div>
     </div>
@@ -379,7 +387,7 @@ function renderTimeAgg(){
 // 要注意グループの集約単位（scaleは項目単位、multiは選択肢ごとに人をまとめる）
 function aggUnits(levels){
   var units=[];
-  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
+  SECTIONS.forEach(function(sec){ if(sec.noagg)return; sec.items.forEach(function(it){
     var itype=it.type||sec.type;
     if(itype==="multi"){
       it.options.forEach(function(opt,idx){
@@ -404,7 +412,7 @@ function scaleUnits(levels){
 // 要注意/△/◎/選択済みに出てこないが、備考だけ記載がある項目（〇＋メモ等）
 function noteUnits(){
   var units=[];
-  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
+  SECTIONS.forEach(function(sec){ if(sec.noagg)return; sec.items.forEach(function(it){
     var itype=it.type||sec.type, ents=[];
     people.forEach(function(p){
       var rz=(p.reason&&p.reason[it.id])||""; if(!rz) return;
@@ -439,19 +447,19 @@ function renderAgg(){
   if(u1.length) renderUnitGroup(g1,u1,true); else g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
   wrap.appendChild(g1);
 
-  // 1.5) 備考メモ（〇や未選択でも記載がある項目）
-  var gn=document.createElement("div"); gn.id="grp-note";
-  gn.innerHTML='<div class="gtitle"><span class="badge gray">備考</span>〇・未選択でも記載あり（チェックで配慮に追加）</div>';
-  var un=noteUnits();
-  if(un.length) renderUnitGroup(gn,un,true); else gn.appendChild(emptyEl("備考の記載はありません。"));
-  wrap.appendChild(gn);
-
   // 2) △ 参考（チェック可）
   var g2=document.createElement("div"); g2.id="grp-meh";
   g2.innerHTML='<div class="gtitle"><span class="badge gray">参考</span>△ 微妙</div>';
   var u2=scaleUnits(["meh"]);
   if(u2.length) renderUnitGroup(g2,u2,true); else g2.appendChild(emptyEl("△ はありません。"));
   wrap.appendChild(g2);
+
+  // 2.5) 備考メモ（〇や未選択でも記載がある項目）
+  var gn=document.createElement("div"); gn.id="grp-note";
+  gn.innerHTML='<div class="gtitle"><span class="badge gray">備考</span>〇・未選択でも記載あり（チェックで配慮に追加）</div>';
+  var un=noteUnits();
+  if(un.length) renderUnitGroup(gn,un,true); else gn.appendChild(emptyEl("備考の記載はありません。"));
+  wrap.appendChild(gn);
 
   // 3) ◎ 好み（参考・チェック不要）
   var g3=document.createElement("div"); g3.id="grp-love";
@@ -538,7 +546,7 @@ function renderMatrix(){
   host.innerHTML=html;
 }
 
-// ---- 注意文 ----
+// ---- おしらせ出力 ----
 function buildOutput(){
   var withNames=document.getElementById("op-names").checked;
   var withMeh=document.getElementById("op-meh").checked;

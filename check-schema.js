@@ -29,6 +29,20 @@ window.JIRAI_LEGEND = [
    choice は attentionFrom 以上の index を「要配慮」とみなす */
 window.JIRAI_SECTIONS = [
   {
+    id: "play", title: "プレイスタイル", type: "choice", noagg: true,
+    items: [
+      { id: "play_role", label: "GM / PL",
+        options: ["GMメイン", "GM・PLどちらも", "PLメイン"] }
+    ]
+  },
+  {
+    id: "tools", title: "使用ツール（複数選択可）", type: "multi", noagg: true,
+    items: [
+      { id: "tool_use", label: "使えるツール（その他は理由欄に記入）",
+        options: ["Discord", "ココフォリア", "Tekey"] }
+    ]
+  },
+  {
     id: "session", title: "セッションの進め方", type: "choice",
     items: [
       { id: "brk_end", label: "区切り：終了時刻",

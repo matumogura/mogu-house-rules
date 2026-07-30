@@ -204,8 +204,9 @@ canvas{display:none}
     <nav class="toc" id="toc">
       <a data-target="card-basic"><span class="n">01</span>基本</a>
       <a data-target="timecard"><span class="n">02</span>参加可能時間</a>
-      <a data-target="sec-trend"><span class="n">03</span>シナリオの傾向</a>
-      <a data-target="card-save"><span class="n">04</span>保存</a>
+      <a data-target="sec-session"><span class="n">03</span>セッションの進め方</a>
+      <a data-target="sec-trend"><span class="n">04</span>シナリオの傾向</a>
+      <a data-target="card-save"><span class="n">05</span>保存</a>
     </nav>
   </header>
   <div class="legendbar"><div class="legendbar-inner"><span class="lbsec" id="lbsec"></span><span class="lbtitle">こたえかた</span><div class="legend" id="legend" style="display:contents"></div></div></div>
@@ -306,14 +307,14 @@ var TIME_MIN=6, TIME_MAX=27;
 function defaultTime(){ return { dayOn:true, dayStart:13, dayEnd:18, dayFlexOn:false, dayFlexStart:9, dayFlexEnd:21, breaks:[15], nightOn:true, nightStart:21, nightEnd:24, nightFlexOn:false, nightFlexStart:20, nightFlexEnd:27, note:"" }; }
 var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:{}, time:defaultTime() };
 function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
-function timeText(t){
+function timeText(t,skipNote){
   if(!t) return "";
   function band(label,on,s,e,fon,fs,fe,bk){ if(!on) return label+"：参加不可"; return label+" "+fmtHour(s)+"〜"+fmtHour(e)+(bk||"")+(fon?"（融通 "+fmtHour(fs)+"〜"+fmtHour(fe)+"）":""); }
   var bk=(t.breaks&&t.breaks.length)?"（休憩 "+t.breaks.slice().sort(function(a,b){return a-b;}).map(fmtHour).join("・")+"）":"";
   var p=[];
   p.push(band("昼卓",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,bk));
   p.push(band("夜卓",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,""));
-  if(t.note) p.push("メモ："+t.note);
+  if(t.note && !skipNote) p.push("メモ："+t.note);
   return p.join(" ／ ");
 }
 // 提出HTML用：参加可能時間のタイムライン図（自己完結インラインスタイル）
@@ -353,7 +354,7 @@ function timelineHTML(t){
 // ---- セクション描画 ----
 var secWrap = document.getElementById("sections");
 SECTIONS.forEach(function(sec){
-  var det=document.createElement("details"); det.className="jsec"; det.open=["session","mastering","wants","policy","erogro","media"].indexOf(sec.id)>=0;
+  var det=document.createElement("details"); det.className="jsec"; det.open=["play","tools","session","mastering","wants","policy","erogro","media"].indexOf(sec.id)>=0;
   det.id="sec-"+sec.id; det.dataset.type=sec.type;
   var sum=document.createElement("summary");
   sum.innerHTML=esc(sec.title)+'<span class="cnt" id="cnt-'+sec.id+'"></span>';
@@ -723,7 +724,7 @@ function drawImage(d){
   var CHIPBG={love:"#ff77aa",meh:"#cfcabd",weak:"#ffce1c",never:"#ff5533",choice:"#2f6bff"};
   var CHIPFG={love:"#161513",meh:"#161513",weak:"#161513",never:"#ffffff",choice:"#ffffff"};
   // 判型（9:16 縦長フルスクリーン）
-  var PW=1080, PH=1920, M=20, SH=8, IP=34, BAND=48;
+  var PW=1080, PH=1920, M=20, SH=8, IP=46, BAND=48;
   var cardW=PW-M*2-SH, cardH=PH-M*2-SH, cardBottom=M+cardH;
   var cX=M+IP, cW=cardW-IP*2;
   var cTop=M+BAND+20;            // 上帯の下からコンテンツ開始
@@ -763,8 +764,8 @@ function drawImage(d){
     return yy+11; }}; }
   function noneBlock(){ return {type:"none",render:function(o,x,y,w,dry){ diamond(o,x,y+14,"#27c05a",dry); o.font="900 30px "+ZK; if(!dry){o.fillStyle="#27c05a"; o.fillText("特筆する項目なし（すべて〇）",x+28,y);} return y+52; }}; }
   function freeBlock(label,text){ return {type:"free",render:function(o,x,y,w,dry){
-    diamond(o,x,y+14,"#ff5533",dry); o.font="900 27px "+ZK; if(!dry){o.fillStyle="#ff5533"; o.fillText(label,x+28,y);} var yy=y+40;
-    o.font="400 26px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,text,x,yy,w,37,dry); return yy+20; }}; }
+    diamond(o,x,y+16,"#ff5533",dry); o.font="900 27px "+ZK; if(!dry){o.fillStyle="#ff5533"; o.fillText(label,x+30,y);} var yy=y+48;
+    o.font="400 26px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,text,x,yy,w,39,dry); return yy+28; }}; }
   function timeBlock(t){ return {type:"time",render:function(o,x,y,w,dry){
     diamond(o,x,y+14,"#ff5533",dry); o.font="900 27px "+ZK; if(!dry){o.fillStyle="#ff5533"; o.fillText("参加可能時間",x+28,y);}
     var yy=y+44, labelW=40, tx=x+labelW, tw=w-labelW;
@@ -789,14 +790,59 @@ function drawImage(d){
     }
     row("昼",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,true,"#2f6bff");
     row("夜",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,false,"#6b3ff2");
-    o.font="400 22px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,timeText(t),x,yy+2,w,31,dry);
-    return yy+16; }}; }
+    o.font="400 22px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,timeText(t,true),x,yy+6,w,33,dry);
+    if(t.note){ o.font="400 22px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,"メモ："+t.note,x,yy+4,w,33,dry); }
+    return yy+20; }}; }
+  // タグ（ピル）を折り返して描画
+  function drawTags(o,x,y,w,tags,dry){
+    var padx=19, ph=54, gx=13, gy=13, cx=x, cy=y;
+    o.font="700 26px "+ZK;
+    tags.forEach(function(t){
+      var pw=Math.min(o.measureText(t.text).width+padx*2, w);
+      if(cx+pw>x+w && cx>x){ cx=x; cy+=ph+gy; }
+      if(!dry){
+        o.fillStyle=t.bg; roundRect(o,cx,cy,pw,ph,ph/2); o.fill();
+        o.lineWidth=2.5; o.strokeStyle="#161513"; roundRect(o,cx,cy,pw,ph,ph/2); o.stroke();
+        o.save(); roundRect(o,cx,cy,pw,ph,ph/2); o.clip();
+        o.fillStyle=t.fg; o.textBaseline="middle"; o.fillText(t.text,cx+padx,cy+ph/2+1); o.textBaseline="top"; o.restore();
+      }
+      cx+=pw+gx;
+    });
+    return cy+ph;
+  }
+  function tagSectionBlock(title,tags,dcolor){ return {type:"tags",render:function(o,x,y,w,dry){
+    diamond(o,x,y+16,dcolor||"#ff5533",dry); o.font="900 29px "+ZK; if(!dry){o.fillStyle="#161513"; o.fillText(title,x+32,y);}
+    var yy=y+56;
+    if(!tags.length){ o.font="400 23px "+ZK; if(!dry){o.fillStyle="#8a857a"; o.fillText("（記載なし）",x+4,yy);} return yy+40; }
+    yy=drawTags(o,x,yy,w,tags,dry); return yy+34; }}; }
 
-  var blocks=[]; var groups=nonNormal();
+  // ---- サマリー用データ（◎＝好き/得意、×・××＝苦手）----
+  var likeScene=[], likeOther=[], dislike=[], LOVE="#ffcf8f";
+  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
+    if((it.type||sec.type)!=="scale") return;
+    var v=d.scale[it.id]; if(!v||v==="normal"||v==="meh") return;
+    if(v==="love"){ var n=d.loveN[it.id]||1; var tag={text:(n>1?"◎"+n+" ":"")+it.label,bg:LOVE,fg:"#161513"};
+      (sec.id==="trend"||sec.id==="world") ? likeScene.push(tag) : likeOther.push(tag); }
+    else if(v==="weak") dislike.push({text:"×"+it.label,bg:"#ffce1c",fg:"#161513"});
+    else if(v==="never") dislike.push({text:"××"+it.label,bg:"#ff5533",fg:"#ffffff"});
+  }); });
+  // プレイスタイル・ツール
+  function findItem(secId,itemId){ var s=SECTIONS.filter(function(x){return x.id===secId;})[0]; return s? s.items.filter(function(i){return i.id===itemId;})[0] : null; }
+  var playIt=findItem("play","play_role");
+  var roleTxt=(playIt && d.choice[playIt.id]!=null) ? playIt.options[d.choice[playIt.id]] : "";
+  var toolIt=findItem("tools","tool_use"), toolList=[];
+  if(toolIt){ (d.multi[toolIt.id]||[]).forEach(function(i){ toolList.push(toolIt.options[i]); }); var trz=(d.reason&&d.reason[toolIt.id])||""; if(trz) toolList.push(trz); }
+  var profileTags=[]; if(roleTxt) profileTags.push({text:roleTxt,bg:"#ffe08a",fg:"#161513"});
+  toolList.forEach(function(t){ profileTags.push({text:t,bg:"#ffffff",fg:"#161513"}); });
+
+  var blocks=[];
+  blocks.push(tagSectionBlock("プレイスタイル・使用ツール", profileTags));
   blocks.push(timeBlock(d.time));
-  if(!groups.length) blocks.push(noneBlock());
-  groups.forEach(function(g){ blocks.push(headerBlock(g.title)); g.entries.forEach(function(e){ blocks.push(itemBlock(e)); }); });
+  blocks.push(tagSectionBlock("好きなシナリオ傾向", likeScene));
+  blocks.push(tagSectionBlock("好き・得意な要素（◎）", likeOther));
+  blocks.push(tagSectionBlock("苦手・NGな要素（×＝黄／××＝赤）", dislike));
   FREE.forEach(function(f){ var v=d.free[f.id]; if(v) blocks.push(freeBlock(f.label,v)); });
+  blocks.push({type:"noteline",render:function(o,x,y,w,dry){ o.font="400 20px "+ZK; if(!dry)o.fillStyle="#8a857a"; var yy=wrap(o,"※△（微妙）や選択式の回答、理由・補足は提出用HTMLに全項目あります。",x,y+6,w,28,dry); return yy+6; }});
   blocks.forEach(function(b){ b.h=b.render(mctx,0,0,cW,true); });
 
   // ---- ページ分割 ----
