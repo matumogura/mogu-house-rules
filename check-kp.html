@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>地雷チェックシート 集約｜モグ卓（KP用）</title>
+<title>事前チェックシート 集約｜モグ卓（KP用）</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -124,15 +124,15 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
     <span class="kpbadge">KP</span>
     <span class="sp"></span>
     <a class="pill y" href="check.html">PL用ページ →</a>
-    <a class="pill" href="jirai.html">地雷トップ</a>
+    <a class="pill" href="jirai.html">事前チェック</a>
     <a class="pill" href="index.html">ハウスルール</a>
   </div>
 </header>
 
 <main>
   <div class="phead">
-    <div class="kick">JIRAI CHECK SHEET — FOR KEEPERS</div>
-    <h1>地雷<span class="cc">集約</span>シート</h1>
+    <div class="kick">JIZEN CHECK SHEET — FOR KEEPERS</div>
+    <h1>事前チェック<span class="cc">集約</span>シート</h1>
     <p class="lead">PLから受け取った提出ファイル（HTML／JSON）を読み込むと、全員の地雷を横断で確認できます。周知が必要な項目にチェックを入れ、PL共有用の注意文をまとめてコピーできます。読み込んだデータは外部に送信されません。</p>
   </div>
 
@@ -141,7 +141,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
     <div class="drop" id="drop">
       <div class="big">ここにファイルをドロップ</div>
       <b>または クリックして選択</b>
-      <p>PLが保存した「地雷_〇〇.html」または JSON ファイル（複数可・最大<span id="maxn">30</span>人）</p>
+      <p>PLが保存した「事前_〇〇.html」または JSON ファイル（複数可・最大<span id="maxn">30</span>人）</p>
       <input type="file" id="file" accept=".html,.htm,.json,application/json,text/html" multiple style="display:none">
     </div>
     <div class="roster" id="roster"></div>
@@ -198,7 +198,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
 </main>
 
 <footer>
-  <div class="f1">モグ<b>卓</b> 地雷チェックシート（KP用）</div>
+  <div class="f1">モグ<b>卓</b> 事前チェックシート（KP用）</div>
   <div class="f2">読み込んだデータはブラウザ内のみで処理されます / no data is sent anywhere</div>
 </footer>
 
@@ -249,7 +249,7 @@ function parseData(text,fname){
     else { var m=text.match(/id=["']mogu-jirai-data["'][^>]*>([\s\S]*?)<\/script>/i); if(m) d=JSON.parse(m[1]); }
   }
   if(!d||d._type!=="mogu-jirai-sheet") return null;
-  d.scale=d.scale||{}; d.loveN=d.loveN||{}; d.choice=d.choice||{}; d.free=d.free||{}; d.reason=d.reason||{};
+  d.scale=d.scale||{}; d.loveN=d.loveN||{}; d.choice=d.choice||{}; d.multi=d.multi||{}; d.free=d.free||{}; d.reason=d.reason||{};
   d.name=d.name||"（無名）";
   return d;
 }
@@ -288,15 +288,26 @@ function choiceAttEntries(sec,item){
   });
   return out;
 }
+function multiEntries(sec,item){
+  var out=[];
+  people.forEach(function(p){
+    var arr=(p.multi&&p.multi[item.id])||[];
+    arr.forEach(function(i,k){ out.push({name:p.name, v:"choice", sym:item.options[i], reason:(k===0?((p.reason&&p.reason[item.id])||""):"")}); });
+  });
+  return out;
+}
+function attEntries(sec,it,levels){
+  return sec.type==="scale" ? scaleEntriesForItem(it.id,levels) : sec.type==="multi" ? multiEntries(sec,it) : choiceAttEntries(sec,it);
+}
 function renderAgg(){
   var wrap=document.getElementById("agg"); wrap.innerHTML="";
   // 1) 要注意（× ××）＋選択式の配慮
   var g1=document.createElement("div");
-  g1.innerHTML='<div class="gtitle"><span class="badge red">要注意</span>× 苦手・×× 絶対NG・配慮希望</div>';
+  g1.innerHTML='<div class="gtitle"><span class="badge red">要注意</span>× 苦手・×× NG・配慮希望</div>';
   var any=false;
   SECTIONS.forEach(function(sec){
     sec.items.forEach(function(it){
-      var entries = sec.type==="scale" ? scaleEntriesForItem(it.id,["weak","never"]) : choiceAttEntries(sec,it);
+      var entries = attEntries(sec,it,["weak","never"]);
       if(entries.length){ any=true; g1.appendChild(arow(sec,it,entries,true)); }
     });
   });
@@ -338,7 +349,7 @@ function emptyEl(t){ var d=document.createElement("div"); d.className="empty"; d
 
 document.getElementById("ck-all").addEventListener("click",function(){
   SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
-    var entries=sec.type==="scale"?scaleEntriesForItem(it.id,["weak","never"]):choiceAttEntries(sec,it);
+    var entries=attEntries(sec,it,["weak","never"]);
     if(entries.length) checked[sec.id+"::"+it.id]=true;
   }); });
   renderAgg(); buildOutput();
@@ -359,6 +370,7 @@ function renderPeople(){
       sec.items.forEach(function(it){
         var rz=(p.reason&&p.reason[it.id])||"";
         if(sec.type==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v==="normal"&&!rz)return; var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} ents.push({label:it.label,sym:sym,cls:v,reason:rz}); }
+        else if(sec.type==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(!arr.length&&!rz)return; if(!arr.length){ents.push({label:it.label,sym:"—",cls:"choice",reason:rz});} else {arr.forEach(function(i,k){ents.push({label:it.options[i],sym:"✓",cls:"choice",reason:(k===0?rz:"")});});} }
         else { var idx=p.choice[it.id]; if(idx==null&&!rz)return; ents.push({label:it.label,sym:(idx==null?"—":it.options[idx]),cls:"choice",reason:rz}); }
       });
       if(ents.length) groups.push({title:sec.title,ents:ents});
@@ -390,6 +402,7 @@ function renderMatrix(){
       people.forEach(function(p){
         var cell="",color="";
         if(sec.type==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v!=="normal"){ var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} cell=sym; color=v==="never"?"#ff5533":v==="weak"?"#b8860b":v==="love"?"#c02e6a":"#7c776c"; } }
+        else if(sec.type==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.length){ cell="✓"+arr.length; color="#2f6bff"; } }
         else { var idx=p.choice[it.id]; if(idx!=null){ cell=(sec.attentionFrom!=null&&idx>=sec.attentionFrom?"▲":"○"); color="#2f6bff"; } }
         html+='<td title="'+esc(cell)+'" style="text-align:center;padding:4px 8px;border-bottom:1px dashed #d8d3c7;font-weight:700;color:'+color+'">'+esc(cell)+'</td>';
       });
@@ -407,14 +420,14 @@ function buildOutput(){
   var withNotice=document.getElementById("op-notice").checked;
   var L=[];
   L.push("【卓の事前共有・お願い】");
-  L.push("提出いただいた地雷チェックをもとに、本卓では以下に配慮します。");
+  L.push("提出いただいた事前チェックをもとに、本卓では以下に配慮します。");
   L.push("");
   var lines=[];
   SECTIONS.forEach(function(sec){
     sec.items.forEach(function(it){
       var key=sec.id+"::"+it.id;
       if(!checked[key]) return;
-      var entries = sec.type==="scale" ? scaleEntriesForItem(it.id, withMeh?["weak","never","meh"]:["weak","never"]) : choiceAttEntries(sec,it);
+      var entries = attEntries(sec,it, withMeh?["weak","never","meh"]:["weak","never"]);
       if(!entries.length) return;
       var detail = entries.map(function(e){ return withNames ? e.sym+" "+e.name+(e.reason?"（"+e.reason+"）":"") : e.sym; }).join("／");
       lines.push("・"+it.label+"："+detail);

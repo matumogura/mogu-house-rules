@@ -7,10 +7,10 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>地雷チェックシート｜モグ卓 ハウスルール</title>
+<title>事前チェックシート｜モグ卓 ハウスルール</title>
 <meta property="og:type" content="website">
-<meta property="og:title" content="地雷チェックシート｜モグ卓">
-<meta property="og:description" content="安心して卓を囲むための地雷チェックシート。PLは入力、KPは集約ができます。">
+<meta property="og:title" content="事前チェックシート｜モグ卓">
+<meta property="og:description" content="安心して卓を囲むための事前チェックシート。PLは入力、KPは集約ができます。">
 <meta property="og:image" content="https://matumogura.github.io/mogu-house-rules/ogp.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -127,18 +127,18 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
     <button class="hamburger" id="hamburger" aria-label="メニューを開閉" aria-expanded="false"><span></span><span></span><span></span></button>
     <span class="menuhint">MENU</span>
     <div class="logo">モグ<b>卓</b></div>
-    <span class="current"><span class="n">JIRAI</span>地雷チェック</span>
+    <span class="current"><span class="n">JIZEN</span>事前チェック</span>
   </div>
 </header>
 
 <nav id="nav">
   <div class="pageswitch">
     <a class="psbtn" href="index.html"><span class="pi">RULES</span>ハウスルール</a>
-    <a class="psbtn on" href="jirai.html"><span class="pi">JIRAI</span>地雷チェック</a>
+    <a class="psbtn on" href="jirai.html"><span class="pi">JIZEN</span>事前チェック</a>
   </div>
   <div class="navwrap" id="navwrap">
     <a href="#top"><span class="n">◎</span>案内</a>
-    <a href="check.html"><span class="n">PL</span>地雷を入力する</a>
+    <a href="check.html"><span class="n">PL</span>事前チェックを入力する</a>
     <a href="check-kp.html"><span class="n">KP</span>提出を集約する</a>
     <a href="index.html"><span class="n">←</span>ハウスルールへ戻る</a>
   </div>
@@ -148,7 +148,7 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
 
 <main>
   <section class="sec" id="top">
-    <div class="sechead"><span class="secnum">✦</span><div class="sectitle"><div class="en">JIRAI CHECK SHEET</div><h2>地雷チェックシート</h2></div></div>
+    <div class="sechead"><span class="secnum">✦</span><div class="sectitle"><div class="en">JIZEN CHECK SHEET</div><h2>事前チェックシート</h2></div></div>
     <p class="lead">自分の苦手・NG要素（地雷）や好きな要素を <code>◎〇△××</code> でまとめ、卓に提出するファイルとSNS共有用の画像・テキストを作れます。KPは受け取ったファイルをまとめて確認し、周知が必要な項目を注意文としてPLに共有できます。入力データは各自のブラウザ内にのみ保存され、外部には送信されません。</p>
 
     <div class="steps">
@@ -162,7 +162,7 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
         <p>「地雷」は人によって本当にさまざまです。事前に共有しておくことで、みんなが安心して物語を楽しめます。答えたくない項目は空欄（〇）のままでも大丈夫です。</p>
         <p class="small">※ このシートは配慮のための任意ツールです。すべてに答える義務はありません。</p></div>
 
-      <div class="card"><div class="card-h"><span class="tag t-blue">PLAYER</span><h3>地雷を入力する（PL）</h3></div>
+      <div class="card"><div class="card-h"><span class="tag t-blue">PLAYER</span><h3>事前チェックを入力する（PL）</h3></div>
         <p>各項目に回答して、<strong>提出用HTML</strong>・<strong>SNS画像</strong>・<strong>コピー用テキスト</strong>を作成します。</p>
         <div class="pills"><a class="chip coral" href="check.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>入力ページを開く</a></div></div>
 
@@ -174,14 +174,14 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
 </main>
 
 <footer>
-  <div class="f1">モグ<b>卓</b> 地雷チェックシート</div>
+  <div class="f1">モグ<b>卓</b> 事前チェックシート</div>
   <div class="f2">入力データはブラウザ内のみに保存されます ／ <a href="index.html">ハウスルールに戻る</a></div>
 </footer>
 
 <script>
 // marquee
 (function(){
-  var mq='JIRAI CHECK ✦ JIRAI CHECK ✦ JIRAI CHECK ✦ JIRAI CHECK ✦ ';
+  var mq='JIZEN CHECK ✦ JIZEN CHECK ✦ JIZEN CHECK ✦ JIZEN CHECK ✦ ';
   var unit=mq.split('✦').join('<span class=q>✦</span>');
   var s="";for(var i=0;i<8;i++){s+='<span>'+unit+'</span>';}
   document.getElementById('mq1').innerHTML=s;

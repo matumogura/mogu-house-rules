@@ -1,5 +1,5 @@
 /* ============================================================
-   モグ卓 地雷チェックシート 共通スキーマ
+   モグ卓 事前チェックシート 共通スキーマ
    check.html（PL入力）と check-kp.html（KP集約）で共有します。
    項目を増減したい場合はこのファイルを編集してください。
    ============================================================ */
@@ -10,7 +10,7 @@ window.JIRAI_SCALE = [
   { v: "normal", sym: "〇",  t: "普通" },
   { v: "meh",    sym: "△",  t: "微妙" },
   { v: "weak",   sym: "×",  t: "苦手",       attention: true },
-  { v: "never",  sym: "××", t: "絶対NG",     attention: true, strong: true }
+  { v: "never",  sym: "××", t: "NG",         attention: true, strong: true }
 ];
 window.JIRAI_SCALE_DEFAULT = "normal"; // 未操作時の既定値（〇）
 
@@ -20,7 +20,7 @@ window.JIRAI_LEGEND = [
   "〇：普通",
   "△：微妙",
   "×：苦手",
-  "××：何があっても通りたくない"
+  "××：できれば避けたい"
 ];
 
 /* セクション定義
@@ -265,6 +265,7 @@ window.JIRAI_SECTIONS = [
       { id: "tbl_sexual",  label: "自PC・同卓PCへの性的な発言" },
       { id: "tbl_fixedrp", label: "同卓者による確定RP" },
       { id: "tbl_pldiscuss", label: "PL発言（メタ相談）の多用" },
+      { id: "tbl_gossip",  label: "他卓・他陣についての雑談" },
       { id: "tbl_longrp",  label: "長めのRP" },
       { id: "tbl_strong",  label: "極端に強いステータス" },
       { id: "tbl_weak",    label: "極端に弱いステータス" },
@@ -274,6 +275,53 @@ window.JIRAI_SECTIONS = [
       { id: "tbl_eatweet", label: "卓中の飲食・Twitter" },
       { id: "tbl_bgm",     label: "苦手BGM" },
       { id: "tbl_record",  label: "セッションの録画・配信・見学" }
+    ]
+  },
+  {
+    id: "session", title: "セッションの進め方", type: "choice",
+    items: [
+      { id: "brk_end", label: "区切り：終了時刻",
+        options: ["時間厳守で終わりたい", "めいっぱい・少し延長してもOK"] },
+      { id: "brk_mid", label: "区切り：中断",
+        options: ["途中で区切ってもいい", "キリの良いところまで進めたい"] },
+      { id: "rp_pace", label: "RPの進行",
+        options: ["長引いたらKPに進めてほしい", "じっくり好きなだけやりたい"] },
+      { id: "sched",   label: "日程の押さえ方",
+        options: ["最低限＋足りなければ都度追加", "多めに押さえて中で調整"] }
+    ]
+  },
+  {
+    id: "policy", title: "協力・PvP・難易度の方針", type: "choice",
+    items: [
+      { id: "coop_pvp",  label: "協力／PvP",
+        options: ["協力しやすいよう仲介してほしい", "基本的に協力したい", "PvPになってもいい", "PvPが発生する方が面白い"] },
+      { id: "coop_lost", label: "ロストの許容",
+        options: ["全生還したい", "終了時ならロストしてもいい", "途中ロストしてもいい"] },
+      { id: "dif_guide", label: "難易度：結果への誘導",
+        options: ["良い結果になるよう誘導してほしい", "必ずしも良い結果にならなくてもいい"] }
+    ]
+  },
+  {
+    id: "erogro", title: "エロ・グロの許容度", type: "choice",
+    items: [
+      { id: "eg_ero", label: "エロ",
+        options: ["描写も省いてほしい", "画像は見たくない", "基本的に許容", "自身がRPしてもいい"] },
+      { id: "eg_gro", label: "グロ",
+        options: ["描写も省いてほしい", "画像は見たくない", "基本的に許容", "自身がRPしてもいい"] }
+    ]
+  },
+  {
+    id: "wants", title: "ダイス・ギミックの希望（複数選択可）", type: "multi",
+    items: [
+      { id: "dif_flags", label: "希望すること（複数可・その場の申告を優先）",
+        options: ["生死のかかるダイスでCTを使いたい", "ファンブルのペナルティは軽い方がいい", "リアル時間を使うギミックは好みではない", "他PC・NPCの生死を左右したくない"] }
+    ]
+  },
+  {
+    id: "imgassets", title: "使用画像の扱い（複数選択可）", type: "multi",
+    items: [
+      { id: "img_flags", label: "該当するもの（複数可）",
+        options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
     ]
   },
   {
@@ -300,6 +348,8 @@ window.JIRAI_SECTIONS = [
 
 /* 自由記入欄 */
 window.JIRAI_FREE = [
+  { id: "time_base",    label: "参加可能時間（基本）", ph: "例）21時〜24時" },
+  { id: "time_ext",     label: "参加可能時間（延長できるなら）", ph: "例）20時〜翌1時" },
   { id: "free_dislike", label: "苦手なことメモ",       ph: "上のカテゴリで拾いきれない苦手や、補足したいこと" },
   { id: "free_notice",  label: "お知らせしたい事項",   ph: "自分がやりがちなこと、取り扱い注意、事前に伝えたいこと" },
   { id: "free_likes",   label: "好きな要素など",       ph: "こういうPC・RP・描写が来ると嬉しい、という要素" }
