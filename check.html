@@ -180,8 +180,9 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
 canvas{display:none}
 @media(max-width:640px){
   .logo{font-size:18px}
-  .hbar{flex-wrap:wrap;gap:8px;padding:10px 14px} /* ロゴ＝1行目、ボタン＝2行目に折り返す */
-  .pill{font-size:12px;padding:5px 11px}
+  .hbar{flex-wrap:wrap;gap:8px;padding:10px 14px} /* 1行目=ロゴ+目次、2行目=各ページpill */
+  .hbar .sp{flex-basis:100%;margin:0;height:0} /* スペーサーを全幅にしてpillを丸ごと次行へ */
+  .pill{font-size:12px;padding:5px 10px}
   .iname{min-width:100%}
   .scale,.choices{width:100%;flex-shrink:1} /* 選択ボタンを全幅にして折り返す（右端切れ防止）*/
   input[type=text],textarea,.reasonbox{font-size:16px} /* タップ時の自動ズーム防止 */
