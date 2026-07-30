@@ -29,6 +29,68 @@ window.JIRAI_LEGEND = [
    choice は attentionFrom 以上の index を「要配慮」とみなす */
 window.JIRAI_SECTIONS = [
   {
+    id: "session", title: "セッションの進め方", type: "choice",
+    items: [
+      { id: "brk_end", label: "区切り：終了時刻",
+        options: ["めいっぱい・少し延長してもOK", "時間厳守で終わりたい"] },
+      { id: "brk_mid", label: "区切り：中断",
+        options: ["途中で区切ってもいい", "キリの良いところまで進めたい"] },
+      { id: "rp_pace", label: "RPの進行",
+        options: ["じっくり好きなだけやりたい", "長引いたらKPに進めてほしい"] },
+      { id: "sched",   label: "日程の押さえ方",
+        options: ["多めに押さえて中で調整", "最低限＋足りなければ都度追加"] }
+    ]
+  },
+  {
+    id: "mastering", title: "演出・マスタリングへの同意", type: "choice", attentionFrom: 2,
+    items: [
+      { id: "mst_gmset", label: "GMによるPC詳細設定・関係性の付与",
+        options: ["お任せしてOK", "相談があれば可", "PL側での設定を優先"] },
+      { id: "mst_norp", label: "結果が変わらない展開でのロールプレイ要求",
+        options: ["歓迎（重視したい）", "許容（適度であれば）", "早期の切り上げを希望"] },
+      { id: "mst_negative", label: "ネガティブな演出（暴言・家庭事情の深掘り等）への耐性",
+        options: ["問題なし", "相談があれば可", "避けたい"] }
+    ]
+  },
+  {
+    id: "wants", title: "ダイス・ギミックの希望（複数選択可）", type: "multi",
+    items: [
+      { id: "dif_flags", label: "希望すること（複数可・その場の申告を優先）",
+        options: ["生死のかかるダイスでCTを使いたい", "ファンブルのペナルティは軽い方がいい", "リアル時間を使うギミックは好みではない", "他PC・NPCの生死を左右したくない"] }
+    ]
+  },
+  {
+    id: "policy", title: "協力・PvP・難易度の方針", type: "choice",
+    items: [
+      { id: "coop_pvp",  label: "協力／PvP",
+        options: ["PvPが発生する方が面白い", "PvPになってもいい", "基本的に協力したい", "協力しやすいよう仲介してほしい"] },
+      { id: "coop_lost", label: "ロストの許容",
+        options: ["途中ロストしてもいい", "終了時ならロストしてもいい", "全生還したい"] },
+      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導（複数選択可）",
+        options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
+    ]
+  },
+  {
+    id: "erogro", title: "エロ・グロの許容度", type: "choice",
+    items: [
+      { id: "eg_ero", label: "エロ",
+        options: ["自身がRPしてもいい", "基本的に許容", "画像は見たくない", "描写も省いてほしい"] },
+      { id: "eg_gro", label: "グロ",
+        options: ["自身がRPしてもいい", "基本的に許容", "画像は見たくない", "描写も省いてほしい"] }
+    ]
+  },
+  {
+    id: "media", title: "画像・ログの取り扱い", type: "choice", attentionFrom: 2,
+    items: [
+      { id: "media_art", label: "立ち絵・作成画像の保存およびSNS投稿",
+        options: ["自由にしてOK", "事後報告があれば可", "事前相談を希望", "個人保存のみ可（投稿不可）"] },
+      { id: "media_log", label: "ログ・スクショを第三者に見せる（SNS含む）",
+        options: ["問題なし", "報告があれば可", "内容を伏せて相談", "完全非公開を希望"] },
+      { id: "img_flags", type: "multi", label: "使用画像の扱い（複数選択可）",
+        options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
+    ]
+  },
+  {
     id: "trend", title: "シナリオの傾向・展開", type: "scale",
     items: [
       { id: "tr_emo",       label: "エモ重視（エモシ）" },
@@ -276,80 +338,11 @@ window.JIRAI_SECTIONS = [
       { id: "tbl_bgm",     label: "苦手BGM" },
       { id: "tbl_record",  label: "セッションの録画・配信・見学" }
     ]
-  },
-  {
-    id: "session", title: "セッションの進め方", type: "choice",
-    items: [
-      { id: "brk_end", label: "区切り：終了時刻",
-        options: ["時間厳守で終わりたい", "めいっぱい・少し延長してもOK"] },
-      { id: "brk_mid", label: "区切り：中断",
-        options: ["途中で区切ってもいい", "キリの良いところまで進めたい"] },
-      { id: "rp_pace", label: "RPの進行",
-        options: ["長引いたらKPに進めてほしい", "じっくり好きなだけやりたい"] },
-      { id: "sched",   label: "日程の押さえ方",
-        options: ["最低限＋足りなければ都度追加", "多めに押さえて中で調整"] }
-    ]
-  },
-  {
-    id: "policy", title: "協力・PvP・難易度の方針", type: "choice",
-    items: [
-      { id: "coop_pvp",  label: "協力／PvP",
-        options: ["協力しやすいよう仲介してほしい", "基本的に協力したい", "PvPになってもいい", "PvPが発生する方が面白い"] },
-      { id: "coop_lost", label: "ロストの許容",
-        options: ["全生還したい", "終了時ならロストしてもいい", "途中ロストしてもいい"] },
-      { id: "dif_guide", label: "難易度：結果への誘導",
-        options: ["良い結果になるよう誘導してほしい", "必ずしも良い結果にならなくてもいい"] }
-    ]
-  },
-  {
-    id: "erogro", title: "エロ・グロの許容度", type: "choice",
-    items: [
-      { id: "eg_ero", label: "エロ",
-        options: ["描写も省いてほしい", "画像は見たくない", "基本的に許容", "自身がRPしてもいい"] },
-      { id: "eg_gro", label: "グロ",
-        options: ["描写も省いてほしい", "画像は見たくない", "基本的に許容", "自身がRPしてもいい"] }
-    ]
-  },
-  {
-    id: "wants", title: "ダイス・ギミックの希望（複数選択可）", type: "multi",
-    items: [
-      { id: "dif_flags", label: "希望すること（複数可・その場の申告を優先）",
-        options: ["生死のかかるダイスでCTを使いたい", "ファンブルのペナルティは軽い方がいい", "リアル時間を使うギミックは好みではない", "他PC・NPCの生死を左右したくない"] }
-    ]
-  },
-  {
-    id: "imgassets", title: "使用画像の扱い（複数選択可）", type: "multi",
-    items: [
-      { id: "img_flags", label: "該当するもの（複数可）",
-        options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
-    ]
-  },
-  {
-    id: "media", title: "画像・ログの取り扱い", type: "choice", attentionFrom: 2,
-    items: [
-      { id: "media_art", label: "立ち絵・作成画像の保存およびSNS投稿",
-        options: ["自由にしてOK", "事後報告があれば可", "事前相談を希望", "個人保存のみ可（投稿不可）"] },
-      { id: "media_log", label: "ログ・スクショを第三者に見せる（SNS含む）",
-        options: ["問題なし", "報告があれば可", "内容を伏せて相談", "完全非公開を希望"] }
-    ]
-  },
-  {
-    id: "mastering", title: "演出・マスタリングへの同意", type: "choice", attentionFrom: 2,
-    items: [
-      { id: "mst_gmset", label: "GMによるPC詳細設定・関係性の付与",
-        options: ["お任せしてOK", "相談があれば可", "PL側での設定を優先"] },
-      { id: "mst_norp", label: "結果が変わらない展開でのロールプレイ要求",
-        options: ["歓迎（重視したい）", "許容（適度であれば）", "早期の切り上げを希望"] },
-      { id: "mst_negative", label: "ネガティブな演出（暴言・家庭事情の深掘り等）への耐性",
-        options: ["問題なし", "相談があれば可", "避けたい"] }
-    ]
   }
 ];
 
 /* 自由記入欄 */
 window.JIRAI_FREE = [
-  { id: "time_base",    label: "参加可能時間（基本）", ph: "例）21時〜24時" },
-  { id: "time_ext",     label: "参加可能時間（延長できるなら）", ph: "例）20時〜翌1時" },
   { id: "free_dislike", label: "苦手なことメモ",       ph: "上のカテゴリで拾いきれない苦手や、補足したいこと" },
   { id: "free_notice",  label: "お知らせしたい事項",   ph: "自分がやりがちなこと、取り扱い注意、事前に伝えたいこと" },
   { id: "free_likes",   label: "好きな要素など",       ph: "こういうPC・RP・描写が来ると嬉しい、という要素" }

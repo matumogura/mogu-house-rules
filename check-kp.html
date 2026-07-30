@@ -160,6 +160,10 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
 
     <!-- 集約ビュー -->
     <div class="view on" id="view-agg">
+      <div class="card" id="timeagg-card">
+        <span class="lab">さんかかのうじかん（集約）</span>
+        <div id="timeagg"></div>
+      </div>
       <div class="card">
         <div class="btnrow" style="margin-bottom:6px">
           <button class="btn sm" id="ck-all"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>× ×× を全てチェック</button>
@@ -207,6 +211,15 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
 var SCALE=window.JIRAI_SCALE, SECTIONS=window.JIRAI_SECTIONS, SMAP=window.JIRAI.scaleMap(), esc=window.JIRAI.esc;
 var DEFAULT=window.JIRAI_SCALE_DEFAULT;
 var MAX=30;
+function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
+function timeText(t){ if(!t) return "";
+  function band(label,on,s,e,fon,fs,fe,bk){ if(!on) return label+"：参加不可"; return label+" "+fmtHour(s)+"〜"+fmtHour(e)+(bk||"")+(fon?"（融通 "+fmtHour(fs)+"〜"+fmtHour(fe)+"）":""); }
+  var bk=(t.breaks&&t.breaks.length)?"（休憩 "+t.breaks.slice().sort(function(a,b){return a-b;}).map(fmtHour).join("・")+"）":"";
+  var p=[];
+  p.push(band("昼卓",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,bk));
+  p.push(band("夜卓",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,""));
+  if(t.note) p.push("メモ："+t.note);
+  return p.join(" ／ "); }
 var people=[]; // {name, session, date, scale, loveN, choice, free, _fname}
 var checked={}; // key -> true
 
@@ -249,7 +262,7 @@ function parseData(text,fname){
     else { var m=text.match(/id=["']mogu-jirai-data["'][^>]*>([\s\S]*?)<\/script>/i); if(m) d=JSON.parse(m[1]); }
   }
   if(!d||d._type!=="mogu-jirai-sheet") return null;
-  d.scale=d.scale||{}; d.loveN=d.loveN||{}; d.choice=d.choice||{}; d.multi=d.multi||{}; d.free=d.free||{}; d.reason=d.reason||{};
+  d.scale=d.scale||{}; d.loveN=d.loveN||{}; d.choice=d.choice||{}; d.multi=d.multi||{}; d.free=d.free||{}; d.reason=d.reason||{}; d.time=d.time||null;
   d.name=d.name||"（無名）";
   return d;
 }
@@ -265,7 +278,7 @@ function render(){
   roster.querySelectorAll(".rm").forEach(function(b){ b.addEventListener("click",function(){ people.splice(parseInt(b.dataset.i,10),1); render(); }); });
   document.getElementById("counter").textContent = people.length? (people.length+" / "+MAX+" 人 読み込み済み") : "";
   document.getElementById("workspace").style.display = people.length? "block":"none";
-  if(people.length){ renderAgg(); renderPeople(); renderMatrix(); buildOutput(); }
+  if(people.length){ renderTimeAgg(); renderAgg(); renderPeople(); renderMatrix(); buildOutput(); }
 }
 
 // ---- 集約 ----
@@ -297,7 +310,48 @@ function multiEntries(sec,item){
   return out;
 }
 function attEntries(sec,it,levels){
-  return sec.type==="scale" ? scaleEntriesForItem(it.id,levels) : sec.type==="multi" ? multiEntries(sec,it) : choiceAttEntries(sec,it);
+  var itype=it.type||sec.type;
+  return itype==="scale" ? scaleEntriesForItem(it.id,levels) : itype==="multi" ? multiEntries(sec,it) : choiceAttEntries(sec,it);
+}
+function renderTimeAgg(){
+  var host=document.getElementById("timeagg"); if(!host) return;
+  var withT=people.filter(function(p){return p.time;});
+  if(!withT.length){ host.innerHTML='<div class="empty">時間データのある提出がありません。</div>'; return; }
+  function agg(band){
+    var onK=band+"On",sK=band+"Start",eK=band+"End",foK=band+"FlexOn",fsK=band+"FlexStart",feK=band+"FlexEnd";
+    var parts=withT.filter(function(p){return p.time[onK];});
+    var o={n:parts.length, absent:withT.filter(function(p){return !p.time[onK];}).map(function(p){return p.name;})};
+    if(!parts.length) return o;
+    var maxS=-Infinity,minE=Infinity,maxSw=[],minEw=[],fMaxS=-Infinity,fMinE=Infinity;
+    parts.forEach(function(p){ var s=p.time[sK],e=p.time[eK];
+      if(s>maxS){maxS=s;maxSw=[p.name];} else if(s===maxS)maxSw.push(p.name);
+      if(e<minE){minE=e;minEw=[p.name];} else if(e===minE)minEw.push(p.name);
+      var fs=p.time[foK]?Math.min(s,p.time[fsK]):s, fe=p.time[foK]?Math.max(e,p.time[feK]):e;
+      if(fs>fMaxS)fMaxS=fs; if(fe<fMinE)fMinE=fe;
+    });
+    o.maxS=maxS;o.minE=minE;o.maxSw=maxSw;o.minEw=minEw;
+    o.common=(maxS<minE)?[maxS,minE]:null; o.flex=(fMaxS<fMinE)?[fMaxS,fMinE]:null;
+    return o;
+  }
+  function band(title,a){
+    var box='margin:8px 0;padding:9px 11px;background:var(--paper);border:2px solid var(--ink);border-radius:10px';
+    if(!a.n) return '<div style="'+box+'"><b>'+title+'</b>：参加者なし'+(a.absent.length?'（不参加：'+a.absent.map(esc).join("、")+'）':'')+'</div>';
+    var h='<div style="'+box+'"><div style="font-weight:900;margin-bottom:3px">'+title+'（参加 '+a.n+'人）</div>';
+    h+= a.common
+      ? '<div style="font-size:14px;color:#c0392b;font-weight:800">全員が参加できる：'+fmtHour(a.common[0])+'〜'+fmtHour(a.common[1])+'</div>'
+      : '<div style="font-size:13px;color:#8a857a;font-weight:700">全員共通の時間帯はありません</div>';
+    h+='<div style="font-size:12px;color:#6b665c;margin-top:2px">最も遅い開始 '+fmtHour(a.maxS)+'（'+a.maxSw.map(esc).join("・")+'）／ 最も早い終了 '+fmtHour(a.minE)+'（'+a.minEw.map(esc).join("・")+'）</div>';
+    if(a.flex) h+='<div style="font-size:12px;color:#6b665c">融通込みなら：'+fmtHour(a.flex[0])+'〜'+fmtHour(a.flex[1])+'</div>';
+    if(a.absent.length) h+='<div style="font-size:12px;color:#8a857a">不参加：'+a.absent.map(esc).join("、")+'</div>';
+    return h+'</div>';
+  }
+  var html=band("昼卓",agg("day"))+band("夜卓",agg("night"));
+  var bt={}; withT.forEach(function(p){ (p.time.breaks||[]).forEach(function(b){ bt[b]=(bt[b]||0)+1; }); });
+  var bk=Object.keys(bt).sort(function(a,b){return a-b;});
+  if(bk.length) html+='<div style="font-size:12.5px;color:#6b665c;margin:4px 2px"><b>休憩の希望：</b>'+bk.map(function(k){return fmtHour(parseFloat(k))+'('+bt[k]+'人)';}).join("、")+'</div>';
+  var notes=withT.filter(function(p){return p.time.note;}).map(function(p){return esc(p.name)+'：'+esc(p.time.note);});
+  if(notes.length) html+='<div style="font-size:12.5px;color:#6b665c;margin:4px 2px"><b>時間のメモ：</b>'+notes.join(" ／ ")+'</div>';
+  host.innerHTML=html;
 }
 function renderAgg(){
   var wrap=document.getElementById("agg"); wrap.innerHTML="";
@@ -363,14 +417,16 @@ function renderPeople(){
   people.forEach(function(p){
     var card=document.createElement("div"); card.className="pcard";
     var h='<h3>'+esc(p.name)+'</h3><div class="pm">'+(p.session?esc(p.session)+' ／ ':'')+'記入日 '+esc(p.date||p.createdAt||"")+'</div>';
+    if(p.time) h+='<div class="pln"><div class="plt">参加可能時間</div><div class="fb">'+esc(timeText(p.time))+'</div></div>';
     // grouped non-normal
     var groups=[];
     SECTIONS.forEach(function(sec){
       var ents=[];
       sec.items.forEach(function(it){
         var rz=(p.reason&&p.reason[it.id])||"";
-        if(sec.type==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v==="normal"&&!rz)return; var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} ents.push({label:it.label,sym:sym,cls:v,reason:rz}); }
-        else if(sec.type==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(!arr.length&&!rz)return; if(!arr.length){ents.push({label:it.label,sym:"—",cls:"choice",reason:rz});} else {arr.forEach(function(i,k){ents.push({label:it.options[i],sym:"✓",cls:"choice",reason:(k===0?rz:"")});});} }
+        var itype=it.type||sec.type;
+        if(itype==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v==="normal"&&!rz)return; var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} ents.push({label:it.label,sym:sym,cls:v,reason:rz}); }
+        else if(itype==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(!arr.length&&!rz)return; if(!arr.length){ents.push({label:it.label,sym:"—",cls:"choice",reason:rz});} else {arr.forEach(function(i,k){ents.push({label:it.options[i],sym:"✓",cls:"choice",reason:(k===0?rz:"")});});} }
         else { var idx=p.choice[it.id]; if(idx==null&&!rz)return; ents.push({label:it.label,sym:(idx==null?"—":it.options[idx]),cls:"choice",reason:rz}); }
       });
       if(ents.length) groups.push({title:sec.title,ents:ents});
@@ -401,8 +457,9 @@ function renderMatrix(){
       html+='<tr><td style="position:sticky;left:0;background:var(--white);padding:4px 8px;border-bottom:1px dashed #d8d3c7">'+esc(it.label)+'</td>';
       people.forEach(function(p){
         var cell="",color="";
-        if(sec.type==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v!=="normal"){ var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} cell=sym; color=v==="never"?"#ff5533":v==="weak"?"#b8860b":v==="love"?"#c02e6a":"#7c776c"; } }
-        else if(sec.type==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.length){ cell="✓"+arr.length; color="#2f6bff"; } }
+        var itype=it.type||sec.type;
+        if(itype==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v!=="normal"){ var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} cell=sym; color=v==="never"?"#ff5533":v==="weak"?"#b8860b":v==="love"?"#c02e6a":"#7c776c"; } }
+        else if(itype==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.length){ cell="✓"+arr.length; color="#2f6bff"; } }
         else { var idx=p.choice[it.id]; if(idx!=null){ cell=(sec.attentionFrom!=null&&idx>=sec.attentionFrom?"▲":"○"); color="#2f6bff"; } }
         html+='<td title="'+esc(cell)+'" style="text-align:center;padding:4px 8px;border-bottom:1px dashed #d8d3c7;font-weight:700;color:'+color+'">'+esc(cell)+'</td>';
       });
@@ -435,6 +492,10 @@ function buildOutput(){
   });
   if(lines.length){ L.push("＜配慮する項目＞"); L=L.concat(lines); L.push(""); }
   else { L.push("（チェックされた配慮項目はありません）"); L.push(""); }
+
+  var tl=[];
+  people.forEach(function(p){ if(p.time) tl.push("・"+p.name+"："+timeText(p.time)); });
+  if(tl.length){ L.push("＜参加可能時間＞"); L=L.concat(tl); L.push(""); }
 
   if(withNotice){
     var nt=[];

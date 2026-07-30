@@ -113,7 +113,7 @@ textarea{resize:vertical;min-height:70px}
 .sbtn.on.s-never{background:var(--coral);color:#fff;box-shadow:2px 2px 0 var(--ink)}
 
 /* choice */
-.choices{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.choices{display:flex;gap:6px;flex-wrap:wrap;width:100%} /* 常に全幅・折り返しで右端切れ防止 */
 .cbtn{cursor:pointer;font-weight:700;font-size:12.5px;border:2.5px solid var(--ink);border-radius:999px;padding:4px 12px;background:var(--white);user-select:none;transition:.08s}
 .cbtn:hover{background:var(--paper-2)}
 .cbtn.on{background:var(--blue);color:#fff;box-shadow:2px 2px 0 var(--ink)}
@@ -141,6 +141,28 @@ textarea{resize:vertical;min-height:70px}
 .pchip{font-weight:700;font-size:12px;border:2.5px solid var(--ink);border-radius:16px;padding:2px 10px} /* 1行時の丸みに固定。折り返しても角Rが大きくならない */
 .pchip.love{background:var(--pink)}.pchip.meh{background:#cfcabd}.pchip.weak{background:var(--yellow)}
 .pchip.never{background:var(--coral);color:#fff}.pchip.choice{background:var(--blue);color:#fff}
+
+/* 参加可能時間ウィジェット */
+#timecard .thelp{font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin:2px 0 12px}
+.trow{display:flex;align-items:center;gap:10px;margin:6px 0}
+.trow.tband.off{opacity:.4}
+.tticks{position:relative;flex:1;height:15px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--ink-soft)}
+.tticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.tbl{display:flex;flex-direction:column;gap:2px;width:58px;flex-shrink:0;font-weight:700;font-size:12.5px;user-select:none}
+.tbl label{display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+.tbl .sub{font-size:10.5px;color:var(--ink-soft);font-weight:700}
+.tbl input{width:15px;height:15px;accent-color:var(--coral)}
+.ttrack{position:relative;flex:1;height:34px;border:2.5px solid var(--ink);border-radius:10px;background:repeating-linear-gradient(90deg,var(--paper),var(--paper) calc(100%/7 - 1px),#d8d3c7 calc(100%/7 - 1px),#d8d3c7 calc(100%/7));touch-action:none}
+.tfill{position:absolute;top:3px;bottom:3px;background:var(--blue);opacity:.32;border-radius:6px;pointer-events:none}
+.tfill.night{background:#6b3ff2}
+.tfill.flex{opacity:.16;border:1.5px dashed var(--ink);top:6px;bottom:6px}
+.thnd{position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border:2.5px solid var(--ink);border-radius:50%;background:var(--white);box-shadow:1px 1px 0 var(--ink);cursor:ew-resize;touch-action:none;z-index:2}
+.thnd.flex{width:17px;height:17px;margin:-9px 0 0 -9px;border-style:dashed;background:var(--paper);box-shadow:none;z-index:1}
+.thnd:focus{outline:none;background:var(--yellow)}
+.tbrk{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:2px;background:var(--coral);color:#fff;border:2px solid var(--ink);border-radius:7px;padding:0 2px 0 5px;font-size:10px;font-weight:700;white-space:nowrap;cursor:ew-resize;touch-action:none;z-index:4;box-shadow:1px 1px 0 var(--ink)}
+.tbrk .bx{cursor:pointer;font-size:13px;line-height:1;padding:0 3px;border-radius:4px}
+.tbrk .bx:hover{background:rgba(0,0,0,.25)}
+.tsummary{margin-top:12px;font-weight:700;font-size:13px;background:var(--paper);border:2px solid var(--ink);border-radius:10px;padding:8px 12px;line-height:1.6}
 
 textarea#txtout{min-height:150px;font-family:'DM Mono',monospace;font-size:12.5px;background:var(--paper);margin-top:10px}
 
@@ -199,6 +221,36 @@ canvas{display:none}
     </div>
   </div>
 
+  <div class="card" id="timecard">
+    <span class="lab">さんかかのうじかん</span>
+    <p class="thelp">ハンドルを左右にドラッグして、参加できる時間帯を選んでください（30分刻み・6〜27時）。目安：<b>10 or 13時開始</b>／12・15時に休憩／18〜21時は夕食／<b>21〜24時に夜卓</b>。<br>「<b>融通可</b>」にチェックすると、延長できる時間帯（点線）を同じバーに追加できます。昼卓トラックの<b>空いた所をクリックで休憩を追加</b>（休憩の×で削除）。参加しない帯はチェックを外してください。</p>
+    <div class="trow"><span class="tbl"></span><div class="tticks" id="tticks"></div></div>
+    <div class="trow tband" data-band="day">
+      <div class="tbl"><label><input type="checkbox" id="day-on" checked>昼卓</label><label class="sub"><input type="checkbox" id="day-flex">融通可</label></div>
+      <div class="ttrack" id="track-day">
+        <div class="tfill flex" id="fill-dayflex"></div>
+        <div class="tfill" id="fill-day"></div>
+        <div class="thnd flex" id="h-dayFlexStart" data-k="dayFlexStart" tabindex="0"></div>
+        <div class="thnd flex" id="h-dayFlexEnd" data-k="dayFlexEnd" tabindex="0"></div>
+        <div class="thnd" id="h-dayStart" data-k="dayStart" tabindex="0"></div>
+        <div class="thnd" id="h-dayEnd" data-k="dayEnd" tabindex="0"></div>
+      </div>
+    </div>
+    <div class="trow tband" data-band="night">
+      <div class="tbl"><label><input type="checkbox" id="night-on" checked>夜卓</label><label class="sub"><input type="checkbox" id="night-flex">融通可</label></div>
+      <div class="ttrack" id="track-night">
+        <div class="tfill flex" id="fill-nightflex"></div>
+        <div class="tfill night" id="fill-night"></div>
+        <div class="thnd flex" id="h-nightFlexStart" data-k="nightFlexStart" tabindex="0"></div>
+        <div class="thnd flex" id="h-nightFlexEnd" data-k="nightFlexEnd" tabindex="0"></div>
+        <div class="thnd" id="h-nightStart" data-k="nightStart" tabindex="0"></div>
+        <div class="thnd" id="h-nightEnd" data-k="nightEnd" tabindex="0"></div>
+      </div>
+    </div>
+    <div class="tsummary" id="tsummary"></div>
+    <div class="field" style="margin-top:10px"><label for="time-note">時間についての補足（任意）</label><div class="hint">例：18時ごろ夕食で30分ほど中座／ペットの餌やりで一時離席など。</div><textarea id="time-note" placeholder="中座・離席の予定や、時間の希望など"></textarea></div>
+  </div>
+
   <div id="sections"></div>
 
   <div class="card">
@@ -237,7 +289,38 @@ var SMAP = window.JIRAI.scaleMap(), esc = window.JIRAI.esc;
 var STORE_KEY = "mogu-jirai-input-v2";
 var DEFAULT = window.JIRAI_SCALE_DEFAULT;
 
-var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:{} };
+var TIME_MIN=6, TIME_MAX=27;
+function defaultTime(){ return { dayOn:true, dayStart:13, dayEnd:18, dayFlexOn:false, dayFlexStart:11, dayFlexEnd:20, breaks:[15], nightOn:true, nightStart:21, nightEnd:24, nightFlexOn:false, nightFlexStart:20, nightFlexEnd:27, note:"" }; }
+var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:{}, time:defaultTime() };
+function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
+function timeText(t){
+  if(!t) return "";
+  function band(label,on,s,e,fon,fs,fe,bk){ if(!on) return label+"：参加不可"; return label+" "+fmtHour(s)+"〜"+fmtHour(e)+(bk||"")+(fon?"（融通 "+fmtHour(fs)+"〜"+fmtHour(fe)+"）":""); }
+  var bk=(t.breaks&&t.breaks.length)?"（休憩 "+t.breaks.slice().sort(function(a,b){return a-b;}).map(fmtHour).join("・")+"）":"";
+  var p=[];
+  p.push(band("昼卓",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,bk));
+  p.push(band("夜卓",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,""));
+  if(t.note) p.push("メモ："+t.note);
+  return p.join(" ／ ");
+}
+// 提出HTML用：参加可能時間のタイムライン図（自己完結インラインスタイル）
+function timelineHTML(t){
+  if(!t) return "";
+  function pc(h){ return (h-TIME_MIN)/(TIME_MAX-TIME_MIN)*100; }
+  var ticks=[6,9,12,15,18,21,24,27].map(function(h){ return '<span style="position:absolute;left:'+pc(h)+'%;transform:translateX(-50%)">'+h+'</span>'; }).join("");
+  function bar(s,e,c){ return '<div style="position:absolute;top:3px;bottom:3px;left:'+pc(s)+'%;width:'+(pc(e)-pc(s))+'%;background:'+c+';border-radius:5px"></div>'; }
+  function flex(on,s,e){ return on?'<div style="position:absolute;top:1px;bottom:1px;left:'+pc(s)+'%;width:'+(pc(e)-pc(s))+'%;border:1.5px dashed #161513;border-radius:6px"></div>':''; }
+  function brks(){ return (t.breaks||[]).map(function(b){ return '<div style="position:absolute;top:0;bottom:0;left:'+pc(b)+'%;width:2px;margin-left:-1px;background:#ff5533"></div>'; }).join(""); }
+  function trk(inner){ return '<div style="position:relative;flex:1;height:24px;border:2px solid #161513;border-radius:7px;background:#fff;overflow:hidden">'+inner+'</div>'; }
+  function na(){ return '<div style="flex:1;color:#8a857a;font-size:12px">参加不可</div>'; }
+  var dayRow=t.dayOn?trk(flex(t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd)+bar(t.dayStart,t.dayEnd,"#2f6bff")+brks()):na();
+  var nightRow=t.nightOn?trk(flex(t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd)+bar(t.nightStart,t.nightEnd,"#6b3ff2")):na();
+  return '<div class="tl"><div class="ft" style="margin-bottom:6px">参加可能時間</div>'+
+    '<div style="position:relative;height:14px;margin-left:32px;font-size:10px;color:#8a857a;font-family:\'DM Mono\',monospace">'+ticks+'</div>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin:3px 0"><span style="width:24px;font-size:12px;font-weight:700">昼</span>'+dayRow+'</div>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin:3px 0"><span style="width:24px;font-size:12px;font-weight:700">夜</span>'+nightRow+'</div>'+
+    '<div style="font-size:12.5px;margin-top:6px;color:#4a463f">'+esc(timeText(t))+(t.dayFlexOn||t.nightFlexOn?'　<span style="color:#8a857a">（点線＝融通可）</span>':'')+'</div></div>';
+}
 
 // ---- 凡例 ----
 (function(){
@@ -252,7 +335,7 @@ var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:{} };
 // ---- セクション描画 ----
 var secWrap = document.getElementById("sections");
 SECTIONS.forEach(function(sec){
-  var det=document.createElement("details"); det.className="jsec"; det.open=(sec.id==="media"||sec.id==="mastering");
+  var det=document.createElement("details"); det.className="jsec"; det.open=["session","mastering","wants","policy","erogro","media"].indexOf(sec.id)>=0;
   det.id="sec-"+sec.id; det.dataset.type=sec.type;
   var sum=document.createElement("summary");
   sum.innerHTML=esc(sec.title)+'<span class="cnt" id="cnt-'+sec.id+'"></span>';
@@ -272,7 +355,8 @@ SECTIONS.forEach(function(sec){
     nm.innerHTML='<span>'+esc(it.label)+'</span><span class="rmark" title="理由・補足">✎</span>';
     nm.addEventListener("click",function(){ toggleReason(it.id); });
     row.appendChild(nm);
-    if(sec.type==="scale"){
+    var itype=it.type||sec.type; // 項目ごとのtype（混在セクション対応）
+    if(itype==="scale"){
       var sc=document.createElement("div"); sc.className="scale";
       SCALE.forEach(function(s){
         var b=document.createElement("div"); b.className="sbtn s-"+s.v; b.textContent=s.sym;
@@ -281,7 +365,7 @@ SECTIONS.forEach(function(sec){
         sc.appendChild(b);
       });
       row.appendChild(sc);
-    } else if(sec.type==="multi"){
+    } else if(itype==="multi"){
       var chm=document.createElement("div"); chm.className="choices";
       it.options.forEach(function(opt,idx){
         var b=document.createElement("div"); b.className="cbtn mbtn"; b.textContent=opt;
@@ -387,8 +471,9 @@ function refreshChoice(){
     if(b.classList.contains("mbtn")) return; // multi は refreshMulti が担当
     b.classList.toggle("on", state.choice[b.dataset.item]===parseInt(b.dataset.idx,10));
   });
-  SECTIONS.forEach(function(sec){ if(sec.type!=="choice")return;
-    var c=0; sec.items.forEach(function(it){ if(state.choice[it.id]!=null) c++; });
+  SECTIONS.forEach(function(sec){ if(sec.type==="scale")return; // scale以外（choice/multi/混在）の回答数
+    var c=0; sec.items.forEach(function(it){ var t=it.type||sec.type;
+      if(t==="multi"){ if((state.multi[it.id]||[]).length) c++; } else { if(state.choice[it.id]!=null) c++; } });
     var el=document.getElementById("cnt-"+sec.id); if(el) el.textContent = c? c+"/"+sec.items.length+"回答":"";
   });
 }
@@ -396,10 +481,6 @@ function refreshMulti(){
   document.querySelectorAll(".mbtn").forEach(function(b){
     var arr=state.multi[b.dataset.item]||[];
     b.classList.toggle("on", arr.indexOf(parseInt(b.dataset.idx,10))>=0);
-  });
-  SECTIONS.forEach(function(sec){ if(sec.type!=="multi")return;
-    var c=0; sec.items.forEach(function(it){ if((state.multi[it.id]||[]).length) c++; });
-    var el=document.getElementById("cnt-"+sec.id); if(el) el.textContent = c? c+"/"+sec.items.length+"回答":"";
   });
 }
 document.querySelectorAll(".qfill").forEach(function(q){
@@ -419,6 +500,7 @@ function collect(){
     loveN:JSON.parse(JSON.stringify(state.loveN)),
     choice:JSON.parse(JSON.stringify(state.choice)),
     multi:JSON.parse(JSON.stringify(state.multi)),
+    time:JSON.parse(JSON.stringify(state.time)),
     reason:JSON.parse(JSON.stringify(state.reason)),
     free:(function(){ var o={}; FREE.forEach(function(f){ o[f.id]=val(f.id); }); return o; })(),
     createdAt:new Date().toISOString().slice(0,10)
@@ -435,6 +517,7 @@ function restore(){
     setV("f-name",d.name); setV("f-session",d.session); setV("f-date",d.date);
     if(d.scale) state.scale=d.scale; if(d.loveN) state.loveN=d.loveN; if(d.choice) state.choice=d.choice; if(d.reason) state.reason=d.reason;
     if(d.multi) state.multi=d.multi;
+    if(d.time) state.time=Object.assign(defaultTime(), d.time);
     if(d.free){ FREE.forEach(function(f){ setV(f.id, d.free[f.id]); }); }
   }catch(e){}
 }
@@ -455,13 +538,14 @@ function nonNormal(){
     var entries=[];
     sec.items.forEach(function(it){
       var rz=state.reason[it.id]||"";
-      if(sec.type==="scale"){
+      var itype=it.type||sec.type;
+      if(itype==="scale"){
         var v=state.scale[it.id]||DEFAULT;
         if(v==="normal" && !rz) return;
         var sym=SMAP[v].sym;
         if(v==="love"){ var n=state.loveN[it.id]||1; if(n>1) sym="◎".repeat(n); }
         entries.push({label:it.label, sym:sym, cls:v, reason:rz});
-      } else if(sec.type==="multi"){
+      } else if(itype==="multi"){
         var arr=state.multi[it.id]||[];
         if(!arr.length && !rz) return;
         if(!arr.length){ entries.push({label:it.label, sym:"—", cls:"choice", reason:rz}); }
@@ -480,6 +564,7 @@ function renderPreview(){
   var d=collect(), p=document.getElementById("preview");
   var html='<h3>'+(esc(d.name)||'（HO未入力）')+'</h3>';
   html+='<div class="pmeta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日 '+esc(d.date||d.createdAt)+'</div>';
+  html+='<div class="pline"><div class="pl-t">参加可能時間</div><div class="pl-b">'+esc(timeText(d.time))+'</div></div>';
   var groups=nonNormal();
   groups.forEach(function(g){
     html+='<div class="pline"><div class="pl-t">'+esc(g.title)+'</div><div class="chips">';
@@ -496,6 +581,7 @@ function buildText(d){
   var L=[]; L.push("【事前チェックシート】"+(d.name||"無名"));
   if(d.session) L.push("セッション："+d.session);
   L.push("記入日："+(d.date||d.createdAt));
+  L.push("参加可能時間："+timeText(d.time));
   L.push("凡例：◎好き 〇普通 △微妙 ×苦手 ××NG（〇は省略）");
   L.push("");
   nonNormal().forEach(function(g){
@@ -524,12 +610,12 @@ function buildSubmissionHTML(d){
     var rows="";
     sec.items.forEach(function(it){
       var rz=(d.reason&&d.reason[it.id])||"";
-      var chip="";
-      if(sec.type==="scale"){
+      var chip=""; var itype=it.type||sec.type;
+      if(itype==="scale"){
         var v=d.scale[it.id]||DEFAULT; if(v==="normal" && !rz) return;
         var sym=SMAP[v].sym; if(v==="love"){var n=d.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);}
         chip='<span class="chip '+v+'">'+esc(sym)+'</span>';
-      } else if(sec.type==="multi"){
+      } else if(itype==="multi"){
         var arr=(d.multi&&d.multi[it.id])||[]; if(!arr.length && !rz) return;
         chip = arr.length ? arr.map(function(i){return '<span class="chip choice">'+esc(it.options[i])+'</span>';}).join(" ") : '<span class="chip choice">—</span>';
       } else {
@@ -574,6 +660,7 @@ function buildSubmissionHTML(d){
   '.chip{display:inline-block;font-weight:700;font-size:12px;border:2.5px solid #161513;border-radius:999px;padding:2px 11px;white-space:nowrap}'+
   '.chip.love{background:#ff77aa}.chip.meh{background:#cfcabd}.chip.weak{background:#ffce1c}.chip.never{background:#ff5533;color:#fff}.chip.choice{background:#2f6bff;color:#fff;font-size:11.5px}'+
   '.free{margin-top:12px;background:#eceae4;border:2.5px solid #161513;border-radius:12px;box-shadow:3px 3px 0 #161513;padding:11px 14px}'+
+  '.tl{margin:14px 0;background:#fff;border:2.5px solid #161513;border-radius:12px;box-shadow:3px 3px 0 #161513;padding:11px 14px}'+
   '.ft{font-weight:900;font-size:12.5px;color:#ff5533}.fb{white-space:pre-wrap;font-size:13.5px;color:#4a463f}'+
   '.empty{color:#8a857a;font-size:13px;margin-top:10px}'+
   '.note{margin-top:14px;font-size:11px;color:#8a857a;border-top:1.5px dashed #d8d3c7;padding-top:10px}</style></head>'+
@@ -584,6 +671,7 @@ function buildSubmissionHTML(d){
   '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日 '+esc(d.date||d.createdAt)+'</div></div>'+
   '<div class="brand"><div class="bk">JIZEN CHECK SHEET — FOR PLAYERS</div><div class="bt">事前<span class="cc">チェックシート</span></div></div></div>'+
   '<div class="legend">'+legend+'<span class="lp" style="border-style:dashed">〇は省略して表示</span></div>'+
+  timelineHTML(d.time)+
   (body||'<p class="empty">特筆する項目なし（すべて〇）</p>')+freeHtml+
   '<div class="note">このファイルにはKP用ページで読み込めるデータが埋め込まれています。KPに渡してください。</div>'+
   '</div>'+
@@ -658,8 +746,35 @@ function drawImage(d){
   function freeBlock(label,text){ return {type:"free",render:function(o,x,y,w,dry){
     diamond(o,x,y+14,"#ff5533",dry); o.font="900 27px "+ZK; if(!dry){o.fillStyle="#ff5533"; o.fillText(label,x+28,y);} var yy=y+40;
     o.font="400 26px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,text,x,yy,w,37,dry); return yy+20; }}; }
+  function timeBlock(t){ return {type:"time",render:function(o,x,y,w,dry){
+    diamond(o,x,y+14,"#ff5533",dry); o.font="900 27px "+ZK; if(!dry){o.fillStyle="#ff5533"; o.fillText("参加可能時間",x+28,y);}
+    var yy=y+44, labelW=40, tx=x+labelW, tw=w-labelW;
+    function px(h){ return tx+(h-TIME_MIN)/(TIME_MAX-TIME_MIN)*tw; }
+    o.font="400 18px "+DM; if(!dry){ o.fillStyle="#8a857a"; o.textAlign="center"; [6,9,12,15,18,21,24,27].forEach(function(h){ o.fillText(""+h, px(h), yy); }); o.textAlign="left"; }
+    yy+=24;
+    function row(label,on,s,e,fon,fs,fe,drawBreaks,col){
+      var th=34;
+      if(!dry){
+        o.font="700 20px "+ZK; o.fillStyle="#161513"; o.fillText(label,x,yy+7);
+        o.fillStyle="#ffffff"; roundRect(o,tx,yy,tw,th,8); o.fill();
+        o.lineWidth=2; o.strokeStyle="#161513"; roundRect(o,tx,yy,tw,th,8); o.stroke();
+        o.save(); roundRect(o,tx,yy,tw,th,8); o.clip();
+        if(on){
+          if(fon){ o.setLineDash([5,4]); o.lineWidth=1.5; o.strokeStyle="#161513"; roundRect(o,px(fs),yy+3,Math.max(2,px(fe)-px(fs)),th-6,6); o.stroke(); o.setLineDash([]); }
+          o.globalAlpha=0.85; o.fillStyle=col; roundRect(o,px(s),yy+4,Math.max(2,px(e)-px(s)),th-8,5); o.fill(); o.globalAlpha=1;
+          if(drawBreaks){ (t.breaks||[]).forEach(function(b){ o.fillStyle="#ff5533"; o.fillRect(px(b)-1,yy,2,th); }); }
+        } else { o.fillStyle="#8a857a"; o.font="400 18px "+ZK; o.fillText("参加不可",tx+10,yy+8); }
+        o.restore();
+      }
+      yy+=th+8;
+    }
+    row("昼",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,true,"#2f6bff");
+    row("夜",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,false,"#6b3ff2");
+    o.font="400 22px "+ZK; if(!dry)o.fillStyle="#4a463f"; yy=wrap(o,timeText(t),x,yy+2,w,31,dry);
+    return yy+16; }}; }
 
   var blocks=[]; var groups=nonNormal();
+  blocks.push(timeBlock(d.time));
   if(!groups.length) blocks.push(noneBlock());
   groups.forEach(function(g){ blocks.push(headerBlock(g.title)); g.entries.forEach(function(e){ blocks.push(itemBlock(e)); }); });
   FREE.forEach(function(f){ var v=d.free[f.id]; if(v) blocks.push(freeBlock(f.label,v)); });
@@ -764,7 +879,11 @@ function wrap(ctx,text,x,y,maxW,lh,dry){
 document.getElementById("btn-reset").addEventListener("click",function(){
   if(!confirm("入力内容をすべて消去します。よろしいですか？")) return;
   try{ localStorage.removeItem(STORE_KEY); }catch(e){}
-  state={scale:{},loveN:{},choice:{},reason:{},multi:{}};
+  state={scale:{},loveN:{},choice:{},reason:{},multi:{},time:defaultTime()};
+  ["day-on","night-on"].forEach(function(id){ var e=document.getElementById(id); if(e)e.checked=true; });
+  ["day-flex","night-flex"].forEach(function(id){ var e=document.getElementById(id); if(e)e.checked=false; });
+  var tn=document.getElementById("time-note"); if(tn)tn.value="";
+  renderTime();
   ["f-name","f-session","f-date"].concat(FREE.map(function(f){return f.id;})).forEach(function(id){ var e=document.getElementById(id); if(e)e.value=""; });
   document.querySelectorAll(".reasonbox").forEach(function(ta){ ta.value=""; });
   document.querySelectorAll(".reasonwrap").forEach(function(w){ w.classList.remove("open"); });
@@ -773,6 +892,89 @@ document.getElementById("btn-reset").addEventListener("click",function(){
   refreshScale(); refreshChoice(); refreshMulti(); renderPreview();
   document.getElementById("savednote").textContent="リセットしました。";
 });
+
+// ---- 参加可能時間ウィジェット ----
+var timeSuppressClick=false;
+function posPct(h){ return (h-TIME_MIN)/(TIME_MAX-TIME_MIN)*100; }
+function clampH(h){ return h<TIME_MIN?TIME_MIN:h>TIME_MAX?TIME_MAX:h; }
+function snap(h){ return Math.round(clampH(h)*2)/2; }
+function hFromX(track,cx){ var r=track.getBoundingClientRect(); var ratio=(cx-r.left)/r.width; if(ratio<0)ratio=0; if(ratio>1)ratio=1; return TIME_MIN+ratio*(TIME_MAX-TIME_MIN); }
+function clampBreaks(){ var t=state.time; (t.breaks||[]).forEach(function(b,i){ t.breaks[i]=Math.min(Math.max(b,t.dayStart),t.dayEnd); }); }
+function setTimeVal(key,h){
+  var t=state.time; h=snap(h);
+  if(key==="dayStart") t.dayStart=Math.min(h, t.dayEnd-0.5);
+  else if(key==="dayEnd") t.dayEnd=Math.max(h, t.dayStart+0.5);
+  else if(key==="nightStart") t.nightStart=Math.min(h, t.nightEnd-0.5);
+  else if(key==="nightEnd") t.nightEnd=Math.max(h, t.nightStart+0.5);
+  else if(key==="dayFlexStart") t.dayFlexStart=Math.min(h, t.dayFlexEnd-0.5);
+  else if(key==="dayFlexEnd") t.dayFlexEnd=Math.max(h, t.dayFlexStart+0.5);
+  else if(key==="nightFlexStart") t.nightFlexStart=Math.min(h, t.nightFlexEnd-0.5);
+  else if(key==="nightFlexEnd") t.nightFlexEnd=Math.max(h, t.nightFlexStart+0.5);
+  clampBreaks(); renderTime(); onChange();
+}
+function setBreakVal(i,h){ var t=state.time; if(!t.breaks||t.breaks[i]==null)return; t.breaks[i]=Math.min(Math.max(snap(h),t.dayStart),t.dayEnd); renderTime(); onChange(); }
+function bindDrag(el,onMove){
+  el.addEventListener("pointerdown",function(e){ if(e.target&&e.target.classList&&e.target.classList.contains("bx"))return; e.preventDefault(); timeSuppressClick=true; if(el.focus)el.focus();
+    function mv(ev){ onMove(ev.clientX); }
+    function up(){ document.removeEventListener("pointermove",mv); document.removeEventListener("pointerup",up); }
+    document.addEventListener("pointermove",mv); document.addEventListener("pointerup",up); onMove(e.clientX);
+  });
+}
+function fillPos(el,a,b){ if(el){ el.style.left=posPct(a)+"%"; el.style.width=(posPct(b)-posPct(a))+"%"; } }
+function showEl(id,on){ var e=document.getElementById(id); if(e)e.style.display=on?"":"none"; }
+function renderTime(){
+  var t=state.time;
+  function setH(id,h){ var e=document.getElementById(id); if(e)e.style.left=posPct(h)+"%"; }
+  setH("h-dayStart",t.dayStart); setH("h-dayEnd",t.dayEnd);
+  setH("h-nightStart",t.nightStart); setH("h-nightEnd",t.nightEnd);
+  setH("h-dayFlexStart",t.dayFlexStart); setH("h-dayFlexEnd",t.dayFlexEnd);
+  setH("h-nightFlexStart",t.nightFlexStart); setH("h-nightFlexEnd",t.nightFlexEnd);
+  fillPos(document.getElementById("fill-day"),t.dayStart,t.dayEnd);
+  fillPos(document.getElementById("fill-night"),t.nightStart,t.nightEnd);
+  fillPos(document.getElementById("fill-dayflex"),t.dayFlexStart,t.dayFlexEnd);
+  fillPos(document.getElementById("fill-nightflex"),t.nightFlexStart,t.nightFlexEnd);
+  // 融通レンジの表示/非表示
+  ["fill-dayflex","h-dayFlexStart","h-dayFlexEnd"].forEach(function(id){ showEl(id,t.dayFlexOn); });
+  ["fill-nightflex","h-nightFlexStart","h-nightFlexEnd"].forEach(function(id){ showEl(id,t.nightFlexOn); });
+  // 休憩マーカー（昼トラック）
+  var track=document.getElementById("track-day");
+  if(track){
+    Array.prototype.slice.call(track.querySelectorAll(".tbrk")).forEach(function(n){ n.remove(); });
+    (t.breaks||[]).forEach(function(b,i){
+      var el=document.createElement("div"); el.className="tbrk"; el.style.left=posPct(b)+"%";
+      el.innerHTML='休憩<span class="bx" title="削除">×</span>';
+      bindDrag(el,function(cx){ setBreakVal(i, hFromX(track,cx)); });
+      el.querySelector(".bx").addEventListener("click",function(ev){ ev.stopPropagation(); t.breaks.splice(i,1); renderTime(); onChange(); });
+      track.appendChild(el);
+    });
+  }
+  var db=document.querySelector('.tband[data-band="day"]'); if(db){ db.classList.toggle("off",!t.dayOn); if(track)track.style.pointerEvents=t.dayOn?"":"none"; }
+  var nb=document.querySelector('.tband[data-band="night"]'); if(nb){ nb.classList.toggle("off",!t.nightOn); var tn=document.getElementById("track-night"); if(tn)tn.style.pointerEvents=t.nightOn?"":"none"; }
+  var s=document.getElementById("tsummary"); if(s) s.textContent=timeText(t);
+}
+function setupTime(){
+  var ticks=document.getElementById("tticks");
+  if(ticks && !ticks.childNodes.length){ [6,9,12,15,18,21,24,27].forEach(function(h){ var s=document.createElement("span"); s.textContent=h+"時"; s.style.left=posPct(h)+"%"; ticks.appendChild(s); }); }
+  var map={"day-on":"dayOn","night-on":"nightOn","day-flex":"dayFlexOn","night-flex":"nightFlexOn"};
+  Object.keys(map).forEach(function(id){ var e=document.getElementById(id); if(!e)return;
+    e.checked=!!state.time[map[id]]; e.addEventListener("change",function(){ state.time[map[id]]=this.checked; renderTime(); onChange(); }); });
+  var trackDay=document.getElementById("track-day"), trackNight=document.getElementById("track-night");
+  [["h-dayStart","dayStart"],["h-dayEnd","dayEnd"],["h-dayFlexStart","dayFlexStart"],["h-dayFlexEnd","dayFlexEnd"]].forEach(function(a){ var el=document.getElementById(a[0]); if(el){ bindDrag(el,function(cx){ setTimeVal(a[1], hFromX(trackDay,cx)); }); bindTimeKey(el,a[1]); } });
+  [["h-nightStart","nightStart"],["h-nightEnd","nightEnd"],["h-nightFlexStart","nightFlexStart"],["h-nightFlexEnd","nightFlexEnd"]].forEach(function(a){ var el=document.getElementById(a[0]); if(el){ bindDrag(el,function(cx){ setTimeVal(a[1], hFromX(trackNight,cx)); }); bindTimeKey(el,a[1]); } });
+  // 昼トラックの空きをクリックで休憩を追加（個数制限なし）
+  if(trackDay) trackDay.addEventListener("click",function(e){
+    if(timeSuppressClick){ timeSuppressClick=false; return; }
+    if(e.target!==trackDay) return; // ハンドル・休憩マーカー上は無視
+    if(!state.time.dayOn) return;
+    if(!state.time.breaks) state.time.breaks=[];
+    var h=Math.min(Math.max(snap(hFromX(trackDay,e.clientX)),state.time.dayStart),state.time.dayEnd);
+    state.time.breaks.push(h); state.time.breaks.sort(function(a,b){return a-b;}); renderTime(); onChange();
+  });
+  var note=document.getElementById("time-note");
+  if(note){ note.value=state.time.note||""; note.addEventListener("input",function(){ state.time.note=this.value.trim()?this.value:""; onChange(); }); }
+  renderTime();
+}
+function bindTimeKey(el,key){ el.addEventListener("keydown",function(e){ var d=e.key==="ArrowLeft"?-0.5:e.key==="ArrowRight"?0.5:0; if(!d)return; e.preventDefault(); setTimeVal(key, state.time[key]+d); }); }
 
 // ---- こたえかたバーの表示制御（スケール項目の入力中のみ表示）----
 var allSecIds = SECTIONS.map(function(s){return s.id;});
@@ -812,6 +1014,7 @@ document.getElementById("sections").addEventListener("toggle", updateLegendBar, 
 (function(){
   document.getElementById("f-date").value=new Date().toISOString().slice(0,10);
   restore();
+  setupTime();
   refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderPreview();
   updateLegendBar();
 })();
