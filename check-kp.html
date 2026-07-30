@@ -366,52 +366,64 @@ function aggUnits(levels){
       it.options.forEach(function(opt,idx){
         var ents=[];
         people.forEach(function(p){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.indexOf(idx)>=0) ents.push({name:p.name,v:"choice",sym:"✓",reason:(p.reason&&p.reason[it.id])||""}); });
-        if(ents.length) units.push({kind:"multi", key:sec.id+"::"+it.id+"#"+idx, label:opt, secTitle:sec.title+"／"+it.label, entries:ents});
+        if(ents.length) units.push({kind:"multi", secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id+"#"+idx, label:opt, entries:ents});
       });
     } else {
       var ents = itype==="scale" ? scaleEntriesForItem(it.id,levels) : choiceAttEntries(sec,it);
-      if(ents.length) units.push({kind:itype, key:sec.id+"::"+it.id, label:it.label, secTitle:sec.title, entries:ents});
+      if(ents.length) units.push({kind:itype, secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id, label:it.label, entries:ents});
     }
   }); });
   return units;
+}
+function scaleUnits(levels){
+  var units=[];
+  SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
+    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,levels); if(e.length) units.push({secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id, label:it.label, entries:e}); });
+  });
+  return units;
+}
+// カテゴリ見出しで区切って行を並べる
+function renderUnitGroup(container, units, withCheck){
+  var order=[], by={};
+  units.forEach(function(u){ if(!by[u.secId]){ by[u.secId]=[]; order.push(u.secId); } by[u.secId].push(u); });
+  order.forEach(function(sid){
+    var head=document.createElement("div"); head.className="acat";
+    head.style.cssText="font-weight:900;font-size:12.5px;color:#161513;margin:12px 2px 4px;padding-bottom:3px;border-bottom:2px solid #161513";
+    head.textContent=by[sid][0].secTitle;
+    container.appendChild(head);
+    by[sid].forEach(function(u){ container.appendChild(arow(u.key,u.label,u.entries,withCheck)); });
+  });
 }
 function renderAgg(){
   var wrap=document.getElementById("agg"); wrap.innerHTML="";
   // 1) 要注意（× ××）＋選択式の配慮
   var g1=document.createElement("div");
   g1.innerHTML='<div class="gtitle"><span class="badge red">要注意</span>× 苦手・×× NG・配慮希望</div>';
-  var units=aggUnits(["weak","never"]);
-  units.forEach(function(u){ g1.appendChild(arow(u.key,u.label,u.secTitle,u.entries,true)); });
-  if(!units.length) g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
+  var u1=aggUnits(["weak","never"]);
+  if(u1.length) renderUnitGroup(g1,u1,true); else g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
   wrap.appendChild(g1);
 
   // 2) △ 参考（チェック可）
   var g2=document.createElement("div");
   g2.innerHTML='<div class="gtitle"><span class="badge gray">参考</span>△ 微妙</div>';
-  var any2=false;
-  SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
-    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["meh"]); if(e.length){ any2=true; g2.appendChild(arow(sec.id+"::"+it.id, it.label, sec.title, e, true)); } });
-  });
-  if(!any2) g2.appendChild(emptyEl("△ はありません。"));
+  var u2=scaleUnits(["meh"]);
+  if(u2.length) renderUnitGroup(g2,u2,true); else g2.appendChild(emptyEl("△ はありません。"));
   wrap.appendChild(g2);
 
   // 3) ◎ 好み（参考・チェック不要）
   var g3=document.createElement("div");
   g3.innerHTML='<div class="gtitle"><span class="badge pink">参考</span>◎ 好きな要素（盛れると喜ばれる）</div>';
-  var any3=false;
-  SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
-    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["love"]); if(e.length){ any3=true; g3.appendChild(arow(sec.id+"::"+it.id, it.label, sec.title, e, false)); } });
-  });
-  if(!any3) g3.appendChild(emptyEl("◎ はありません。"));
+  var u3=scaleUnits(["love"]);
+  if(u3.length) renderUnitGroup(g3,u3,false); else g3.appendChild(emptyEl("◎ はありません。"));
   wrap.appendChild(g3);
 }
-function arow(key,label,secTitle,entries,withCheck){
+function arow(key,label,entries,withCheck){
   var row=document.createElement("div"); row.className="arow";
   var ck="";
   if(withCheck) ck='<div class="ck"><input type="checkbox" data-key="'+key+'" '+(checked[key]?"checked":"")+'></div>';
   var who=entries.map(function(e){ return '<span class="wtag '+e.v+'"'+(e.reason?' title="'+esc(e.reason)+'"':'')+'><span class="s">'+esc(e.sym)+'</span>'+esc(e.name)+'</span>'; }).join("");
   var rzs=entries.filter(function(e){return e.reason;}).map(function(e){ return '<div class="rzline"><b>'+esc(e.name)+'</b>：'+esc(e.reason)+'</div>'; }).join("");
-  row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(label)+'<span class="seclabel">'+esc(secTitle)+'</span></div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
+  row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(label)+'</div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
   if(withCheck){ row.querySelector("input").addEventListener("change",function(){ checked[key]=this.checked; buildOutput(); }); }
   return row;
 }
