@@ -32,6 +32,16 @@ header{position:sticky;top:0;z-index:50;background:var(--ink);border-bottom:3px 
 .kpbadge{font-family:'Archivo Black';font-size:11px;background:var(--coral);color:#fff;padding:3px 9px;border-radius:6px}
 .hbar .sp{margin-left:auto}
 .pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--paper);border-radius:999px;padding:5px 13px;background:var(--white);white-space:nowrap}
+.toc{background:var(--paper);border-top:3px solid var(--ink)}
+.toc-inner{max-width:1080px;margin:0 auto;padding:10px 18px;display:flex;flex-wrap:wrap;gap:8px}
+.toc a{white-space:nowrap;font-weight:700;font-size:12.5px;text-decoration:none;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px}
+.toc a .n{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
+.toc a:hover{filter:brightness(1.05)}
+.toc a.t-weak{background:var(--yellow)}
+.toc a.t-meh{background:#cfcabd}
+.toc a.t-normal{background:var(--green);color:#063d17}
+.toc a.t-love{background:var(--pink)}
+.toc a.t-weak .n,.toc a.t-meh .n,.toc a.t-normal .n,.toc a.t-love .n{color:var(--ink)}
 .pill.y{background:var(--yellow)}
 
 main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 70px}
@@ -127,6 +137,15 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
     <a class="pill" href="jirai.html">事前チェック</a>
     <a class="pill" href="index.html">ハウスルール</a>
   </div>
+  <nav class="toc" id="kptoc"><div class="toc-inner">
+    <a data-target="drop"><span class="n">01</span>読み込み</a>
+    <a data-target="card-notice"><span class="n">02</span>注意文</a>
+    <a data-target="timeagg-card"><span class="n">03</span>参加可能時間</a>
+    <a data-target="grp-att" class="t-weak"><span class="n">×</span>要注意</a>
+    <a data-target="grp-meh" class="t-meh"><span class="n">△</span>微妙</a>
+    <a data-target="grp-note" class="t-normal"><span class="n">〇</span>備考あり</a>
+    <a data-target="grp-love" class="t-love"><span class="n">◎</span>好きな要素</a>
+  </div></nav>
 </header>
 
 <main>
@@ -160,20 +179,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
 
     <!-- 集約ビュー -->
     <div class="view on" id="view-agg">
-      <div class="card" id="timeagg-card">
-        <span class="lab">さんかかのうじかん（集約）</span>
-        <div id="timeagg"></div>
-      </div>
-      <div class="card">
-        <div class="btnrow" style="margin-bottom:6px">
-          <button class="btn sm" id="ck-all"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>× ×× を全てチェック</button>
-          <button class="btn ghost sm" id="ck-none">チェック解除</button>
-        </div>
-        <p style="font-size:13px;color:var(--ink-soft)">チェックした項目が下の「注意文」に入ります。◎や△は参考情報です。</p>
-        <div id="agg"></div>
-      </div>
-
-      <div class="card">
+      <div class="card" id="card-notice">
         <span class="lab">ちゅういぶん</span>
         <div class="opts">
           <label><input type="checkbox" id="op-names" checked>PL名を載せる（時間・お知らせ欄。配慮項目は常に匿名）</label>
@@ -185,6 +191,19 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
           <span id="copynote" style="font-size:12.5px;color:#8a857a"></span>
         </div>
         <textarea id="out" readonly></textarea>
+      </div>
+
+      <div class="card" id="timeagg-card">
+        <span class="lab">さんかかのうじかん（集約）</span>
+        <div id="timeagg"></div>
+      </div>
+      <div class="card">
+        <div class="btnrow" style="margin-bottom:6px">
+          <button class="btn sm" id="ck-all"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>× ×× を全てチェック</button>
+          <button class="btn ghost sm" id="ck-none">チェック解除</button>
+        </div>
+        <p style="font-size:13px;color:var(--ink-soft)">下でチェックした項目が上の「注意文」に入ります。◎や△は参考情報です。</p>
+        <div id="agg"></div>
       </div>
     </div>
 
@@ -382,6 +401,23 @@ function scaleUnits(levels){
   });
   return units;
 }
+// 要注意/△/◎/選択済みに出てこないが、備考だけ記載がある項目（〇＋メモ等）
+function noteUnits(){
+  var units=[];
+  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
+    var itype=it.type||sec.type, ents=[];
+    people.forEach(function(p){
+      var rz=(p.reason&&p.reason[it.id])||""; if(!rz) return;
+      var surfaced=false, sym="", cls="choice";
+      if(itype==="scale"){ var v=p.scale[it.id]||DEFAULT; surfaced=(v!=="normal"); sym=(SMAP[v]?SMAP[v].sym:"〇"); cls=v; }
+      else if(itype==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; surfaced=arr.length>0; sym=(arr.length?"✓":"〇"); }
+      else { var idx=p.choice[it.id]; surfaced=(idx!=null && sec.attentionFrom!=null && idx>=sec.attentionFrom); sym=(idx!=null?it.options[idx]:"〇"); }
+      if(!surfaced) ents.push({name:p.name, v:cls, sym:sym, reason:rz});
+    });
+    if(ents.length) units.push({secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id+"@note", label:it.label, entries:ents});
+  }); });
+  return units;
+}
 // カテゴリ見出しで区切って行を並べる
 function renderUnitGroup(container, units, withCheck){
   var order=[], by={};
@@ -397,21 +433,28 @@ function renderUnitGroup(container, units, withCheck){
 function renderAgg(){
   var wrap=document.getElementById("agg"); wrap.innerHTML="";
   // 1) 要注意（× ××）＋選択式の配慮
-  var g1=document.createElement("div");
+  var g1=document.createElement("div"); g1.id="grp-att";
   g1.innerHTML='<div class="gtitle"><span class="badge red">要注意</span>× 苦手・×× NG・配慮希望</div>';
   var u1=aggUnits(["weak","never"]);
   if(u1.length) renderUnitGroup(g1,u1,true); else g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
   wrap.appendChild(g1);
 
+  // 1.5) 備考メモ（〇や未選択でも記載がある項目）
+  var gn=document.createElement("div"); gn.id="grp-note";
+  gn.innerHTML='<div class="gtitle"><span class="badge gray">備考</span>〇・未選択でも記載あり（チェックで配慮に追加）</div>';
+  var un=noteUnits();
+  if(un.length) renderUnitGroup(gn,un,true); else gn.appendChild(emptyEl("備考の記載はありません。"));
+  wrap.appendChild(gn);
+
   // 2) △ 参考（チェック可）
-  var g2=document.createElement("div");
+  var g2=document.createElement("div"); g2.id="grp-meh";
   g2.innerHTML='<div class="gtitle"><span class="badge gray">参考</span>△ 微妙</div>';
   var u2=scaleUnits(["meh"]);
   if(u2.length) renderUnitGroup(g2,u2,true); else g2.appendChild(emptyEl("△ はありません。"));
   wrap.appendChild(g2);
 
   // 3) ◎ 好み（参考・チェック不要）
-  var g3=document.createElement("div");
+  var g3=document.createElement("div"); g3.id="grp-love";
   g3.innerHTML='<div class="gtitle"><span class="badge pink">参考</span>◎ 好きな要素（盛れると喜ばれる）</div>';
   var u3=scaleUnits(["love"]);
   if(u3.length) renderUnitGroup(g3,u3,false); else g3.appendChild(emptyEl("◎ はありません。"));
@@ -513,6 +556,11 @@ function buildOutput(){
     var reasons = uniq(u.entries.map(function(e){return e.reason;}));
     lines.push("・"+u.label+(sev?"："+sev:"")+(reasons.length?" ／ 補足："+reasons.join("／"):""));
   });
+  noteUnits().forEach(function(u){
+    if(!checked[u.key]) return;
+    var reasons=uniq(u.entries.map(function(e){return e.reason;}));
+    lines.push("・"+u.label+(reasons.length?"："+reasons.join("／"):""));
+  });
   if(lines.length){ L.push("＜配慮する項目＞（記入者のお名前は伏せています）"); L=L.concat(lines); L.push(""); }
   else { L.push("（チェックされた配慮項目はありません）"); L.push(""); }
 
@@ -530,7 +578,6 @@ function buildOutput(){
     var bt={}; A.withT.forEach(function(p){ (p.time.breaks||[]).forEach(function(b){ bt[b]=(bt[b]||0)+1; }); });
     var bk=Object.keys(bt).sort(function(a,b){return a-b;});
     if(bk.length) L.push("・休憩の希望："+bk.map(function(k){return fmtHour(parseFloat(k))+"("+bt[k]+"人)";}).join("、"));
-    A.withT.forEach(function(p){ if(p.time.note) L.push("・メモ"+(withNames?"（"+p.name+"）":"")+"："+p.time.note); });
     L.push("");
   }
 
@@ -562,6 +609,20 @@ document.querySelectorAll(".tab").forEach(function(t){
     document.querySelectorAll(".view").forEach(function(x){x.classList.remove("on");});
     t.classList.add("on"); document.getElementById("view-"+t.dataset.view).classList.add("on");
   });
+});
+document.getElementById("kptoc").addEventListener("click",function(e){
+  var a=e.target.closest ? e.target.closest("a[data-target]") : null; if(!a) return;
+  var id=a.dataset.target;
+  // 読み込み以外は集約タブ内の要素なので、集約ビューへ切替
+  if(id!=="drop"){
+    document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});
+    document.querySelectorAll(".view").forEach(function(x){x.classList.remove("on");});
+    var tab=document.querySelector('.tab[data-view="agg"]'); if(tab)tab.classList.add("on");
+    var va=document.getElementById("view-agg"); if(va)va.classList.add("on");
+  }
+  var el=document.getElementById(id); if(!el) return;
+  var hh=(document.querySelector("header")||{}).offsetHeight||0;
+  window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-hh-8, behavior:"smooth"});
 });
 document.getElementById("btn-clear").addEventListener("click",function(){
   if(!people.length) return;

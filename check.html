@@ -40,6 +40,13 @@ header{background:var(--paper);border-bottom:3px solid var(--ink)}
 .legendbar.nolegend .lbtitle,.legendbar.nolegend .legend{display:none!important}
 .logo{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:21px;line-height:1;white-space:nowrap}
 .logo b{color:var(--coral)}
+.toc{max-width:1000px;margin:0 auto;padding:0 18px 10px;display:none;flex-wrap:wrap;gap:8px}
+.toc.open{display:flex}
+.toc a{white-space:nowrap;font-weight:700;font-size:12.5px;text-decoration:none;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px}
+.toc a .n{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
+.toc a:hover{background:var(--yellow)}
+.tocbtn{font-family:inherit;font-weight:700;font-size:12px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--white);box-shadow:2px 2px 0 var(--ink);cursor:pointer;white-space:nowrap}
+.tocbtn[aria-expanded="true"]{background:var(--ink);color:var(--paper)}
 .hbar .sp{margin-left:auto}
 .pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;background:var(--white);box-shadow:2px 2px 0 var(--ink);white-space:nowrap}
 .pill.y{background:var(--yellow)}
@@ -186,11 +193,18 @@ canvas{display:none}
   <header>
     <div class="hbar">
       <div class="logo">モグ<b>卓</b></div>
+      <button class="tocbtn" id="tocbtn" aria-controls="toc" aria-expanded="false">≡ 目次</button>
       <span class="sp"></span>
       <a class="pill y" href="check-kp.html">KP用ページ →</a>
       <a class="pill" href="jirai.html">事前チェック</a>
       <a class="pill" href="index.html">ハウスルール</a>
     </div>
+    <nav class="toc" id="toc">
+      <a data-target="card-basic"><span class="n">01</span>基本</a>
+      <a data-target="timecard"><span class="n">02</span>参加可能時間</a>
+      <a data-target="sec-trend"><span class="n">03</span>シナリオの傾向</a>
+      <a data-target="card-save"><span class="n">04</span>保存</a>
+    </nav>
   </header>
   <div class="legendbar"><div class="legendbar-inner"><span class="lbsec" id="lbsec"></span><span class="lbtitle">こたえかた</span><div class="legend" id="legend" style="display:contents"></div></div></div>
 </div>
@@ -212,7 +226,7 @@ canvas{display:none}
     <p style="font-size:13px;color:var(--ink-soft)">未操作の項目は自動的に「〇（普通）」扱いになります。気になる項目だけ変更すればOK。◎はもう一度押すと好き度（◎◎◎）が上がります。<br><strong>項目名をクリック</strong>すると、その項目の理由・補足を入力できます（任意）。凡例は上部に常に表示されています。</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="card-basic">
     <span class="lab">きほん</span>
     <div class="field"><label for="f-name">ハンドルネーム（HO）<span style="color:var(--coral)">*</span></label><div class="hint">卓での呼び名。ファイル名・一覧の見出しになります。</div><input type="text" id="f-name" placeholder="例：モグラ" maxlength="40"></div>
     <div class="field"><label for="f-session">セッション名／シナリオ名</label><div class="hint">任意。記入日は出力時に自動で今日の日付が入ります。</div><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
@@ -255,7 +269,7 @@ canvas{display:none}
     <div id="freefields"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="card-save">
     <div class="btnrow">
       <button class="btn" id="btn-html"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>提出用HTMLを保存</button>
       <button class="btn blue" id="btn-img"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 16-5-5-9 9"/></svg>SNS用画像を保存</button>
@@ -980,6 +994,21 @@ function setupTime(){
 }
 function bindTimeKey(el,key){ el.addEventListener("keydown",function(e){ var d=e.key==="ArrowLeft"?-0.5:e.key==="ArrowRight"?0.5:0; if(!d)return; e.preventDefault(); setTimeVal(key, state.time[key]+d); }); }
 
+// ---- 目次（ヘッダーからカテゴリへジャンプ）----
+function setupToc(){
+  var nav=document.getElementById("toc"), btn=document.getElementById("tocbtn"); if(!nav) return;
+  function setOpen(on){ nav.classList.toggle("open",on); if(btn) btn.setAttribute("aria-expanded",on?"true":"false"); }
+  if(btn) btn.addEventListener("click",function(){ setOpen(!nav.classList.contains("open")); });
+  nav.addEventListener("click",function(e){
+    var a=e.target.closest ? e.target.closest("a[data-target]") : null; if(!a) return;
+    var el=document.getElementById(a.dataset.target); if(!el) return;
+    if(el.tagName==="DETAILS") el.open=true;
+    setOpen(false); // 目次を閉じてから位置を確定
+    var hh=(document.querySelector(".stickytop")||{}).offsetHeight||0;
+    window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-hh-8, behavior:"smooth"});
+  });
+}
+
 // ---- こたえかたバーの表示制御（スケール項目の入力中のみ表示）----
 var allSecIds = SECTIONS.map(function(s){return s.id;});
 var secById = {}; SECTIONS.forEach(function(s){ secById[s.id]=s; });
@@ -1018,6 +1047,7 @@ document.getElementById("sections").addEventListener("toggle", updateLegendBar, 
 (function(){
   restore();
   setupTime();
+  setupToc();
   refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderPreview();
   updateLegendBar();
 })();
