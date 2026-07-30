@@ -220,7 +220,7 @@ canvas{display:none}
 
   <div class="card" id="timecard">
     <span class="lab">さんかかのうじかん</span>
-    <p class="thelp">ハンドルを左右にドラッグして、参加できる時間帯を選んでください（30分刻み・6〜27時）。目安：<b>10 or 13時開始</b>／12・15時に休憩／18〜21時は夕食／<b>21〜24時に夜卓</b>。<br>「<b>融通可</b>」にチェックすると、延長できる時間帯（点線）を同じバーに追加できます。昼卓トラックの<b>空いた所をクリックで休憩を追加</b>（休憩の×で削除）。参加しない帯はチェックを外してください。</p>
+    <p class="thelp">ハンドルを左右にドラッグして、参加できる時間帯を選んでください。<br>「<b>融通可</b>」にチェックすると、延長できる時間帯（点線）を追加できます。<b>空いた所をクリックで休憩を追加</b>（×で削除）。参加しない帯はチェックを外してください。</p>
     <div class="trow"><span class="tbl"></span><div class="tticks" id="tticks"></div></div>
     <div class="trow tband" data-band="day">
       <div class="tbl"><label><input type="checkbox" id="day-on" checked>昼卓</label><label class="sub"><input type="checkbox" id="day-flex">融通可</label></div>
@@ -245,7 +245,7 @@ canvas{display:none}
       </div>
     </div>
     <div class="tsummary" id="tsummary"></div>
-    <div class="field" style="margin-top:10px"><label for="time-note">日程・時間についての補足（任意）</label><div class="hint">例：早朝・夕方も相談可／中座・離席の予定（夕食・ペットの餌やり等）／日程の優先度（仕事・家庭の用事＞体調＞遊びの約束）／入りやすい予定（月末は飲み会、日曜は家族の用事）など。</div><textarea id="time-note" placeholder="日程の都合・優先度、中座や離席の予定など" rows="2" style="min-height:48px"></textarea></div>
+    <div class="field" style="margin-top:10px"><label for="time-note">日程・時間についての補足（任意）</label><div class="hint">例：早朝・夕方も相談可／離席の予定／日程の優先度／入りやすい予定など。</div><textarea id="time-note" placeholder="日程の都合・優先度、中座や離席の予定など" rows="2" style="min-height:48px"></textarea></div>
   </div>
 
   <div id="sections"></div>
