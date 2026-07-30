@@ -67,8 +67,9 @@ window.JIRAI_SECTIONS = [
       { id: "w_nichiasa",   label: "ニチアサ風" },
       { id: "w_parallel",   label: "パラレルワールド" },
       { id: "w_fakeworld",  label: "世界観・時代背景が実は事前情報と違う（幻覚/妄想・バーチャル等）" },
-      { id: "w_metalight",  label: "軽度なメタフィクション要素" },
-      { id: "w_metacore",   label: "シナリオの根幹にメタフィクション要素がある" },
+      { id: "meta_contained", label: "メタ：作中で完結（劇中劇・夢/VRなど虚構内の虚構）" },
+      { id: "meta_charaware", label: "メタ：PC・NPCが物語（シナリオ）の存在だと気づく" },
+      { id: "meta_pl",        label: "メタ：PL本人に語りかける（第四の壁を破る）" },
       { id: "w_original",   label: "原作・元ネタがある（小説・映画・漫画・SCP等）" }
     ]
   },
