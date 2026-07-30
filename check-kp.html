@@ -176,7 +176,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
       <div class="card">
         <span class="lab">ちゅういぶん</span>
         <div class="opts">
-          <label><input type="checkbox" id="op-names" checked>PL名を載せる</label>
+          <label><input type="checkbox" id="op-names" checked>PL名を載せる（時間・お知らせ欄。配慮項目は常に匿名）</label>
           <label><input type="checkbox" id="op-meh">△（微妙）も含める</label>
           <label><input type="checkbox" id="op-notice" checked>お知らせ・自衛も載せる</label>
         </div>
@@ -212,13 +212,13 @@ var SCALE=window.JIRAI_SCALE, SECTIONS=window.JIRAI_SECTIONS, SMAP=window.JIRAI.
 var DEFAULT=window.JIRAI_SCALE_DEFAULT;
 var MAX=30;
 function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
-function timeText(t){ if(!t) return "";
+function timeText(t,skipNote){ if(!t) return "";
   function band(label,on,s,e,fon,fs,fe,bk){ if(!on) return label+"：参加不可"; return label+" "+fmtHour(s)+"〜"+fmtHour(e)+(bk||"")+(fon?"（融通 "+fmtHour(fs)+"〜"+fmtHour(fe)+"）":""); }
   var bk=(t.breaks&&t.breaks.length)?"（休憩 "+t.breaks.slice().sort(function(a,b){return a-b;}).map(fmtHour).join("・")+"）":"";
   var p=[];
   p.push(band("昼卓",t.dayOn,t.dayStart,t.dayEnd,t.dayFlexOn,t.dayFlexStart,t.dayFlexEnd,bk));
   p.push(band("夜卓",t.nightOn,t.nightStart,t.nightEnd,t.nightFlexOn,t.nightFlexStart,t.nightFlexEnd,""));
-  if(t.note) p.push("メモ："+t.note);
+  if(t.note && !skipNote) p.push("メモ："+t.note);
   return p.join(" ／ "); }
 var people=[]; // {name, session, date, scale, loveN, choice, free, _fname}
 var checked={}; // key -> true
@@ -353,19 +353,32 @@ function renderTimeAgg(){
   if(notes.length) html+='<div style="font-size:12.5px;color:#6b665c;margin:4px 2px"><b>時間のメモ：</b>'+notes.join(" ／ ")+'</div>';
   host.innerHTML=html;
 }
+// 要注意グループの集約単位（scaleは項目単位、multiは選択肢ごとに人をまとめる）
+function aggUnits(levels){
+  var units=[];
+  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
+    var itype=it.type||sec.type;
+    if(itype==="multi"){
+      it.options.forEach(function(opt,idx){
+        var ents=[];
+        people.forEach(function(p){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.indexOf(idx)>=0) ents.push({name:p.name,v:"choice",sym:"✓",reason:(p.reason&&p.reason[it.id])||""}); });
+        if(ents.length) units.push({kind:"multi", key:sec.id+"::"+it.id+"#"+idx, label:opt, secTitle:sec.title+"／"+it.label, entries:ents});
+      });
+    } else {
+      var ents = itype==="scale" ? scaleEntriesForItem(it.id,levels) : choiceAttEntries(sec,it);
+      if(ents.length) units.push({kind:itype, key:sec.id+"::"+it.id, label:it.label, secTitle:sec.title, entries:ents});
+    }
+  }); });
+  return units;
+}
 function renderAgg(){
   var wrap=document.getElementById("agg"); wrap.innerHTML="";
   // 1) 要注意（× ××）＋選択式の配慮
   var g1=document.createElement("div");
   g1.innerHTML='<div class="gtitle"><span class="badge red">要注意</span>× 苦手・×× NG・配慮希望</div>';
-  var any=false;
-  SECTIONS.forEach(function(sec){
-    sec.items.forEach(function(it){
-      var entries = attEntries(sec,it,["weak","never"]);
-      if(entries.length){ any=true; g1.appendChild(arow(sec,it,entries,true)); }
-    });
-  });
-  if(!any) g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
+  var units=aggUnits(["weak","never"]);
+  units.forEach(function(u){ g1.appendChild(arow(u.key,u.label,u.secTitle,u.entries,true)); });
+  if(!units.length) g1.appendChild(emptyEl("× / ×× や配慮希望はありません。"));
   wrap.appendChild(g1);
 
   // 2) △ 参考（チェック可）
@@ -373,7 +386,7 @@ function renderAgg(){
   g2.innerHTML='<div class="gtitle"><span class="badge gray">参考</span>△ 微妙</div>';
   var any2=false;
   SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
-    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["meh"]); if(e.length){ any2=true; g2.appendChild(arow(sec,it,e,true)); } });
+    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["meh"]); if(e.length){ any2=true; g2.appendChild(arow(sec.id+"::"+it.id, it.label, sec.title, e, true)); } });
   });
   if(!any2) g2.appendChild(emptyEl("△ はありません。"));
   wrap.appendChild(g2);
@@ -383,29 +396,25 @@ function renderAgg(){
   g3.innerHTML='<div class="gtitle"><span class="badge pink">参考</span>◎ 好きな要素（盛れると喜ばれる）</div>';
   var any3=false;
   SECTIONS.forEach(function(sec){ if(sec.type!=="scale")return;
-    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["love"]); if(e.length){ any3=true; g3.appendChild(arow(sec,it,e,false)); } });
+    sec.items.forEach(function(it){ var e=scaleEntriesForItem(it.id,["love"]); if(e.length){ any3=true; g3.appendChild(arow(sec.id+"::"+it.id, it.label, sec.title, e, false)); } });
   });
   if(!any3) g3.appendChild(emptyEl("◎ はありません。"));
   wrap.appendChild(g3);
 }
-function arow(sec,item,entries,withCheck){
-  var key=sec.id+"::"+item.id;
+function arow(key,label,secTitle,entries,withCheck){
   var row=document.createElement("div"); row.className="arow";
   var ck="";
   if(withCheck) ck='<div class="ck"><input type="checkbox" data-key="'+key+'" '+(checked[key]?"checked":"")+'></div>';
   var who=entries.map(function(e){ return '<span class="wtag '+e.v+'"'+(e.reason?' title="'+esc(e.reason)+'"':'')+'><span class="s">'+esc(e.sym)+'</span>'+esc(e.name)+'</span>'; }).join("");
   var rzs=entries.filter(function(e){return e.reason;}).map(function(e){ return '<div class="rzline"><b>'+esc(e.name)+'</b>：'+esc(e.reason)+'</div>'; }).join("");
-  row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(item.label)+'<span class="seclabel">'+esc(sec.title)+'</span></div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
+  row.innerHTML=ck+'<div class="amain"><div class="alabel">'+esc(label)+'<span class="seclabel">'+esc(secTitle)+'</span></div><div class="who">'+who+'</div>'+(rzs?'<div class="reasons">'+rzs+'</div>':'')+'</div>';
   if(withCheck){ row.querySelector("input").addEventListener("change",function(){ checked[key]=this.checked; buildOutput(); }); }
   return row;
 }
 function emptyEl(t){ var d=document.createElement("div"); d.className="empty"; d.textContent=t; return d; }
 
 document.getElementById("ck-all").addEventListener("click",function(){
-  SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){
-    var entries=attEntries(sec,it,["weak","never"]);
-    if(entries.length) checked[sec.id+"::"+it.id]=true;
-  }); });
+  aggUnits(["weak","never"]).forEach(function(u){ checked[u.key]=true; });
   renderAgg(); buildOutput();
 });
 document.getElementById("ck-none").addEventListener("click",function(){ checked={}; renderAgg(); buildOutput(); });
@@ -479,22 +488,23 @@ function buildOutput(){
   L.push("【卓の事前共有・お願い】");
   L.push("提出いただいた事前チェックをもとに、本卓では以下に配慮します。");
   L.push("");
+  function uniq(a){ return a.filter(function(v,i){return v&&a.indexOf(v)===i;}); }
   var lines=[];
-  SECTIONS.forEach(function(sec){
-    sec.items.forEach(function(it){
-      var key=sec.id+"::"+it.id;
-      if(!checked[key]) return;
-      var entries = attEntries(sec,it, withMeh?["weak","never","meh"]:["weak","never"]);
-      if(!entries.length) return;
-      var detail = entries.map(function(e){ return withNames ? e.sym+" "+e.name+(e.reason?"（"+e.reason+"）":"") : e.sym; }).join("／");
-      lines.push("・"+it.label+"："+detail);
-    });
+  aggUnits(withMeh?["weak","never","meh"]:["weak","never"]).forEach(function(u){
+    if(!checked[u.key]) return;
+    // 名前は伏せる。程度（記号）と補足のみ匿名で載せる
+    var sev = u.kind==="multi" ? "" : uniq(u.entries.map(function(e){return e.sym;})).join("・");
+    var reasons = uniq(u.entries.map(function(e){return e.reason;}));
+    lines.push("・"+u.label+(sev?"："+sev:"")+(reasons.length?" ／ 補足："+reasons.join("／"):""));
   });
-  if(lines.length){ L.push("＜配慮する項目＞"); L=L.concat(lines); L.push(""); }
+  if(lines.length){ L.push("＜配慮する項目＞（名前は伏せています）"); L=L.concat(lines); L.push(""); }
   else { L.push("（チェックされた配慮項目はありません）"); L.push(""); }
 
   var tl=[];
-  people.forEach(function(p){ if(p.time) tl.push("・"+p.name+"："+timeText(p.time)); });
+  people.forEach(function(p){ if(!p.time) return;
+    tl.push("・"+(withNames?p.name+"：":"")+timeText(p.time,true));
+    if(p.time.note) tl.push("　メモ："+p.time.note);
+  });
   if(tl.length){ L.push("＜参加可能時間＞"); L=L.concat(tl); L.push(""); }
 
   if(withNotice){
@@ -503,7 +513,7 @@ function buildOutput(){
       var parts=[];
       if(p.free.free_notice) parts.push(p.free.free_notice);
       if(p.free.free_dislike) parts.push("苦手："+p.free.free_dislike);
-      if(parts.length) nt.push("・"+p.name+"："+parts.join(" ／ "));
+      if(parts.length) nt.push("・"+(withNames?p.name+"：":"")+parts.join(" ／ "));
     });
     if(nt.length){ L.push("＜各PLからのお知らせ・自衛＞"); L=L.concat(nt); L.push(""); }
   }
