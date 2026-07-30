@@ -39,7 +39,8 @@ window.JIRAI_SECTIONS = [
       { id: "tr_gag",       label: "ギャグ寄り" },
       { id: "tr_many",      label: "大人数卓" },
       { id: "tr_uchiyoso",  label: "うちよそ（既存PC/KPCとの親密な関係）" },
-      { id: "tr_realint",   label: "リアルINT・作者の脳内当てが必須の謎解き" },
+      { id: "tr_realint",   label: "リアルINTが必須の謎解き" },
+      { id: "tr_mindread",  label: "作者の脳内当てが必要な謎解き" },
       { id: "tr_trick",     label: "叙述トリックなど、PLに罠を仕掛ける展開" },
       { id: "tr_adlib",     label: "KPのアドリブ依存が大きい（描写例が少ない）" }
     ]
