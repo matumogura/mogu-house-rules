@@ -32,8 +32,8 @@ window.JIRAI_SECTIONS = [
     id: "play", title: "プレイスタイル", type: "choice", noagg: true,
     items: [
       { id: "play_role", label: "GM / PL", options: ["GMメイン", "GM・PLどちらも", "PLメイン"] },
-      { id: "play_method", type: "multi", label: "方法（複数選択可）", options: ["完テキ", "半テキ", "ボイセ"] },
-      { id: "tool_use", type: "multi", label: "使用ツール（その他は理由欄に記入）", options: ["Discord", "ココフォリア", "Tekey"] }
+      { id: "play_method", type: "multi", label: "方法", options: ["完テキ", "半テキ", "ボイセ"] },
+      { id: "tool_use", type: "multi", label: "使用ツール", options: ["Discord", "ココフォリア", "Tekey"] }
     ]
   },
   {
@@ -54,7 +54,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "wants", title: "ダイス・ギミックの希望（複数選択可）", type: "multi",
+    id: "wants", title: "ダイス・ギミックの希望", type: "multi",
     items: [
       { id: "dif_flags", label: "希望すること（複数可・その場の申告を優先）", options: ["生死のかかるダイスでCTを使いたい", "ファンブルのペナルティは軽い方がいい", "リアル時間を使うギミックは好みではない", "他PC・NPCの生死を左右したくない"] }
     ]
@@ -64,7 +64,7 @@ window.JIRAI_SECTIONS = [
     items: [
       { id: "coop_pvp", label: "協力／PvP", options: ["PvPが発生する方が面白い", "PvPになってもいい", "基本的に協力したい", "協力しやすいよう仲介してほしい"] },
       { id: "coop_lost", label: "ロストの許容", options: ["途中ロストしてもいい", "クライマックスのロストが望ましい", "全生還したい"] },
-      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導（複数選択可）", options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
+      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導", options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
     ]
   },
   {
@@ -79,7 +79,7 @@ window.JIRAI_SECTIONS = [
     items: [
       { id: "media_art", label: "立ち絵・作成画像の保存およびSNS投稿", options: ["自由にしてOK", "事後報告があれば可", "事前相談を希望", "個人保存のみ可（投稿不可）"] },
       { id: "media_log", label: "ログ・スクショを第三者に見せる（SNS含む）", options: ["問題なし", "報告があれば可", "事前に相談を希望", "完全非公開を希望"] },
-      { id: "img_flags", type: "multi", label: "使用画像の扱い（複数選択可）", options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
+      { id: "img_flags", type: "multi", label: "使用画像の扱い", options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
     ]
   },
   {
@@ -127,6 +127,8 @@ window.JIRAI_SECTIONS = [
   {
     id: "develop", title: "シナリオ展開", type: "scale",
     items: [
+      { id: "fixed_dice", label: "確定描写：出目によるもの" },
+      { id: "fixed_set", label: "確定描写：出目によらず決められているもの" },
       { id: "tr_ntr", label: "NTR・当て馬系の展開" },
       { id: "tr_forcedlose", label: "確定で負けイベントが発生する" },
       { id: "tr_filler", label: "ストーリーに直接関係ない茶番用イベント（ダイスゲーム等）" },
@@ -141,7 +143,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "quality", title: "シナリオの不足", type: "scale",
+    id: "quality", title: "シナリオの質", type: "scale",
     items: [
       { id: "tr_inconsistent", label: "時系列や設定に矛盾があり整合性に欠けるストーリー" },
       { id: "tr_npcvague", label: "NPCの行動理念があやふやな展開" },
@@ -199,7 +201,7 @@ window.JIRAI_SECTIONS = [
       { id: "npc_wasteddeath", label: "演出のためだけにNPC・KPCが死ぬ" },
       { id: "npc_kill", label: "NPC・KPCを殺さなければいけない状況" },
       { id: "npc_sacrifice", label: "NPC・KPCのためにPCが犠牲になる場面" },
-      { id: "npc_many", label: "大人数のNPC・KPC（名前付き5人以上）" },
+      { id: "npc_many", label: "大人数のNPC（名前付き5人以上）" },
       { id: "kpc_alt", label: "別世界軸のKPC（もしくはPC）の存在" },
       { id: "npc_imposter", label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
       { id: "npc_denounce", label: "NPC・KPCから強く（特に集団で）糾弾されること" },
@@ -209,27 +211,37 @@ window.JIRAI_SECTIONS = [
   {
     id: "pcdo", title: "PCが行う行動・設定（強制RP含む）", type: "scale",
     items: [
+      { id: "frp_violence", label: "暴力・虐待・いじめRP" },
       { id: "pcdo_crime", label: "PCに犯罪歴が付く" },
-      { id: "pcdo_bully", label: "PCによるいじめが行われる" },
-      { id: "pcdo_animal", label: "PCによる動物虐待が行われる" },
-      { id: "pcdo_child", label: "PCによる児童虐待が行われる" },
-      { id: "pcdo_sexviol", label: "PCによる性的な暴力が行われる" },
-      { id: "pcdo_gore", label: "PCによる猟奇事件が行われる" },
+      { id: "pcdo_bully", label: "PCによるいじめ" },
+      { id: "pcdo_animal", label: "PCによる動物虐待" },
+      { id: "pcdo_child", label: "PCによる児童虐待" },
+      { id: "pcdo_sexviol", label: "PCによる性的な暴力" },
+      { id: "pcdo_gore", label: "PCによる猟奇事件" },
       { id: "pcdo_suicideurge", label: "PCが自殺衝動を持っている" },
       { id: "pcdo_killurge", label: "PCが殺人衝動を持っている" },
       { id: "pcdo_torture", label: "PCが拷問をする" },
-      { id: "pcdo_harass", label: "PCがハラスメント行為をする" },
+      { id: "pcdo_harass", label: "PCによるハラスメント行為" },
       { id: "pcdo_dead", label: "PCが既に死んだ人間である" },
       { id: "pcdo_nonhuman", label: "PCが人間ではない" },
       { id: "pcdo_denounce", label: "PCが他PCへ糾弾する" },
+      { id: "frp_insane", label: "発狂RP" },
+      { id: "frp_psycho", label: "サイコパスRP" },
       { id: "pcdo_madness", label: "PCが確定で発狂するシーンがある" },
       { id: "pcdo_madness_hidden", label: "開始時から実はPCが自覚なく発狂している" },
+      { id: "frp_love_h", label: "恋愛RP（異性）" },
+      { id: "frp_love_s", label: "恋愛RP（同性）" },
+      { id: "frp_sensitive", label: "センシティブRP" },
       { id: "pcdo_sex_npc", label: "PC・NPC間で性的接触がある/あった" },
       { id: "pcdo_sex_pc", label: "PC間で性的接触がある/あった" },
       { id: "pcdo_love_nf", label: "異性NPCに対して恋愛感情を持つ" },
       { id: "pcdo_love_pf", label: "異性PCに対して恋愛感情を持つ" },
       { id: "pcdo_love_ns", label: "同性NPCに対して恋愛感情を持つ" },
       { id: "pcdo_love_ps", label: "同性PCに対して恋愛感情を持つ" },
+      { id: "frp_emotion", label: "感情的になるRP" },
+      { id: "frp_emo", label: "エモRP" },
+      { id: "frp_farewell", label: "死ぬ前の別れの言葉RP" },
+      { id: "frp_persuade", label: "PC/NPCへの説得RP" },
       { id: "pcdo_clone", label: "PC/KPCがクローン等、本人ではない" },
       { id: "pcdo_forced_emotion", label: "シナリオ描写によってPCの感情や行動を強制させられる" },
       { id: "pcdo_forced_mythos", label: "神話的事象によってPCの感情や行動を強制させられる" },
@@ -240,17 +252,7 @@ window.JIRAI_SECTIONS = [
       { id: "pcdo_ability_super", label: "人間ができないレベルの特殊技能・能力を持っている" },
       { id: "pcdo_ability_limited", label: "シナリオ内で回数制限がある能力・技能を持っている" },
       { id: "frp_child", label: "子供RP" },
-      { id: "frp_hetero", label: "異性RP" },
-      { id: "frp_emotion", label: "感情的になるRP" },
-      { id: "frp_emo", label: "エモRP" },
-      { id: "frp_farewell", label: "死ぬ前の別れの言葉RP" },
-      { id: "frp_insane", label: "発狂RP" },
-      { id: "frp_psycho", label: "サイコパスRP" },
-      { id: "frp_violence", label: "暴力・虐待・いじめRP" },
-      { id: "frp_persuade", label: "PC/NPCへの説得RP" },
-      { id: "frp_love_h", label: "恋愛RP（異性）" },
-      { id: "frp_love_s", label: "恋愛RP（同性）" },
-      { id: "frp_sensitive", label: "センシティブRP" }
+      { id: "frp_hetero", label: "異性RP" }
     ]
   },
   {
@@ -274,6 +276,8 @@ window.JIRAI_SECTIONS = [
   {
     id: "hocontent", title: "秘匿HOの内容・設定介入", type: "scale",
     items: [
+      { id: "sh_lowfree", label: "極端に自由度の低いHO" },
+      { id: "sh_highfree", label: "極端に自由度の高いHO" },
       { id: "ho_pre_crime", label: "事前HOの設定介入：犯罪歴" },
       { id: "ho_pre_blood", label: "事前HOの設定介入：血縁関係" },
       { id: "ho_pre_dear", label: "事前HOの設定介入：大切な人" },
@@ -284,13 +288,9 @@ window.JIRAI_SECTIONS = [
       { id: "emo_in_crime", label: "他者から感情を向けられる：監禁などの犯罪手段" },
       { id: "emo_out_obsess", label: "自PCが感情を向ける：過度の執着・恨み" },
       { id: "emo_out_crime", label: "自PCが感情を向ける：監禁などの犯罪手段" },
-      { id: "fixed_dice", label: "確定描写：出目によるもの" },
-      { id: "fixed_set", label: "確定描写：出目によらず決められているもの" },
       { id: "sh_amnesia", label: "PCが記憶喪失である" },
       { id: "sh_falsemem", label: "PCが記憶を改ざんされている/している（自覚なし）" },
       { id: "sh_hostile", label: "他PCへの敵意を抱いている" },
-      { id: "sh_lowfree", label: "極端に自由度の低いHO" },
-      { id: "sh_highfree", label: "極端に自由度の高いHO" },
       { id: "sh_sex", label: "秘匿内で性別が指定されている" },
       { id: "sh_age", label: "秘匿内で年齢が指定されている" },
       { id: "sh_look", label: "秘匿内で外見が指定されている" },
@@ -318,7 +318,7 @@ window.JIRAI_SECTIONS = [
   {
     id: "pvp", title: "PvPについて", type: "scale",
     items: [
-      { id: "pvp_verbal", label: "口論・議論など肉体的被害を伴わないもの" },
+      { id: "pvp_verbal", label: "口論・議論、レスバ" },
       { id: "pvp_physical", label: "PC同士の肉体的被害を伴う争い" },
       { id: "pvp_decide", label: "特定PCに決断権がある場面" },
       { id: "pvp_forced", label: "洗脳・発狂などPCの意思によらないPvP" }
@@ -359,27 +359,27 @@ window.JIRAI_SECTIONS = [
   {
     id: "ending", title: "ED・分岐について", type: "scale",
     items: [
-      { id: "ed_bad", label: "バッドエンド" },
-      { id: "ed_merrybad", label: "メリーバッドエンド" },
-      { id: "ed_multibad", label: "マルチバッドエンド" },
-      { id: "ed_bitter", label: "後味の悪いED" },
-      { id: "ed_forcedhappy", label: "ご都合ハッピーエンド" },
-      { id: "ed_dream", label: "夢オチ" },
-      { id: "ed_sequel", label: "続編を匂わせるオチ" },
-      { id: "ed_meta", label: "メタフィクションが関わるED" },
-      { id: "ed_timeback", label: "時間遡行を行う" },
-      { id: "ed_parallel", label: "パラレルワールド・別世界線へ行く" },
-      { id: "ed_memloss", label: "PC/NPCの記憶が消える" },
       { id: "ed_epilogue", label: "PLがエピローグを考えて自由描写" },
-      { id: "ed_norp", label: "RP無しで描写のみのED" },
       { id: "ed_sparse", label: "極端に描写の少ないED" },
+      { id: "ed_norp", label: "RP無しで描写のみのED" },
       { id: "ed_single", label: "1つしか用意されていないED" },
       { id: "ed_inconsistent", label: "整合性の取れない分岐条件・ED" },
       { id: "ed_point", label: "ポイント制でのED分岐" },
       { id: "ed_multidice", label: "複数のダイスロールでのED分岐" },
       { id: "ed_onedice", label: "1回のダイスロールでのED分岐" },
       { id: "ed_choice", label: "探索者の決断によるED分岐" },
-      { id: "ed_kp", label: "KPの裁量による分岐（NPCへの説得や好感度等）" }
+      { id: "ed_kp", label: "KPの裁量による分岐（NPCへの説得や好感度等）" },
+      { id: "ed_dream", label: "夢オチ" },
+      { id: "ed_bad", label: "バッドエンド" },
+      { id: "ed_merrybad", label: "メリーバッドエンド" },
+      { id: "ed_multibad", label: "マルチバッドエンド" },
+      { id: "ed_bitter", label: "後味の悪いED" },
+      { id: "ed_forcedhappy", label: "ご都合ハッピーエンド" },
+      { id: "ed_timeback", label: "時間遡行を行う" },
+      { id: "ed_parallel", label: "パラレルワールド・別世界線へ行く" },
+      { id: "ed_memloss", label: "PC/NPCの記憶が消える" },
+      { id: "ed_meta", label: "メタフィクションが関わるED" },
+      { id: "ed_sequel", label: "続編を匂わせるオチ" }
     ]
   },
   {
@@ -408,20 +408,20 @@ window.JIRAI_SECTIONS = [
   {
     id: "table", title: "その他：同卓時の注意", type: "scale",
     items: [
-      { id: "tbl_sexual", label: "自PC・同卓PCへの性的な発言" },
-      { id: "tbl_fixedrp", label: "同卓者による確定RP" },
+      { id: "tbl_eatweet", label: "卓中の飲食・Twitter" },
       { id: "tbl_pldiscuss", label: "PL発言（メタ相談）の多用" },
-      { id: "tbl_gossip", label: "他卓・他陣についての雑談" },
       { id: "tbl_longrp", label: "長めのRP" },
+      { id: "tbl_fixedrp", label: "同卓者による確定RP" },
+      { id: "tbl_selflost", label: "同卓者の自主ロスト" },
+      { id: "tbl_sexual", label: "自PC・同卓PCへの性的な発言" },
+      { id: "tbl_gossip", label: "他卓・他陣についての雑談" },
       { id: "tbl_strong", label: "極端に強いステータス" },
       { id: "tbl_weak", label: "極端に弱いステータス" },
       { id: "tbl_unreal", label: "現実味のない設定" },
       { id: "tbl_crime", label: "犯罪歴を持つ同卓PC" },
       { id: "tbl_age", label: "極端な年齢の同卓PC（子供・老人）" },
-      { id: "tbl_eatweet", label: "卓中の飲食・Twitter" },
       { id: "tbl_bgm", label: "苦手BGM" },
-      { id: "tbl_record", label: "セッションの録画・配信・見学" },
-      { id: "tbl_selflost", label: "同卓者の自主ロスト" }
+      { id: "tbl_record", label: "セッションの録画・配信・見学" }
     ]
   }
 ];
