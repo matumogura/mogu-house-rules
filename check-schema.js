@@ -63,12 +63,12 @@ window.JIRAI_SECTIONS = [
     id: "policy", title: "協力・PvP・難易度の方針", type: "choice",
     items: [
       { id: "coop_pvp", label: "協力／PvP", options: ["PvPが発生する方が面白い", "PvPになってもいい", "基本的に協力したい", "協力しやすいよう仲介してほしい"] },
-      { id: "coop_lost", label: "ロストの許容", options: ["途中ロストしてもいい", "終了時ならロストしてもいい", "全生還したい"] },
+      { id: "coop_lost", label: "ロストの許容", options: ["途中ロストしてもいい", "クライマックスのロストが望ましい", "全生還したい"] },
       { id: "dif_guide", type: "multi", label: "難易度：結果への誘導（複数選択可）", options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
     ]
   },
   {
-    id: "erogro", title: "エロ・グロの許容度", type: "choice",
+    id: "erogro", title: "エロ・グロの許容度", type: "multi",
     items: [
       { id: "eg_ero", label: "エロ", options: ["自身がRPしてもいい", "基本的に許容", "画像は見たくない", "描写も省いてほしい"] },
       { id: "eg_gro", label: "グロ", options: ["自身がRPしてもいい", "基本的に許容", "画像は見たくない", "描写も省いてほしい"] }
