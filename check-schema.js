@@ -31,7 +31,7 @@ window.JIRAI_SECTIONS = [
   {
     id: "play", title: "プレイスタイル", type: "choice", noagg: true,
     items: [
-      { id: "play_role", label: "GM / PL", options: ["GMメイン", "GM・PLどちらも", "PLメイン"] },
+      { id: "play_role", label: "KP・PL経験", options: ["KPメイン", "KP・PLどちらも", "PLメイン"] },
       { id: "play_method", type: "multi", label: "方法", options: ["完テキ", "半テキ", "ボイセ"] },
       { id: "tool_use", type: "multi", label: "使用ツール", options: ["Discord", "ココフォリア", "Tekey"] }
     ]
@@ -48,7 +48,7 @@ window.JIRAI_SECTIONS = [
   {
     id: "mastering", title: "演出・マスタリングへの同意", type: "choice", attentionFrom: 2,
     items: [
-      { id: "mst_gmset", label: "GMによるPC詳細設定・関係性の付与", options: ["お任せしてOK", "相談があれば可", "PL側での設定を優先"] },
+      { id: "mst_gmset", label: "KPによるPC詳細設定・関係性の付与", options: ["お任せしてOK", "相談があれば可", "PL側での設定を優先"] },
       { id: "mst_norp", label: "結果が変わらない展開でのロールプレイ要求", options: ["歓迎（重視したい）", "許容（適度であれば）", "早期の切り上げを希望"] },
       { id: "mst_negative", label: "ネガティブな演出（暴言・家庭事情の深掘り等）への耐性", options: ["問題なし", "相談があれば可", "避けたい"] }
     ]
