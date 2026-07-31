@@ -56,15 +56,15 @@ window.JIRAI_SECTIONS = [
   {
     id: "wants", title: "ダイス・ギミックの希望", type: "multi",
     items: [
-      { id: "dif_flags", label: "希望すること（複数可・その場の申告を優先）", options: ["生死のかかるダイスでCTを使いたい", "ファンブルのペナルティは軽い方がいい", "リアル時間を使うギミックは好みではない", "他PC・NPCの生死を左右したくない"] }
+      { id: "dif_flags", label: "希望すること（複数可・その場の申告を優先）", options: ["生死のかかるダイスでCTを使いたい", "ファンブルのペナルティは軽い方がいい", "リアル時間を使うギミックは好みではない", "他PC・NPCの生死を左右したくない","CT制度は採用したくない"] }
     ]
   },
   {
-    id: "policy", title: "協力・PvP・難易度の方針", type: "choice",
+    id: "media", title: "画像・ログの取り扱い", type: "choice", attentionFrom: 2,
     items: [
-      { id: "coop_pvp", label: "協力／PvP", options: ["PvPが発生する方が面白い", "PvPになってもいい", "基本的に協力したい", "協力しやすいよう仲介してほしい"] },
-      { id: "coop_lost", label: "ロストの許容", options: ["途中ロストしてもいい", "クライマックスのロストが望ましい", "全生還したい"] },
-      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導", options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
+      { id: "media_art", label: "立ち絵・作成画像の保存およびSNS投稿", options: ["自由にしてOK", "事後報告があれば可", "事前相談を希望", "個人保存のみ可（投稿不可）"] },
+      { id: "media_log", label: "ログ・スクショを第三者に見せる（SNS含む）", options: ["問題なし", "報告があれば可", "事前に相談を希望", "完全非公開を希望"] },
+      { id: "img_flags", type: "multi", label: "使用画像の扱い", options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
     ]
   },
   {
@@ -75,11 +75,11 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "media", title: "画像・ログの取り扱い", type: "choice", attentionFrom: 2,
+    id: "policy", title: "協力・PvP・難易度の方針", type: "choice",
     items: [
-      { id: "media_art", label: "立ち絵・作成画像の保存およびSNS投稿", options: ["自由にしてOK", "事後報告があれば可", "事前相談を希望", "個人保存のみ可（投稿不可）"] },
-      { id: "media_log", label: "ログ・スクショを第三者に見せる（SNS含む）", options: ["問題なし", "報告があれば可", "事前に相談を希望", "完全非公開を希望"] },
-      { id: "img_flags", type: "multi", label: "使用画像の扱い", options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
+      { id: "coop_pvp", label: "協力／PvP", options: ["PvPが発生する方が面白い", "PvPになってもいい", "基本的に協力したい", "協力しやすいよう仲介してほしい"] },
+      { id: "coop_lost", label: "ロストの許容", options: ["途中ロストしてもいい", "クライマックスのロストが望ましい", "全生還したい"] },
+      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導", options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
     ]
   },
   {
@@ -174,6 +174,11 @@ window.JIRAI_SECTIONS = [
       { id: "tr_many", label: "大人数卓" },
       { id: "tr_gag", label: "ギャグ寄り・茶番" },
       { id: "tr_sanrecover", label: "SAN値回復シナリオ" },
+      { id: "lost_none", label: "ロストがないシナリオ" },
+      { id: "lost_pc_norescue", label: "ロストPC限定（救済なし）" },
+      { id: "lost_kpc_norescue", label: "ロストKPC限定（救済なし）" },
+      { id: "lost_pc_rescue", label: "ロストPCの救済がある" },
+      { id: "lost_kpc_rescue", label: "ロストKPCの救済がある" },
       { id: "tr_battle", label: "戦闘重視" },
       { id: "tr_pvp", label: "PvP前提のシナリオ" },
       { id: "w_child", label: "学生・子供PCシナリオ" },
@@ -197,13 +202,13 @@ window.JIRAI_SECTIONS = [
   {
     id: "npc", title: "NPC・KPCについて", type: "scale",
     items: [
+      { id: "npc_imposter", label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
+      { id: "kpc_alt", label: "別世界軸のKPC（もしくはPC）の存在" },
       { id: "npc_death", label: "確定死亡NPC・KPC" },
       { id: "npc_wasteddeath", label: "演出のためだけにNPC・KPCが死ぬ" },
       { id: "npc_kill", label: "NPC・KPCを殺さなければいけない状況" },
       { id: "npc_sacrifice", label: "NPC・KPCのためにPCが犠牲になる場面" },
       { id: "npc_many", label: "大人数のNPC（名前付き5人以上）" },
-      { id: "kpc_alt", label: "別世界軸のKPC（もしくはPC）の存在" },
-      { id: "npc_imposter", label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
       { id: "npc_denounce", label: "NPC・KPCから強く（特に集団で）糾弾されること" },
       { id: "npc_overshadow", label: "NPC・KPCが活躍しすぎてPCの存在意義が薄れる" }
     ]
@@ -258,6 +263,7 @@ window.JIRAI_SECTIONS = [
   {
     id: "pcreceive", title: "PCが受ける行動・設定", type: "scale",
     items: [
+      { id: "rcv_amnesia", label: "PCが記憶を失う" },
       { id: "rcv_bully", label: "PCがいじめを受ける" },
       { id: "rcv_abuse", label: "PCが虐待を受ける" },
       { id: "rcv_harass", label: "PCがハラスメント行為を受ける" },
@@ -266,7 +272,6 @@ window.JIRAI_SECTIONS = [
       { id: "rcv_petcruel", label: "PCのペットに対する残虐描写が入る" },
       { id: "rcv_denounced", label: "PCが他PCから糾弾される" },
       { id: "rcv_ganged", label: "PC内で1対多・ハブにされる展開がある" },
-      { id: "rcv_amnesia", label: "PCが記憶を失う" },
       { id: "rcv_love_nf", label: "異性NPCに恋愛感情を持たれる" },
       { id: "rcv_love_pf", label: "異性PCに恋愛感情を持たれる" },
       { id: "rcv_love_ns", label: "同性NPCに恋愛感情を持たれる" },
@@ -278,6 +283,7 @@ window.JIRAI_SECTIONS = [
     items: [
       { id: "sh_lowfree", label: "極端に自由度の低いHO" },
       { id: "sh_highfree", label: "極端に自由度の高いHO" },
+      { id: "lost_ho_pc", label: "特定のHOのPCが確定ロスト" },
       { id: "ho_pre_crime", label: "事前HOの設定介入：犯罪歴" },
       { id: "ho_pre_blood", label: "事前HOの設定介入：血縁関係" },
       { id: "ho_pre_dear", label: "事前HOの設定介入：大切な人" },
@@ -325,31 +331,24 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "lost", title: "ロスト・欠損・後遺症について", type: "scale",
+    id: "lost", title: "ロスト・後遺症・欠損について", type: "scale",
     items: [
-      { id: "lost_none", label: "ロストがないシナリオ" },
+
       { id: "lost_fixed", label: "確定ロスト" },
       { id: "lost_high", label: "序盤・中盤から死にやすい高ロスト" },
+      { id: "lost_mid", label: "途中ロスト（クライマックス前）" },
+      { id: "lost_high_end", label: "高ロスト（終盤で死にやすい）" },
       { id: "lost_instadeath", label: "ヒントや忠告のない即死トラップ" },
       { id: "lost_san0", label: "SAN0ロスト" },
       { id: "lost_body", label: "肉体的ロスト" },
-      { id: "lost_mid", label: "途中ロスト（クライマックス前）" },
       { id: "lost_dice", label: "出目のギミックによるロスト" },
       { id: "lost_choice", label: "自らの選択によるロスト" },
       { id: "lost_known", label: "ロストと分かっていてその選択をする行為" },
-      { id: "lost_aftereffect", label: "確定でPCに余命・重い後遺症が残る" },
-      { id: "lost_high_end", label: "高ロスト（終盤で死にやすい）" },
-      { id: "lost_kpc_new", label: "新規KPCの確定ロスト" },
-      { id: "lost_kpc_cont", label: "継続KPCの確定ロスト" },
-      { id: "lost_ho_pc", label: "特定のHOのPCが確定ロスト" },
       { id: "lost_noallsurv", label: "確定で全生還が不可" },
       { id: "lost_revive_pc", label: "死亡したPCの蘇り（シナリオ内）" },
       { id: "lost_revive_npc", label: "死亡したNPCの蘇り（シナリオ内）" },
-      { id: "lost_pc_norescue", label: "ロストPC限定（救済なし）" },
-      { id: "lost_pc_rescue", label: "ロストPCの救済がある" },
-      { id: "lost_kpc_norescue", label: "ロストKPC限定（救済なし）" },
-      { id: "lost_kpc_rescue", label: "ロストKPCの救済がある" },
       { id: "lost_permanent", label: "永久ロスト扱い（救済不可）" },
+      { id: "lost_aftereffect", label: "確定でPCに余命・重い後遺症が残る" },
       { id: "lost_effective_death", label: "継続可だが確定で実質的なPCの死亡・世界の滅亡" },
       { id: "lost_limb", label: "欠損：四肢の欠損" },
       { id: "lost_sense", label: "欠損：失明・聴覚の喪失" },
