@@ -108,7 +108,7 @@ main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 7
 .pcard .pln{margin:9px 0}
 .pcard .plt{font-weight:900;font-size:12px;color:var(--coral)}
 .pcard .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
-.pchip{font-weight:700;font-size:11.5px;border:2px solid var(--ink);border-radius:999px;padding:2px 9px}
+.pchip{font-weight:700;font-size:11.5px;border:2px solid var(--ink);border-radius:14px;padding:2px 9px} /* 1行時の丸みに固定。折り返しても角Rが大きくならない */
 .pchip.love{background:var(--pink)}.pchip.meh{background:#cfcabd}.pchip.weak{background:var(--yellow)}
 .pchip.never{background:var(--coral);color:#fff}.pchip.choice{background:var(--blue);color:#fff}
 .pcard .fb{white-space:pre-wrap;font-size:13px;color:var(--ink-soft)}
@@ -352,7 +352,8 @@ function timeAgg(){
     parts.forEach(function(p){ var s=p.time[sK],e=p.time[eK];
       if(s>maxS){maxS=s;maxSw=[p.name];} else if(s===maxS)maxSw.push(p.name);
       if(e<minE){minE=e;minEw=[p.name];} else if(e===minE)minEw.push(p.name);
-      var fs=p.time[foK]?Math.min(s,p.time[fsK]):s, fe=p.time[foK]?Math.max(e,p.time[feK]):e;
+      // 融通入力者はその融通時間、未入力者は可能時間（基本）全体を使って重なりを取る
+      var fs=p.time[foK]?p.time[fsK]:s, fe=p.time[foK]?p.time[feK]:e;
       if(fs>fMaxS)fMaxS=fs; if(fe<fMinE)fMinE=fe;
     });
     o.maxS=maxS;o.minE=minE;o.maxSw=maxSw;o.minEw=minEw;
@@ -391,10 +392,11 @@ function aggUnits(levels){
   SECTIONS.forEach(function(sec){ if(sec.noagg)return; sec.items.forEach(function(it){
     var itype=it.type||sec.type;
     if(itype==="multi"){
+      var mCnt=sec.items.filter(function(x){return (x.type||sec.type)==="multi";}).length; // 同一セクションに複数のmulti項目がある場合は項目名を付ける
       it.options.forEach(function(opt,idx){
         var ents=[];
         people.forEach(function(p){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.indexOf(idx)>=0) ents.push({name:p.name,v:"choice",sym:"✓",reason:(p.reason&&p.reason[it.id])||""}); });
-        if(ents.length) units.push({kind:"multi", secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id+"#"+idx, label:opt, entries:ents});
+        if(ents.length) units.push({kind:"multi", secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id+"#"+idx, label:(mCnt>1?it.label+"："+opt:opt), entries:ents});
       });
     } else {
       var ents = itype==="scale" ? scaleEntriesForItem(it.id,levels) : choiceAttEntries(sec,it);
@@ -512,13 +514,13 @@ function renderPeople(){
         var itype=it.type||sec.type;
         if(itype==="scale"){ var v=p.scale[it.id]||DEFAULT; if(v==="normal"&&!rz)return; var sym=SMAP[v].sym; if(v==="love"){var n=p.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);} ents.push({label:it.label,sym:sym,cls:v,reason:rz}); }
         else if(itype==="multi"){ var arr=(p.multi&&p.multi[it.id])||[]; if(!arr.length&&!rz)return; if(!arr.length){ents.push({label:it.label,sym:"—",cls:"choice",reason:rz});} else {arr.forEach(function(i,k){ents.push({label:it.options[i],sym:"✓",cls:"choice",reason:(k===0?rz:"")});});} }
-        else { var idx=p.choice[it.id]; if(idx==null&&!rz)return; ents.push({label:it.label,sym:(idx==null?"—":it.options[idx]),cls:"choice",reason:rz}); }
+        else { var idx=p.choice[it.id]; if(idx==null&&!rz)return; ents.push({label:it.label+"："+(idx==null?"—":it.options[idx]),sym:"",cls:"choice",reason:rz}); }
       });
       if(ents.length) groups.push({title:sec.title,ents:ents});
     });
     groups.forEach(function(gr){
       h+='<div class="pln"><div class="plt">'+esc(gr.title)+'</div><div class="chips">';
-      gr.ents.forEach(function(e){ h+='<span class="pchip '+e.cls+'">'+esc(e.sym)+' '+esc(e.label)+(e.reason?'：'+esc(e.reason):'')+'</span>'; });
+      gr.ents.forEach(function(e){ h+='<span class="pchip '+e.cls+'">'+(e.sym?esc(e.sym)+' ':'')+esc(e.label)+(e.reason?'：'+esc(e.reason):'')+'</span>'; });
       h+='</div></div>';
     });
     if(!groups.length) h+='<div class="pln" style="color:#8a857a;font-size:13px">特筆項目なし（すべて〇）</div>';

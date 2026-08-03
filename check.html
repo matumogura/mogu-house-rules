@@ -233,6 +233,7 @@ canvas{display:none}
     <span class="lab">きほん</span>
     <div class="field"><label for="f-name">ハンドルネーム（HO）<span style="color:var(--coral)">*</span></label><div class="hint">卓での呼び名。ファイル名・一覧の見出しになります。</div><input type="text" id="f-name" placeholder="例：モグラ" maxlength="40"></div>
     <div class="field"><label for="f-session">セッション名／シナリオ名</label><div class="hint">任意。記入日は出力時に自動で今日の日付が入ります。</div><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
+    <div class="field"><label for="importfile">保存した提出HTMLから読み込む</label><div class="hint">以前保存した「事前_〇〇.html」（またはJSON）を選ぶと、選択項目・記入内容を復元します。※入力途中の内容は上書きされます。</div><input type="file" id="importfile" accept=".html,.htm,.json,text/html,application/json"></div>
   </div>
 
   <div class="card" id="timecard">
@@ -305,7 +306,8 @@ var DEFAULT = window.JIRAI_SCALE_DEFAULT;
 
 var TIME_MIN=6, TIME_MAX=27;
 function defaultTime(){ return { dayOn:true, dayStart:13, dayEnd:18, dayFlexOn:false, dayFlexStart:9, dayFlexEnd:21, breaks:[15], nightOn:true, nightStart:21, nightEnd:24, nightFlexOn:false, nightFlexStart:20, nightFlexEnd:27, note:"" }; }
-var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:{}, time:defaultTime() };
+function defaultMulti(){ return { tool_use:[0,1] }; } // 使用ツール：Discord・ココフォリアを既定でON
+var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:defaultMulti(), time:defaultTime() };
 function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
 function timeText(t,skipNote,sep){
   if(!t) return "";
@@ -953,7 +955,7 @@ function wrap(ctx,text,x,y,maxW,lh,dry){
 document.getElementById("btn-reset").addEventListener("click",function(){
   if(!confirm("入力内容をすべて消去します。よろしいですか？")) return;
   try{ localStorage.removeItem(STORE_KEY); }catch(e){}
-  state={scale:{},loveN:{},choice:{},reason:{},multi:{},time:defaultTime()};
+  state={scale:{},loveN:{},choice:{},reason:{},multi:defaultMulti(),time:defaultTime()};
   ["day-on","night-on"].forEach(function(id){ var e=document.getElementById(id); if(e)e.checked=true; });
   ["day-flex","night-flex"].forEach(function(id){ var e=document.getElementById(id); if(e)e.checked=false; });
   var tn=document.getElementById("time-note"); if(tn)tn.value="";
@@ -1099,11 +1101,50 @@ window.addEventListener("scroll", onScrollLB, {passive:true});
 window.addEventListener("resize", onScrollLB);
 document.getElementById("sections").addEventListener("toggle", updateLegendBar, true);
 
+// ---- 提出HTML/JSONの読み込み（部分修正用）----
+function syncTimeControls(){
+  var m={"day-on":"dayOn","night-on":"nightOn","day-flex":"dayFlexOn","night-flex":"nightFlexOn"};
+  Object.keys(m).forEach(function(id){ var e=document.getElementById(id); if(e)e.checked=!!state.time[m[id]]; });
+  var note=document.getElementById("time-note"); if(note) note.value=state.time.note||"";
+}
+function applySheet(d){
+  if(!d || d._type!=="mogu-jirai-sheet"){ alert("対応する事前チェックのデータが見つかりませんでした。"); return; }
+  setV("f-name",d.name); setV("f-session",d.session);
+  state.scale=d.scale||{}; state.loveN=d.loveN||{}; state.choice=d.choice||{}; state.multi=d.multi||{}; state.reason=d.reason||{};
+  state.time = d.time ? Object.assign(defaultTime(), d.time) : defaultTime();
+  FREE.forEach(function(f){ setV(f.id, (d.free&&d.free[f.id])||""); });
+  syncTimeControls(); refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderTime(); renderPreview(); save();
+  document.getElementById("savednote").textContent="提出HTMLから読み込みました。";
+}
+function setupImport(){
+  var inp=document.getElementById("importfile"); if(!inp) return;
+  inp.addEventListener("change",function(){
+    var f=inp.files&&inp.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      var text=String(r.result||""), d=null;
+      try{
+        if(/\.json$/i.test(f.name)){ d=JSON.parse(text); }
+        else{ var mm=text.match(/id=["']mogu-jirai-data["'][^>]*>([\s\S]*?)<\/script>/i);
+          if(mm){ d=JSON.parse(mm[1]); }
+          else{ var doc=new DOMParser().parseFromString(text,"text/html"); var s=doc.getElementById("mogu-jirai-data"); if(s) d=JSON.parse(s.textContent); } }
+      }catch(err){ alert("ファイルを読み込めませんでした（データ形式が不正です）。"); inp.value=""; return; }
+      if(d && d._type==="mogu-jirai-sheet"){
+        if(confirm("このファイルの内容で入力を上書きします。よろしいですか？（入力途中の内容は失われます）")) applySheet(d);
+      } else { alert("対応する事前チェックのデータが見つかりませんでした。"); }
+      inp.value="";
+    };
+    r.onerror=function(){ alert("ファイルの読み込みに失敗しました。"); inp.value=""; };
+    r.readAsText(f);
+  });
+}
+
 // ---- 初期化 ----
 (function(){
   restore();
   setupTime();
   setupToc();
+  setupImport();
   refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderPreview();
   updateLegendBar();
 })();

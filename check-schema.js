@@ -68,7 +68,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "erogro", title: "エロ・グロの許容度", type: "multi",
+    id: "erogro", title: "エロ・グロの許容度", type: "choice", attentionFrom: 2,
     items: [
       { id: "eg_ero", label: "エロ", options: ["自身がRPしてもいい", "基本的に許容", "画像は見たくない", "描写も省いてほしい"] },
       { id: "eg_gro", label: "グロ", options: ["自身がRPしてもいい", "基本的に許容", "画像は見たくない", "描写も省いてほしい"] }
@@ -322,7 +322,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "pvp", title: "PvPについて", type: "scale",
+    id: "pvp", title: "PvP内容について", type: "scale",
     items: [
       { id: "pvp_verbal", label: "口論・議論、レスバ" },
       { id: "pvp_physical", label: "PC同士の肉体的被害を伴う争い" },
