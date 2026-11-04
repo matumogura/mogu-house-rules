@@ -345,6 +345,20 @@ input[type=checkbox]:focus-visible{outline:3px solid rgba(232,112,159,.3);outlin
 .ansbtn{margin-left:auto;display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border-radius:16px;background:var(--blue);color:#fff;font-weight:700;font-size:18px;text-decoration:none;box-shadow:0 8px 20px rgba(75,147,212,.28);transition:transform .12s}
 .ansbtn:hover{transform:translateY(-1px)}
 .ansbtn svg.ico{width:22px;height:22px}
+
+/* チェックの並びは同じ幅で、外したものは灰色の欄に */
+.askopt{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.askopt label{gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:15px}
+.askopt label:has(input:not(:checked)){background:#efedf2;border-color:#e2dfe8;color:var(--ink-soft)}
+.aqit{border-radius:10px;padding:12px 10px;margin-top:4px;border-top:0}
+.aqit+.aqit{margin-top:4px}
+.aqit.off{background:#efedf2}
+.aqit.off .aql{text-decoration:none;color:#9a96a8}
+.aqit.off .aqo{opacity:.4}
+.asksec.off{background:#efedf2;border-color:#e2dfe8}
+.asksec.off>summary .stt,.asksec.off>summary .n{color:#9a96a8}
+.asksec.off>summary .sico{background:#e2dfe8;color:#9a96a8}
+@media (min-width:1100px){ .aqni.none{background:#efedf2} .aqni.none a{color:#9a96a8!important} }
 </style>
 </head>
 <body>
@@ -914,7 +928,7 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
       '<div class="aqwrap"><nav class="aqnav" aria-label="聞く項目の見出し">'+window.JIRAI_SECTIONS.map(function(sec){ var n=sec.items.length, on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
           return '<div class="aqni '+(on===0?'none':on<n?'some':'all')+'"><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===n?' checked':'')+(on&&on<n?' data-some="1"':'')+' aria-label="「'+esc(sec.title)+'」をまとめて聞く・外す" title="この見出しの項目をまとめて聞く・外す"><a href="#aq-'+esc(sec.id)+'" data-aqgo="'+esc(sec.id)+'">'+ICO(SEC_ICON[sec.id]||'help')+'<span>'+esc(sec.title)+'</span><em>'+on+'/'+n+'</em></a></div>'; }).join("")+'</nav>'+
         '<div class="asksecs">'+window.JIRAI_SECTIONS.map(function(sec){ var on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
-        return '<details class="asksec" id="aq-'+esc(sec.id)+'"'+(AQOPEN[sec.id]?' open':'')+'><summary><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===sec.items.length?' checked':'')+(on&&on<sec.items.length?' data-some="1"':'')+' aria-label="「'+esc(sec.title)+'」をまとめて聞く・外す"><span class="sico">'+ICO(SEC_ICON[sec.id]||'help')+'</span><span class="stt">'+esc(sec.title)+'</span><span class="n">'+on+' / '+sec.items.length+'</span></summary><div class="aqitems">'+
+        return '<details class="asksec'+(on===0?' off':'')+'" id="aq-'+esc(sec.id)+'"'+(AQOPEN[sec.id]?' open':'')+'><summary><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===sec.items.length?' checked':'')+(on&&on<sec.items.length?' data-some="1"':'')+' aria-label="「'+esc(sec.title)+'」をまとめて聞く・外す"><span class="sico">'+ICO(SEC_ICON[sec.id]||'help')+'</span><span class="stt">'+esc(sec.title)+'</span><span class="n">'+on+' / '+sec.items.length+'</span></summary><div class="aqitems">'+
           sec.items.map(function(it){ var ty=it.type||sec.type, off=has(A.x,it.id);
             var opts = ty==="scale" ? window.JIRAI_SCALE.map(function(x){ return '<i class="aqs s-'+esc(x.v)+'">'+esc(x.sym)+'</i>'; }).join("")
               : (it.options||[]).map(function(o){ return '<i>'+esc(o)+'</i>'; }).join("")+(ty==="multi"?'<span class="aqm">いくつでも選べる</span>':'');
