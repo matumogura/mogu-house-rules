@@ -348,6 +348,44 @@ footer .f2{font-size:14px;color:var(--ink-soft)}
 #timecard .pill.on{background:var(--b-bg);color:var(--b-ink);border-color:var(--b-line)}
 #timecard .pill input{position:absolute;opacity:0;width:1px;height:1px}
 #timecard .pill:disabled{opacity:.45;cursor:default}
+
+/* 読みやすさ：文字を大きく、行間を広く、字間は詰めすぎず空けすぎず */
+body{font-size:16px;line-height:1.85;letter-spacing:.04em;font-feature-settings:"palt" 1}
+svg.ico{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+.card>.lab{display:inline-flex;align-items:center;gap:6px;font-size:14px;letter-spacing:.04em;padding:4px 14px}
+.jsec>summary{font-size:18px;gap:12px;padding:18px 22px}
+.jsec>summary .sico{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--s-love);color:var(--coral);flex:none}
+.jsec>summary .sico svg.ico{width:18px;height:18px}
+.jsec>summary .cnt{font-size:13px;padding:2px 10px}
+.jbody{padding:6px 22px 14px}
+.item{padding:14px 0;gap:10px 14px}
+.iname{font-size:16px;line-height:1.6;font-weight:500;color:var(--ink)}
+.iname .rmark{font-size:15px;color:var(--ink-soft)}
+.cbtn{font-size:15px;line-height:1.5;padding:8px 16px}
+.sbtn{font-size:16px;min-width:46px;padding:8px 8px}
+.choices{gap:8px}
+.reasonbox{font-size:15px;line-height:1.7}
+.field label{font-size:16px}
+input[type=text],textarea{font-size:16px}
+.howto{font-size:16px}
+.secbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:26px 2px 12px}
+.secbar-t{font-weight:700;font-size:17px}
+.secbar .sp{flex:1}
+.secbar .btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;padding:8px 14px}
+.qfill{font-size:14px;padding:4px 14px}
+@media(max-width:640px){ .jsec>summary{font-size:17px;padding:16px} .jbody{padding:4px 16px 12px} .cbtn{font-size:15px} }
+
+.flab{display:block;font-weight:700;font-size:16px;margin-bottom:8px}
+.adultsel{display:flex;gap:8px;flex-wrap:wrap}
+.adultsel .cbtn{font-size:15px}
+.field .filedrop{display:flex;margin:0;font-weight:500;align-items:center;gap:12px;padding:14px 18px;border:1.5px dashed var(--line2);border-radius:14px;background:var(--paper);color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s}
+.field .filedrop:hover,.field .filedrop.over{border-color:var(--blue);background:#eef5fc}
+.filedrop .fdi{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#e3eefa;color:var(--blue);flex:none}
+.filedrop .fdi svg.ico{width:20px;height:20px}
+.filedrop .fdt{font-size:15px;font-weight:500}
+.legendbar .lbsec{font-size:15px}
+.legendbar .lbtitle{font-size:12px}
+.legendbar .lg{font-size:14px;padding:3px 10px}
 </style>
 </head>
 <body>
@@ -381,34 +419,36 @@ footer .f2{font-size:14px;color:var(--ink-soft)}
     <div class="steps">
       <div class="step"><span class="sn">1</span><b>答える</b></div>
       <div class="step"><span class="sn">2</span><b>ファイルを保存してKPに渡す</b></div>
-      <div class="step"><span class="sn">3</span><b>画像で共有する（しなくてもよい）</b></div>
+      <div class="step"><span class="sn">3</span><b>画像で共有する（任意）</b></div>
     </div>
   </div>
 
   <div class="card">
-    <span class="lab">使い方</span>
+    <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>使い方</span>
     <ul class="howto"><li>選ばなかった項目は「〇（ふつう）」になります。気になる項目だけ選べば大丈夫です。</li><li>◎ は押すたびに ◎◎、◎◎◎ と増えます。</li><li>項目の名前を押すと、理由や補足を書けます。</li></ul>
   </div>
 
   <div class="card" id="card-basic">
-    <span class="lab">基本情報</span>
-    <div class="field"><label for="f-name">卓での呼び名<span style="color:var(--coral)">（必須）</span></label><input type="text" id="f-name" placeholder="例：ハル" maxlength="40"></div>
+    <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>基本情報</span>
+    <div class="field"><label for="f-name">アカウント名<span style="color:var(--coral)">（必須）</span></label><input type="text" id="f-name" placeholder="例：ハル" maxlength="40"></div>
+    <div class="field"><span class="flab" id="adult-lab">成人していますか</span><div class="adultsel choices" id="f-adult" role="radiogroup" aria-labelledby="adult-lab"><button type="button" class="cbtn" data-adult="yes" role="radio" aria-checked="false">成人している（18歳以上）</button><button type="button" class="cbtn" data-adult="no" role="radio" aria-checked="false">未成年（18歳未満）</button></div></div>
     <div class="field"><label for="f-session">卓名・シナリオ名</label><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
-    <div class="field"><label for="importfile">前に保存したファイルから読み込む</label><input type="file" id="importfile" accept=".html,.htm,.json,text/html,application/json"></div>
+    <div class="field"><span class="flab">前に保存したファイルから読み込む</span><label class="filedrop" id="importdrop"><input type="file" id="importfile" accept=".html,.htm,.json,text/html,application/json" hidden><span class="fdi"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span><span class="fdt">ファイルを選ぶか、ここへドロップ</span></label></div>
   </div>
 
   <div class="card" id="timecard">
-    <span class="lab">参加可能時間</span>
+    <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>参加可能時間</span>
     <p class="thelp">丸を左右に動かして、参加できる時間を選んでください。</p>
     <div id="tedit"></div>
 
     <div class="field" style="margin-top:10px"><label for="time-note">日程や時間についてのメモ</label><textarea id="time-note" placeholder="例：夕方も相談できます／途中で30分ほど抜けます" rows="2" style="min-height:48px"></textarea></div>
   </div>
 
+  <div class="secbar" id="secbar"><span class="secbar-t">質問の項目</span><span class="sp"></span><button type="button" class="btn ghost sm" id="sec-open"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>すべて開く</button><button type="button" class="btn ghost sm" id="sec-close"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 20 5-5 5 5M7 4l5 5 5-5"/></svg>すべて閉じる</button></div>
   <div id="sections"></div>
 
   <div class="card">
-    <span class="lab">自由記入</span>
+    <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>自由記入</span>
     <div id="freefields"></div>
   </div>
 
@@ -435,7 +475,7 @@ footer .f2{font-size:14px;color:var(--ink-soft)}
 
 <canvas id="cv"></canvas>
 
-<script src="check-schema.js?v=20261104"></script>
+<script src="check-schema.js?v=20261104b"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
 // KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
@@ -450,7 +490,7 @@ var DEFAULT = window.JIRAI_SCALE_DEFAULT;
 var TIME_MIN=6, TIME_MAX=27;
 function defaultTime(){ return { dayOn:true, dayStart:13, dayEnd:18, dayFlexOn:false, dayFlexStart:9, dayFlexEnd:21, breaks:[], nightOn:true, nightStart:21, nightEnd:24, nightFlexOn:false, nightFlexStart:20, nightFlexEnd:27, note:"" }; }
 function defaultMulti(){ return { tool_use:[0,1] }; } // 使用ツール：Discord・ココフォリアを既定でON
-var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:defaultMulti(), time:defaultTime() };
+var state = { scale:{}, loveN:{}, choice:{}, reason:{}, multi:defaultMulti(), time:defaultTime(), adult:"" };
 function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
 function timeText(t,skipNote,sep){
   if(!t) return "";
@@ -497,12 +537,14 @@ function timelineHTML(t){
 })();
 
 // ---- セクション描画 ----
+var ICONS={"info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5M12 8h.01\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "pen": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "mail": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/>", "dice": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8.5 8.5h.01M15.5 15.5h.01M12 12h.01M15.5 8.5h.01M8.5 15.5h.01\"/>", "calendar": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15\" rx=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "sparkle": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\"/><path d=\"M19 17v4M17 19h4\"/>", "image": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"2\"/><path d=\"m21 16-5-5-9 9\"/>", "alert": "<path d=\"M12 4 2.5 20h19z\"/><path d=\"M12 10v4M12 17h.01\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5\"/>", "book": "<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z\"/><path d=\"M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5\"/>", "route": "<circle cx=\"6\" cy=\"18\" r=\"2.5\"/><circle cx=\"18\" cy=\"6\" r=\"2.5\"/><path d=\"M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5\"/>", "star": "<path d=\"m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "mask": "<path d=\"M4 5h16v6a8 8 0 0 1-16 0z\"/><path d=\"M8.5 10h.01M15.5 10h.01M9 14.5a4 4 0 0 0 6 0\"/>", "hand": "<path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V11M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L3.5 15a1.6 1.6 0 0 1 2.6-1.8L7 14.5\"/>", "shield": "<path d=\"M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z\"/>", "lock": "<rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"/><path d=\"M8 10.5V7a4 4 0 0 1 8 0v3.5\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M16 7l3 3M14 9l2 2\"/>", "swords": "<path d=\"M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2\"/><path d=\"M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l-2 2 3 3 2-2\"/>", "heart": "<path d=\"M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z\"/>", "flag": "<path d=\"M5 21V4M5 4h11l-2 4 2 4H5\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3\"/>", "chat": "<path d=\"M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.6A8 8 0 1 1 21 12z\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01\"/>", "expand": "<path d=\"m7 15 5 5 5-5M7 9l5-5 5 5\"/>", "collapse": "<path d=\"m7 20 5-5 5 5M7 4l5 5 5-5\"/>"}, SEC_ICON={"play": "dice", "session": "calendar", "mastering": "sparkle", "wants": "dice", "media": "image", "erogro": "alert", "policy": "users", "theme": "book", "develop": "route", "quality": "star", "genre": "globe", "npc": "mask", "pcdo": "hand", "pcreceive": "shield", "hocontent": "lock", "hoproc": "key", "pvp": "swords", "lost": "heart", "ending": "flag", "kp": "mic", "table": "chat", "kpq": "help"};
+function ICO(k){ return ICONS[k]?'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[k]+'</svg>':''; }
 var secWrap = document.getElementById("sections");
 SECTIONS.forEach(function(sec){
   var det=document.createElement("details"); det.className="jsec"; det.open=["play","session","mastering","wants","policy","erogro","media","kpq"].indexOf(sec.id)>=0;
   det.id="sec-"+sec.id; det.dataset.type=sec.type;
   var sum=document.createElement("summary");
-  sum.innerHTML=esc(sec.title)+'<span class="cnt" id="cnt-'+sec.id+'"></span>';
+  sum.innerHTML='<span class="sico">'+ICO(SEC_ICON[sec.id]||'help')+'</span><span class="stt">'+esc(sec.title)+'</span><span class="cnt" id="cnt-'+sec.id+'"></span>';
   det.appendChild(sum);
   var body=document.createElement("div"); body.className="jbody";
 
@@ -562,7 +604,7 @@ SECTIONS.forEach(function(sec){
 // ---- KP から届いたリンクのとき：上に案内を出し、参加可能時間を聞かないなら隠す ----
 if(KPCFG){
   var kb=document.createElement("div"); kb.className="card kpbanner"; var nAll=0; SECTIONS.forEach(function(sec){ nAll+=sec.items.length; });
-  kb.innerHTML='<span class="lab">KPからのお願い</span><b class="kpbt">'+esc(KPCFG.t||"この卓")+' の事前チェック</b>'+(KPCFG.m?'<p class="kpbm">'+esc(KPCFG.m).replace(/\n/g,"<br>")+'</p>':'')+
+  kb.innerHTML='<span class="lab">'+ICO('mail')+'KPからのお願い</span><b class="kpbt">'+esc(KPCFG.t||"この卓")+' の事前チェック</b>'+(KPCFG.m?'<p class="kpbm">'+esc(KPCFG.m).replace(/\n/g,"<br>")+'</p>':'')+
     '<p class="kpbn">KPが聞きたい項目だけを出しています。答えたら、いちばん下の「KPに渡すファイルを保存」で保存して、KPに渡してください。</p>';
   var ph=document.querySelector("main .phead"); if(ph) ph.after(kb);
   if(!KPTIME){ var tc=document.getElementById("timecard"); if(tc) tc.style.display="none"; var ta=document.querySelector('[data-target="timecard"]'); if(ta) ta.style.display="none"; }
@@ -668,7 +710,7 @@ document.querySelectorAll(".qfill").forEach(function(q){
 function collect(){
   return {
     _type:"mogu-jirai-sheet", _version:2,
-    name:val("f-name"), session:val("f-session"), date:new Date().toISOString().slice(0,10),
+    name:val("f-name"), session:val("f-session"), adult:state.adult||undefined, date:new Date().toISOString().slice(0,10),
     scale:askedOnly(state.scale),
     loveN:askedOnly(state.loveN),
     choice:askedOnly(state.choice),
@@ -689,7 +731,7 @@ function restore(){
   try{
     var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
     var d=JSON.parse(raw);
-    setV("f-name",d.name); setV("f-session",d.session);
+    setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult||"";
     if(d.scale) state.scale=d.scale; if(d.loveN) state.loveN=d.loveN; if(d.choice) state.choice=d.choice; if(d.reason) state.reason=d.reason;
     if(d.multi) state.multi=d.multi;
     if(d.time) state.time=Object.assign(defaultTime(), d.time);
@@ -769,7 +811,7 @@ function buildText(d){
 }
 document.getElementById("btn-txt").addEventListener("click",function(){
   var d=collect();
-  if(!d.name){ alert("卓での呼び名を入れてください。"); document.getElementById("f-name").focus(); return; }
+  if(!d.name){ alert("アカウント名を入れてください。"); document.getElementById("f-name").focus(); return; }
   var t=buildText(d), ta=document.getElementById("txtout");
   ta.style.display="block"; ta.value=t; ta.select();
   var ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
@@ -817,6 +859,7 @@ function buildSubmissionHTML(d){
   '.body{padding:24px 26px 22px}'+
   '.sheettop{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:12px}'+
   '.stitle{min-width:0}h1{font-size:23px;font-weight:900;margin:0 0 2px;line-height:1.4}.meta{font-size:14px;color:#8a8699}'+
+  '.adult{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;border-radius:999px;padding:2px 12px;background:#e3f4ea;color:#2f8a5c}.adult.minor{background:#fbe1e3;color:#c8394f}'+
   '.brand{flex-shrink:0;font-size:15px;font-weight:900;color:#3a3848}.brand .cc{color:#e8709f}'+
   '.legend{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}'+
   '.lp{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;background:#f7f5fa;border-radius:999px;padding:4px 12px 4px 5px}'+
@@ -839,7 +882,7 @@ function buildSubmissionHTML(d){
   '<div class="topbar"></div>'+
   '<div class="body">'+
   '<div class="sheettop"><div class="stitle"><h1>'+esc(d.name||'無名')+' の事前チェックシート</h1>'+
-  '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日：'+esc(d.date||d.createdAt)+'</div></div>'+
+  '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日：'+esc(d.date||d.createdAt)+'</div>'+(d.adult?'<div class="adult '+(d.adult==='no'?'minor':'')+'">'+(d.adult==='no'?'未成年（18歳未満）':'成人（18歳以上）')+'</div>':'')+'</div>'+
   '<div class="brand">事前<span class="cc">チェックシート</span></div></div>'+
   '<div class="legend">'+legend+'<span class="lp plain">〇（ふつう）の項目は省いています</span></div>'+
   timelineHTML(d.time)+
@@ -857,7 +900,7 @@ function download(filename,text,mime){
 function safeName(s){ return (s||"無名").replace(/[\\/:*?"<>|\s]+/g,"_").slice(0,30); }
 document.getElementById("btn-html").addEventListener("click",function(){
   var d=collect();
-  if(!d.name){ alert("卓での呼び名を入れてください。"); document.getElementById("f-name").focus(); return; }
+  if(!d.name){ alert("アカウント名を入れてください。"); document.getElementById("f-name").focus(); return; }
   var ymd=(d.date&&/^\d{4}-\d{2}-\d{2}$/.test(d.date)?d.date:d.createdAt||new Date().toISOString().slice(0,10)).slice(2).replace(/-/g,"");
   download("事前_"+safeName(d.name)+"_"+ymd+".html", buildSubmissionHTML(d), "text/html;charset=utf-8");
 });
@@ -865,7 +908,7 @@ document.getElementById("btn-html").addEventListener("click",function(){
 // ---- SNS画像 ----
 document.getElementById("btn-img").addEventListener("click",function(){
   var d=collect();
-  if(!d.name){ alert("卓での呼び名を入れてください。"); document.getElementById("f-name").focus(); return; }
+  if(!d.name){ alert("アカウント名を入れてください。"); document.getElementById("f-name").focus(); return; }
   // 画像の文字が別の書体にならないよう、使う文字のぶんだけ先に書体を読み込んでおく
   var txt=JSON.stringify(d)+document.body.innerText+"0123456789:〜／・◎×△〇（）JIZENCHECKSHEET— すべての回答は、KPに渡すファイルで見られます。とくに気になる項目はありません";
   var go=function(){ drawImage(d); };
@@ -1329,7 +1372,7 @@ document.getElementById("sections").addEventListener("toggle", updateLegendBar, 
 // ---- 提出HTML/JSONの読み込み（部分修正用）----
 function applySheet(d){
   if(!d || d._type!=="mogu-jirai-sheet"){ alert("このファイルには、事前チェックの答えが入っていませんでした。"); return; }
-  setV("f-name",d.name); setV("f-session",d.session);
+  setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult||""; paintAdult();
   state.scale=d.scale||{}; state.loveN=d.loveN||{}; state.choice=d.choice||{}; state.multi=d.multi||{}; state.reason=d.reason||{};
   state.time = d.time ? Object.assign(defaultTime(), d.time) : defaultTime();
   FREE.forEach(function(f){ setV(f.id, (d.free&&d.free[f.id])||""); });
@@ -1337,9 +1380,8 @@ function applySheet(d){
   document.getElementById("savednote").textContent="ファイルから読み込みました。";
 }
 function setupImport(){
-  var inp=document.getElementById("importfile"); if(!inp) return;
-  inp.addEventListener("change",function(){
-    var f=inp.files&&inp.files[0]; if(!f) return;
+  var inp=document.getElementById("importfile"), drop=document.getElementById("importdrop"); if(!inp) return;
+  function readFile(f){ if(!f) return;
     var r=new FileReader();
     r.onload=function(){
       var text=String(r.result||""), d=null;
@@ -1350,22 +1392,36 @@ function setupImport(){
           else{ var doc=new DOMParser().parseFromString(text,"text/html"); var s=doc.getElementById("mogu-jirai-data"); if(s) d=JSON.parse(s.textContent); } }
       }catch(err){ alert("このファイルは読み込めませんでした。保存したファイルか確かめてください。"); inp.value=""; return; }
       if(d && d._type==="mogu-jirai-sheet"){
-        if(confirm("いま入力している内容を、このファイルの内容に置きかえます。よろしいですか？")) applySheet(d);
+        if(confirm("いま入力している内容を、このファイルの内容に置きかえます。よろしいですか？")){ applySheet(d); var t=drop&&drop.querySelector(".fdt"); if(t) t.textContent="読み込みました："+f.name; }
       } else { alert("このファイルには、事前チェックの答えが入っていませんでした。"); }
       inp.value="";
     };
     r.onerror=function(){ alert("ファイルを読み込めませんでした。"); inp.value=""; };
     r.readAsText(f);
-  });
+  }
+  inp.addEventListener("change",function(){ readFile(inp.files&&inp.files[0]); });
+  if(drop){
+    ["dragenter","dragover"].forEach(function(ev){ drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.add("over"); }); });
+    ["dragleave","drop"].forEach(function(ev){ drop.addEventListener(ev,function(e){ e.preventDefault(); drop.classList.remove("over"); }); });
+    drop.addEventListener("drop",function(e){ var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; readFile(f); });
+  }
 }
 
+// ---- 成人しているか（成人／未成年。もう一度押すと外す） ----
+function paintAdult(){ document.querySelectorAll("#f-adult [data-adult]").forEach(function(b){ var on=b.dataset.adult===state.adult; b.classList.toggle("on",on); b.setAttribute("aria-checked",on?"true":"false"); }); }
+(function(){ var w=document.getElementById("f-adult"); if(!w) return;
+  w.addEventListener("click",function(e){ var b=e.target.closest("[data-adult]"); if(!b) return; state.adult = state.adult===b.dataset.adult ? "" : b.dataset.adult; paintAdult(); onChange(); }); })();
+// ---- 質問の項目をまとめて開く・閉じる ----
+(function(){ function all(on){ document.querySelectorAll("#sections details.jsec").forEach(function(d){ d.open=on; }); if(typeof updateLegendBar==="function") updateLegendBar(); }
+  var o=document.getElementById("sec-open"), c=document.getElementById("sec-close"); if(o) o.addEventListener("click",function(){ all(true); }); if(c) c.addEventListener("click",function(){ all(false); });
+  if(!SECTIONS.length){ var b=document.getElementById("secbar"); if(b) b.style.display="none"; } })();
 // ---- 初期化 ----
 (function(){
   restore();
   if(KPCFG && KPCFG.t && !val("f-session")) setV("f-session", KPCFG.t);
   setupTime();
   setupToc();
-  setupImport();
+  setupImport(); paintAdult();
   refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderPreview();
   updateLegendBar();
 })();

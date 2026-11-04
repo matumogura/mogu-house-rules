@@ -271,6 +271,10 @@ footer .f2{font-size:13px}
 .tpl.on{background:var(--s-love);color:var(--s-love-t);border-color:#f3c3d7}
 .asksave{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
 .asksave input{flex:1;min-width:200px;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+
+.agec{display:inline-block;vertical-align:middle;margin-left:10px;font-size:13px;font-weight:700;border-radius:999px;padding:1px 10px;background:#e3f4ea;color:#2f8a5c}
+.agec.minor,.agem{background:#fbe1e3;color:#c8394f}
+.agem{font-style:normal;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px}
 </style>
 </head>
 <body>
@@ -379,7 +383,7 @@ footer .f2{font-size:13px}
   <div class="f2">読み込んだ内容は、どこにも送られません。</div>
 </footer>
 
-<script src="check-schema.js?v=20261104"></script>
+<script src="check-schema.js?v=20261104b"></script>
 <script>
 var SCALE=window.JIRAI_SCALE, SECTIONS=window.JIRAI_SECTIONS, SMAP=window.JIRAI.scaleMap(), esc=window.JIRAI.esc;
 var CFREE=[];   // PLの提出に入っていた「KPからの質問」の自由記入
@@ -449,7 +453,7 @@ function render(){
   var roster=document.getElementById("roster"); roster.innerHTML="";
   people.forEach(function(p,i){
     var el=document.createElement("div"); el.className="person";
-    el.innerHTML='<span>'+esc(p.name)+'</span><button class="rm" data-i="'+i+'" title="削除">×</button>';
+    el.innerHTML='<span>'+esc(p.name)+'</span>'+(p.adult==='no'?'<em class="agem">未成年</em>':'')+'<button class="rm" data-i="'+i+'" title="削除">×</button>';
     roster.appendChild(el);
   });
   roster.querySelectorAll(".rm").forEach(function(b){ b.addEventListener("click",function(){ people.splice(parseInt(b.dataset.i,10),1); render(); }); });
@@ -653,7 +657,7 @@ function renderPeople(){
   var g=document.getElementById("pgrid"); g.innerHTML="";
   people.forEach(function(p){
     var card=document.createElement("div"); card.className="pcard";
-    var h='<h3>'+esc(p.name)+'</h3><div class="pm">'+(p.session?esc(p.session)+' ／ ':'')+'記入日 '+esc(p.date||p.createdAt||"")+'</div>';
+    var h='<h3>'+esc(p.name)+(p.adult?'<span class="agec'+(p.adult==='no'?' minor':'')+'">'+(p.adult==='no'?'未成年':'成人')+'</span>':'')+'</h3><div class="pm">'+(p.session?esc(p.session)+' ／ ':'')+'記入日 '+esc(p.date||p.createdAt||"")+'</div>';
     if(p.time) h+='<div class="pln"><div class="plt">参加可能時間</div><div class="fb">'+esc(timeText(p.time))+'</div></div>';
     // grouped non-normal
     var groups=[];
