@@ -51,6 +51,12 @@ header{position:sticky;top:0;z-index:50;background:var(--ink);border-bottom:1px 
 .pillnav{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
 .toc{background:var(--paper);border-top:1px solid var(--line)}
 .toc-inner{max-width:1080px;margin:0 auto;padding:10px 18px;display:flex;flex-wrap:wrap;gap:8px}
+.toc-inner{align-items:center}
+.tocmain,.toclg{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toclg{margin-left:auto;padding-left:14px;border-left:1px solid var(--line)}
+#kptoc .toc-inner{gap:6px 10px}#kptoc .tocmain,#kptoc .toclg{gap:6px}#kptoc a{padding:5px 10px}
+body:not(.hasdata) #kptoc .needdata{display:none}
+.toc a.cur{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .toc a{white-space:nowrap;font-weight:700;font-size:12.5px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px}
 .toc a .n{font-weight:700;font-size:10px;color:var(--coral)}
 .toc a:hover{filter:brightness(1.05)}
@@ -378,14 +384,20 @@ input[type=checkbox]::before{border-left-width:2.5px;border-bottom-width:2.5px;b
     </div>
   </div>
   <nav class="toc" id="kptoc"><div class="toc-inner">
-    <a data-target="card-ask"><span class="n">00</span>聞く項目</a>
-    <a data-target="drop"><span class="n">01</span>読み込み</a>
-    <a data-target="card-notice"><span class="n">02</span>お知らせ出力</a>
-    <a data-target="timeagg-card"><span class="n">03</span>参加可能時間</a>
-    <a data-target="grp-att" class="t-weak"><span class="n">×</span>要注意</a>
-    <a data-target="grp-meh" class="t-meh"><span class="n">△</span>微妙</a>
-    <a data-target="grp-note" class="t-normal"><span class="n">〇</span>備考</a>
-    <a data-target="grp-love" class="t-love"><span class="n">◎</span>好きな要素</a>
+    <div class="tocmain">
+      <a data-target="card-ask"><span class="n">00</span>聞く項目</a>
+      <a data-target="card-read"><span class="n">01</span>読み込み</a>
+      <a data-target="card-notice" data-view="agg" class="needdata"><span class="n">02</span>お知らせ出力</a>
+      <a data-target="timeagg-card" data-view="agg" class="needdata"><span class="n">03</span>参加可能時間</a>
+      <a data-target="workspace" data-view="people" class="needdata"><span class="n">04</span>個人カード</a>
+      <a data-target="workspace" data-view="matrix" class="needdata"><span class="n">05</span>一覧表</a>
+    </div>
+    <div class="toclg needdata" aria-label="要注意まとめの印へ移る">
+      <a data-target="grp-att" data-view="agg" class="t-weak"><span class="n">×</span>要注意</a>
+      <a data-target="grp-meh" data-view="agg" class="t-meh"><span class="n">△</span>微妙</a>
+      <a data-target="grp-note" data-view="agg" class="t-normal"><span class="n">〇</span>備考</a>
+      <a data-target="grp-love" data-view="agg" class="t-love"><span class="n">◎</span>好きな要素</a>
+    </div>
   </div></nav>
 </header>
 
@@ -550,6 +562,7 @@ function render(){
   roster.querySelectorAll(".rm").forEach(function(b){ b.addEventListener("click",function(){ people.splice(parseInt(b.dataset.i,10),1); render(); }); });
   document.getElementById("counter").textContent = people.length? (people.length+" / "+MAX+" 人 読み込み済み") : "";
   document.getElementById("workspace").style.display = people.length? "block":"none";
+  document.body.classList.toggle("hasdata", !!people.length); tocCur();
   rebuildSections();
   if(people.length){ renderTimeAgg(); renderAgg(); renderPeople(); renderMatrix(); buildOutput(); }
 }
@@ -874,17 +887,21 @@ document.querySelectorAll(".tab").forEach(function(t){
     t.classList.add("on"); document.getElementById("view-"+t.dataset.view).classList.add("on");
   });
 });
+// 上の目次：いまの画面に合わせて出す（読み込む前は「聞く項目・読み込み」だけ。読み込んだらまとめ・個人カード・一覧表と、右に印の見出し）
+function showView(v){
+  document.querySelectorAll(".tab").forEach(function(x){ x.classList.toggle("on", x.dataset.view===v); });
+  document.querySelectorAll(".view").forEach(function(x){ x.classList.toggle("on", x.id==="view-"+v); });
+  tocCur();
+}
+function tocCur(){
+  var t=document.querySelector(".tab.on"), v=t?t.dataset.view:"agg";
+  document.querySelectorAll("#kptoc .tocmain a[data-view]").forEach(function(a){ a.classList.toggle("cur", (a.dataset.view==="people"||a.dataset.view==="matrix") && a.dataset.view===v); });
+}
+document.querySelectorAll(".tab").forEach(function(t){ t.addEventListener("click", tocCur); });
 document.getElementById("kptoc").addEventListener("click",function(e){
   var a=e.target.closest ? e.target.closest("a[data-target]") : null; if(!a) return;
-  var id=a.dataset.target;
-  // 読み込み以外は集約タブ内の要素なので、集約ビューへ切替
-  if(id!=="drop"){
-    document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});
-    document.querySelectorAll(".view").forEach(function(x){x.classList.remove("on");});
-    var tab=document.querySelector('.tab[data-view="agg"]'); if(tab)tab.classList.add("on");
-    var va=document.getElementById("view-agg"); if(va)va.classList.add("on");
-  }
-  var el=document.getElementById(id); if(!el) return;
+  if(a.dataset.view) showView(a.dataset.view);
+  var el=document.getElementById(a.dataset.target); if(!el) return;
   var hh=(document.querySelector("header")||{}).offsetHeight||0;
   window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-hh-8, behavior:"smooth"});
 });
