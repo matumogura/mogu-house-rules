@@ -323,6 +323,28 @@ svg.ico{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-
   .aqni.none a{color:var(--ink-soft)}.aqni.none a svg.ico{color:var(--ink-soft)}
   .aqni.some a em{color:var(--coral);font-weight:700}
 }
+
+/* チェックボックス：白地にピンクの枠、チェックもピンク。大きく押しやすく */
+input[type=checkbox]{-webkit-appearance:none;appearance:none;width:24px;height:24px;margin:0;flex:none;border:2px solid var(--coral);border-radius:7px;background:#fff;display:inline-grid;place-content:center;cursor:pointer;vertical-align:middle;transition:background .12s}
+input[type=checkbox]::before{content:"";width:11px;height:6px;border-left:3px solid var(--coral);border-bottom:3px solid var(--coral);transform:translate(0,-2px) rotate(-45deg);opacity:0}
+input[type=checkbox]:checked::before{opacity:1}
+input[type=checkbox]:indeterminate::before{opacity:1;width:11px;height:0;border-left:0;transform:none}
+input[type=checkbox]:hover{background:#fff5f9}
+input[type=checkbox]:focus-visible{outline:3px solid rgba(232,112,159,.3);outline-offset:2px}
+.opts input[type=checkbox]{border-color:var(--blue)}.opts input[type=checkbox]::before{border-color:var(--blue)}
+.aqit input,.aqni input,.asksec input[type=checkbox],.askopt input[type=checkbox],.arow .ck input{width:24px;height:24px}
+.aqit input{margin-top:0}
+.askopt label,.aqit,.aqni{gap:10px}
+/* 質問の枠：中だけスクロール（カーソルが外にあるときは、ページがそのまま下へ進む） */
+.aqwrap{height:min(72vh,780px)}
+.asksecs{height:100%;overflow-y:auto;overscroll-behavior:contain;position:relative;padding-right:6px;margin:0;scrollbar-width:thin}
+@media (min-width:1100px){ .aqnav{position:static;max-height:none;height:100%;overscroll-behavior:contain} }
+/* 回答を確認：見出しの右 */
+.phrow{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:6px}
+.phrow h1{margin:0!important}
+.ansbtn{margin-left:auto;display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border-radius:16px;background:var(--blue);color:#fff;font-weight:700;font-size:18px;text-decoration:none;box-shadow:0 8px 20px rgba(75,147,212,.28);transition:transform .12s}
+.ansbtn:hover{transform:translateY(-1px)}
+.ansbtn svg.ico{width:22px;height:22px}
 </style>
 </head>
 <body>
@@ -331,7 +353,6 @@ svg.ico{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-
     <div class="logo">事前<b>チェック</b></div>
     <span class="kpbadge">KP</span>
     <div class="pillnav">
-      <a class="pill ans" href="#card-read" id="goread">回答を確認</a>
       <a class="pill y" href="check.html">PL用</a>
       <a class="pill" href="jizen.html">事前チェック</a>
       <a class="pill" href="index.html">ハウスルール</a>
@@ -352,7 +373,7 @@ svg.ico{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-
 <main>
   <div class="phead">
     <div class="kick">JIZEN CHECK SHEET — FOR KEEPERS</div>
-    <h1>事前チェック<span class="cc">集約</span>シート</h1>
+    <div class="phrow"><h1>事前チェック<span class="cc">集約</span>シート</h1><a class="ansbtn" href="#card-read" id="goread"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14l2 2 4-4"/></svg>回答を確認</a></div>
     <p class="lead">PLから受け取ったファイルを読み込むと、全員の答えをまとめて見られます。<br>読み込んだ内容はこのブラウザの中だけで使い、どこにも送られません。</p>
   </div>
 
@@ -904,7 +925,9 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
       '<button type="button" class="btn ghost sm" data-qadd>＋ 質問を足す</button>'+
       '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><button type="button" class="btn ghost sm" data-apv>プレビュー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">新しいタブで開く</a></div>'+
       '<div class="vnote" style="margin-top:8px"><span id="askn">'+count()+'</span></div>';
-    box.innerHTML=h; box.querySelectorAll('[data-some]').forEach(function(c){ c.indeterminate=true; }); document.getElementById("askopen").href=link(); }
+    var sc0=box.querySelector('.asksecs'), st0=sc0?sc0.scrollTop:0, sn0=box.querySelector('.aqnav'), sn1=sn0?sn0.scrollTop:0;
+    box.innerHTML=h; { var sc1=box.querySelector('.asksecs'); if(sc1) sc1.scrollTop=st0; var sn2=box.querySelector('.aqnav'); if(sn2) sn2.scrollTop=sn1; }
+    box.querySelectorAll('[data-some]').forEach(function(c){ c.indeterminate=true; }); document.getElementById("askopen").href=link(); }
   box.addEventListener("input", function(e){ var t=e.target;
     if(t.dataset.a){ A[t.dataset.a]=t.value; save(); document.getElementById("askopen").href=link(); return; }
     var q=t.closest("[data-qi]"); if(q && t.dataset.q && t.dataset.q!=="t"){ A.q[+q.dataset.qi][t.dataset.q]=t.value; save(); document.getElementById("askopen").href=link(); } });
@@ -926,7 +949,7 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
     if(t.matches('summary input[type=checkbox]')) e.stopPropagation();
     if(t.closest("[data-apv]")){ var u=link(); document.getElementById("aqpvf").src=u; document.getElementById("aqpvtab").href=u; PV.hidden=false; return; }
     var al=t.closest("[data-aqall]"); if(al){ var on=al.dataset.aqall==="1"; window.JIRAI_SECTIONS.forEach(function(sec){ AQOPEN[sec.id]=on; }); box.querySelectorAll("details.asksec").forEach(function(d){ d.open=on; }); return; }
-    var go=t.closest("[data-aqgo]"); if(go){ e.preventDefault(); var d=document.getElementById("aq-"+go.dataset.aqgo); if(!d) return; d.open=true; AQOPEN[go.dataset.aqgo]=true; var hh=(document.querySelector("header")||{}).offsetHeight||0; window.scrollTo({top:d.getBoundingClientRect().top+window.pageYOffset-hh-14, behavior:"smooth"}); return; }
+    var go=t.closest("[data-aqgo]"); if(go){ e.preventDefault(); var d=document.getElementById("aq-"+go.dataset.aqgo); if(!d) return; d.open=true; AQOPEN[go.dataset.aqgo]=true; var sc=box.querySelector(".asksecs"); if(sc) sc.scrollTo({top:d.offsetTop-6, behavior:"smooth"}); return; }
     if(t.closest("[data-qadd]")){ A.q.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), l:"", t:"scale"}); save(); draw(); var L=box.querySelectorAll('[data-q="l"]'); if(L.length) L[L.length-1].focus(); return; }
     var rm=t.closest("[data-qrm]"); if(rm){ A.q.splice(+rm.closest("[data-qi]").dataset.qi,1); save(); draw(); return; }
     if(t.closest("[data-acopy]")){ var v=link(); (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){ t.textContent="コピーしました"; setTimeout(function(){ t.textContent="リンクをコピー"; },1500); }, function(){ var i=document.getElementById("asklink"); i.select(); document.execCommand("copy"); }); return; }
