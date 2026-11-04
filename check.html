@@ -506,7 +506,7 @@ input::placeholder,textarea::placeholder{color:#bcb8c8;font-weight:400;opacity:1
 
 <canvas id="cv"></canvas>
 
-<script src="check-schema.js?v=20261104j"></script>
+<script src="check-schema.js?v=20261104k"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
 // KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
@@ -855,77 +855,8 @@ document.getElementById("btn-txt").addEventListener("click",function(){
 });
 
 // ---- 提出用HTML ----
-function buildSubmissionHTML(d){
-  var json=JSON.stringify(d).replace(/</g,"\\u003c");
-  function rzHtml(it){ var rz=(d.reason&&d.reason[it.id])||""; return rz? '<div class="rz">理由：'+esc(rz)+'</div>':''; }
-  function rowsFor(sec){
-    var rows="";
-    sec.items.forEach(function(it){
-      var rz=(d.reason&&d.reason[it.id])||"";
-      var chip=""; var itype=it.type||sec.type;
-      if(itype==="scale"){
-        var v=d.scale[it.id]||DEFAULT; if(v==="normal" && !rz) return;
-        var sym=SMAP[v].sym; if(v==="love"){var n=d.loveN[it.id]||1; if(n>1)sym="◎".repeat(n);}
-        chip='<span class="chip '+v+'">'+esc(sym)+'</span>';
-      } else if(itype==="multi"){
-        var arr=(d.multi&&d.multi[it.id])||[]; if(!arr.length && !rz) return;
-        chip = arr.length ? arr.map(function(i){return '<span class="chip choice">'+esc(it.options[i])+'</span>';}).join(" ") : '<span class="chip choice">—</span>';
-      } else {
-        var idx=d.choice[it.id]; if(idx==null && !rz) return;
-        chip='<span class="chip choice">'+esc(idx==null?"—":it.options[idx])+'</span>';
-      }
-      rows+='<div class="item"><div class="lb">'+esc(it.label)+rzHtml(it)+'</div><div class="val">'+chip+'</div></div>';
-    });
-    return rows? '<div class="sec"><div class="sechd"><span class="dot"></span><h2>'+esc(sec.title)+'</h2></div>'+rows+'</div>' : '';
-  }
-  var body=""; SECTIONS.forEach(function(sec){ body+=rowsFor(sec); });
-  var legend=SCALE.map(function(s){ return '<span class="lp"><span class="s '+s.v+'">'+esc(s.sym)+'</span>'+esc(s.t)+'</span>'; }).join('');
-  var freeHtml=""; FREE.forEach(function(f){ var v=d.free[f.id];
-    if(v) freeHtml+='<div class="free"><div class="ft">'+esc(f.label)+'</div><div class="fb">'+esc(v)+'</div></div>';
-  });
-  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'+
-  '<title>事前チェックシート：'+esc(d.name||'無名')+'</title>'+
-  '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'+
-  '<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">'+
-  '<script type="application/json" id="mogu-jirai-data">'+json+'<\/script>'+
-  '<style>*{box-sizing:border-box}body{font-family:"Zen Maru Gothic",-apple-system,"Hiragino Maru Gothic ProN",sans-serif;color:#3a3848;line-height:1.8;margin:0;padding:28px 16px;background:#f7f5fa;-webkit-font-smoothing:antialiased}'+
-  '.sheet{max-width:680px;margin:0 auto;background:#fff;border:1px solid #e8e4ef;border-radius:22px;box-shadow:0 8px 26px rgba(60,50,90,.08);overflow:hidden}'+
-  '.topbar{height:6px;background:linear-gradient(135deg,#e8709f,#f2a07b)}'+
-  '.body{padding:24px 26px 22px}'+
-  '.sheettop{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:12px}'+
-  '.stitle{min-width:0}h1{font-size:23px;font-weight:900;margin:0 0 2px;line-height:1.4}.meta{font-size:14px;color:#8a8699}'+
-  '.adult{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;border-radius:999px;padding:2px 12px;background:#e3f4ea;color:#2f8a5c}.adult.minor{background:#fbe1e3;color:#c8394f}'+
-  '.brand{flex-shrink:0;font-size:15px;font-weight:900;color:#3a3848}.brand .cc{color:#e8709f}'+
-  '.legend{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}'+
-  '.lp{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;background:#f7f5fa;border-radius:999px;padding:4px 12px 4px 5px}'+
-  '.lp.plain{padding:4px 12px;color:#6c6879;font-weight:500}'+
-  '.lp .s{font-size:13px;border-radius:999px;padding:0 9px}'+
-  '.s.love,.chip.love{background:#fbe0ec;color:#c2457b}.s.normal{background:#e3f4ea;color:#2f8a5c}.s.meh,.chip.meh{background:#eeecf2;color:#6c6879}.s.weak,.chip.weak{background:#fdf0cf;color:#9a6a05}.s.never,.chip.never{background:#fbe1e3;color:#c8394f}'+
-  '.sec{margin-top:20px}.sechd{display:flex;align-items:center;gap:9px;margin-bottom:4px}'+
-  '.dot{width:9px;height:9px;border-radius:50%;background:#e8709f;flex-shrink:0}'+
-  '.sechd h2{font-size:17px;font-weight:900;margin:0;line-height:1.3}'+
-  '.item{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:9px 2px;border-top:1px solid #efecf4}'+
-  '.item:first-of-type{border-top:none}.lb{font-size:15px;font-weight:500;min-width:0}.val{flex-shrink:0}'+
-  '.rz{font-size:14px;color:#6c6879;margin-top:2px;white-space:pre-wrap}'+
-  '.chip{display:inline-block;font-weight:700;font-size:14px;border-radius:999px;padding:2px 12px;white-space:nowrap}'+
-  '.chip.choice{background:#e3eefa;color:#2f6fae}'+
-  '.free,.tl{margin-top:14px;background:#faf9fc;border:1px solid #e8e4ef;border-radius:16px;padding:14px 16px}'+
-  '.ft{font-weight:900;font-size:14px;color:#e8709f}.fb{white-space:pre-wrap;font-size:15px;color:#4f4b5e}'+
-  '.empty{color:#6c6879;font-size:15px;margin-top:12px}'+
-  '.note{margin-top:18px;font-size:14px;color:#6c6879;border-top:1px solid #efecf4;padding-top:12px}</style></head>'+
-  '<body><div class="sheet">'+
-  '<div class="topbar"></div>'+
-  '<div class="body">'+
-  '<div class="sheettop"><div class="stitle"><h1>'+esc(d.name||'無名')+' の事前チェックシート</h1>'+
-  '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日：'+esc(d.date||d.createdAt)+'</div>'+(d.adult==='yes'?'<div class="adult">✅ 成人済み</div>':'')+'</div>'+
-  '<div class="brand">事前<span class="cc">チェックシート</span></div></div>'+
-  '<div class="legend">'+legend+'<span class="lp plain">〇（ふつう）の項目は省いています</span></div>'+
-  timelineHTML(d.time)+
-  (body||'<p class="empty">とくに気になる項目はありません（すべて〇）</p>')+freeHtml+
-  '<div class="note">このファイルをKPに渡してください。KP用のページでそのまま読み込めます。</div>'+
-  '</div>'+
-  '</div></body></html>';
-}
+// 提出用の HTML は check-schema.js（JIRAI.sheetHTML）で作る（キパビューの「シートを見る」と同じもの）
+function buildSubmissionHTML(d){ return window.JIRAI.sheetHTML(d); }
 function download(filename,text,mime){
   var blob=new Blob([text],{type:mime||"text/plain;charset=utf-8"});
   var url=URL.createObjectURL(blob), a=document.createElement("a");
