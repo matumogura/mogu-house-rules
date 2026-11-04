@@ -390,6 +390,18 @@ input[type=text],textarea{font-size:16px}
 .field .adultck{display:inline-flex;align-items:center;gap:10px;margin:0;padding:10px 16px;border:1px solid var(--line2);border-radius:999px;background:#fff;font-size:16px;font-weight:700;cursor:pointer}
 .field .adultck input{width:20px;height:20px;margin:0;accent-color:#2f8a5c;cursor:pointer}
 .field .adultck:has(input:checked){background:#e3f4ea;border-color:#9fd6b6;color:#2f8a5c}
+
+input.short{max-width:320px}
+.sidetoc{display:none}
+@media (min-width:1240px){
+  main,.hbar,.legendbar-inner{margin-left:max(268px, calc(50% - 500px));margin-right:auto}
+  .sidetoc{display:flex;flex-direction:column;gap:2px;position:fixed;z-index:5;top:96px;bottom:20px;left:max(24px, calc(50% - 500px - 248px));width:220px;overflow-y:auto;padding:6px 6px 12px;scrollbar-width:thin}
+  .sidetoc .stt{font-size:13px;font-weight:700;color:var(--ink-soft);padding:4px 12px 8px;letter-spacing:.08em}
+  .sidetoc a{display:flex;align-items:center;gap:9px;padding:7px 12px;border-radius:10px;font-size:14px;line-height:1.45;color:var(--ink);text-decoration:none}
+  .sidetoc a svg.ico{width:17px;height:17px;color:var(--coral);flex:none}
+  .sidetoc a:hover{background:#fff}
+  .sidetoc a.on{background:#fff;box-shadow:var(--sh);font-weight:700}
+}
 </style>
 </head>
 <body>
@@ -415,6 +427,7 @@ input[type=text],textarea{font-size:16px}
   <div class="legendbar"><div class="legendbar-inner"><span class="lbsec" id="lbsec"></span><span class="lbtitle">こたえかた</span><div class="legend" id="legend" style="display:contents"></div></div></div>
 </div>
 
+<nav class="sidetoc" id="sidetoc" aria-label="目次"></nav>
 <main>
   <div class="phead">
     <div class="kick">JIZEN CHECK SHEET — FOR PLAYERS</div>
@@ -434,7 +447,7 @@ input[type=text],textarea{font-size:16px}
 
   <div class="card" id="card-basic">
     <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>基本情報</span>
-    <div class="field"><label for="f-name">アカウント名<span style="color:var(--coral)">（必須）</span></label><input type="text" id="f-name" placeholder="例：ハル" maxlength="40"></div>
+    <div class="field"><label for="f-name">アカウント名<span style="color:var(--coral)">（必須）</span></label><input type="text" id="f-name" class="short" placeholder="例：ハル" maxlength="40"></div>
     <div class="field"><label class="adultck"><input type="checkbox" id="f-adult-ck"><span>成人済みです</span></label></div>
     <div class="field"><label for="f-session">卓名・シナリオ名</label><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
     <div class="field"><span class="flab">前に保存したファイルから読み込む</span><label class="filedrop" id="importdrop"><input type="file" id="importfile" accept=".html,.htm,.json,text/html,application/json" hidden><span class="fdi"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span><span class="fdt">ファイルを選ぶか、ここへドロップ</span></label></div>
@@ -451,7 +464,7 @@ input[type=text],textarea{font-size:16px}
   <div class="secbar" id="secbar"><span class="secbar-t">質問の項目</span><span class="sp"></span><button type="button" class="btn ghost sm" id="sec-open"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>すべて開く</button><button type="button" class="btn ghost sm" id="sec-close"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 20 5-5 5 5M7 4l5 5 5-5"/></svg>すべて閉じる</button></div>
   <div id="sections"></div>
 
-  <div class="card">
+  <div class="card" id="card-free">
     <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>自由記入</span>
     <div id="freefields"></div>
   </div>
@@ -479,7 +492,7 @@ input[type=text],textarea{font-size:16px}
 
 <canvas id="cv"></canvas>
 
-<script src="check-schema.js?v=20261104c"></script>
+<script src="check-schema.js?v=20261104d"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
 // KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
@@ -541,7 +554,7 @@ function timelineHTML(t){
 })();
 
 // ---- セクション描画 ----
-var ICONS={"info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5M12 8h.01\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "pen": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "mail": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/>", "dice": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8.5 8.5h.01M15.5 15.5h.01M12 12h.01M15.5 8.5h.01M8.5 15.5h.01\"/>", "calendar": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15\" rx=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "sparkle": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\"/><path d=\"M19 17v4M17 19h4\"/>", "image": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"2\"/><path d=\"m21 16-5-5-9 9\"/>", "alert": "<path d=\"M12 4 2.5 20h19z\"/><path d=\"M12 10v4M12 17h.01\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5\"/>", "book": "<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z\"/><path d=\"M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5\"/>", "route": "<circle cx=\"6\" cy=\"18\" r=\"2.5\"/><circle cx=\"18\" cy=\"6\" r=\"2.5\"/><path d=\"M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5\"/>", "star": "<path d=\"m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "mask": "<path d=\"M4 5h16v6a8 8 0 0 1-16 0z\"/><path d=\"M8.5 10h.01M15.5 10h.01M9 14.5a4 4 0 0 0 6 0\"/>", "hand": "<path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V11M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L3.5 15a1.6 1.6 0 0 1 2.6-1.8L7 14.5\"/>", "shield": "<path d=\"M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z\"/>", "lock": "<rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"/><path d=\"M8 10.5V7a4 4 0 0 1 8 0v3.5\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M16 7l3 3M14 9l2 2\"/>", "swords": "<path d=\"M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2\"/><path d=\"M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l-2 2 3 3 2-2\"/>", "heart": "<path d=\"M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z\"/>", "flag": "<path d=\"M5 21V4M5 4h11l-2 4 2 4H5\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3\"/>", "chat": "<path d=\"M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.6A8 8 0 1 1 21 12z\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01\"/>", "expand": "<path d=\"m7 15 5 5 5-5M7 9l5-5 5 5\"/>", "collapse": "<path d=\"m7 20 5-5 5 5M7 4l5 5 5-5\"/>"}, SEC_ICON={"play": "dice", "session": "calendar", "mastering": "sparkle", "wants": "dice", "media": "image", "erogro": "alert", "policy": "users", "theme": "book", "develop": "route", "quality": "star", "genre": "globe", "npc": "mask", "pcdo": "hand", "pcreceive": "shield", "hocontent": "lock", "hoproc": "key", "pvp": "swords", "lost": "heart", "ending": "flag", "kp": "mic", "table": "chat", "kpq": "help"};
+var ICONS={"save": "<path d=\"M12 4v11M7 10l5 5 5-5\"/><path d=\"M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5M12 8h.01\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "pen": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "mail": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/>", "dice": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8.5 8.5h.01M15.5 15.5h.01M12 12h.01M15.5 8.5h.01M8.5 15.5h.01\"/>", "calendar": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15\" rx=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "sparkle": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\"/><path d=\"M19 17v4M17 19h4\"/>", "image": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"2\"/><path d=\"m21 16-5-5-9 9\"/>", "alert": "<path d=\"M12 4 2.5 20h19z\"/><path d=\"M12 10v4M12 17h.01\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5\"/>", "book": "<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z\"/><path d=\"M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5\"/>", "route": "<circle cx=\"6\" cy=\"18\" r=\"2.5\"/><circle cx=\"18\" cy=\"6\" r=\"2.5\"/><path d=\"M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5\"/>", "star": "<path d=\"m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "mask": "<path d=\"M4 5h16v6a8 8 0 0 1-16 0z\"/><path d=\"M8.5 10h.01M15.5 10h.01M9 14.5a4 4 0 0 0 6 0\"/>", "hand": "<path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V11M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L3.5 15a1.6 1.6 0 0 1 2.6-1.8L7 14.5\"/>", "shield": "<path d=\"M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z\"/>", "lock": "<rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"/><path d=\"M8 10.5V7a4 4 0 0 1 8 0v3.5\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M16 7l3 3M14 9l2 2\"/>", "swords": "<path d=\"M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2\"/><path d=\"M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l-2 2 3 3 2-2\"/>", "heart": "<path d=\"M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z\"/>", "flag": "<path d=\"M5 21V4M5 4h11l-2 4 2 4H5\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3\"/>", "chat": "<path d=\"M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.6A8 8 0 1 1 21 12z\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01\"/>", "expand": "<path d=\"m7 15 5 5 5-5M7 9l5-5 5 5\"/>", "collapse": "<path d=\"m7 20 5-5 5 5M7 4l5 5 5-5\"/>"}, SEC_ICON={"play": "dice", "session": "calendar", "mastering": "sparkle", "wants": "dice", "media": "image", "erogro": "alert", "policy": "users", "theme": "book", "develop": "route", "quality": "star", "genre": "globe", "npc": "mask", "pcdo": "hand", "pcreceive": "shield", "hocontent": "lock", "hoproc": "key", "pvp": "swords", "lost": "heart", "ending": "flag", "kp": "mic", "table": "chat", "kpq": "help"};
 function ICO(k){ return ICONS[k]?'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[k]+'</svg>':''; }
 var secWrap = document.getElementById("sections");
 SECTIONS.forEach(function(sec){
@@ -1339,6 +1352,26 @@ function setupToc(){
   });
 }
 
+// ---- 左の目次（画面が広いときだけ。いま見ているところに色を付ける） ----
+function setupSideToc(){
+  var nav=document.getElementById("sidetoc"); if(!nav) return;
+  var L=[["card-basic","user","基本情報"]];
+  if(KPTIME) L.push(["timecard","clock","参加可能時間"]);
+  SECTIONS.forEach(function(sec){ L.push(["sec-"+sec.id, SEC_ICON[sec.id]||"help", sec.title]); });
+  if(FREE.length) L.push(["card-free","pen","自由記入"]);
+  L.push(["card-save","save","保存する"]);
+  nav.innerHTML='<div class="stt">目次</div>'+L.map(function(x){ return '<a href="#'+x[0]+'" data-target="'+x[0]+'">'+ICO(x[1])+'<span>'+esc(x[2])+'</span></a>'; }).join("");
+  nav.addEventListener("click",function(e){ var a=e.target.closest("a[data-target]"); if(!a) return; e.preventDefault();
+    var el=document.getElementById(a.dataset.target); if(!el) return; if(el.tagName==="DETAILS") el.open=true;
+    var hh=(document.querySelector(".stickytop")||{}).offsetHeight||0;
+    window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-hh-(el.tagName==="DETAILS"?58:12), behavior:"smooth"}); });
+  var links=[].slice.call(nav.querySelectorAll("a[data-target]")), tick=false;
+  function mark(){ tick=false; var hh=(document.querySelector(".stickytop")||{}).offsetHeight||0, cur=links[0];
+    links.forEach(function(a){ var el=document.getElementById(a.dataset.target); if(el && el.offsetParent!==null && el.getBoundingClientRect().top<=hh+80) cur=a; });
+    links.forEach(function(a){ a.classList.toggle("on", a===cur); }); }
+  window.addEventListener("scroll",function(){ if(!tick){ tick=true; requestAnimationFrame(mark); } },{passive:true}); mark();
+}
+
 // ---- こたえかたバーの表示制御（スケール項目の入力中のみ表示）----
 var allSecIds = SECTIONS.map(function(s){return s.id;});
 var secById = {}; SECTIONS.forEach(function(s){ secById[s.id]=s; });
@@ -1346,7 +1379,7 @@ function updateLegendBar(){
   var bar=document.querySelector(".legendbar");
   var header=document.querySelector("header");
   if(!bar||!header||!allSecIds.length) return;
-  var line=header.getBoundingClientRect().bottom; // ヘッダー直下のライン
+  var line=header.getBoundingClientRect().bottom+70; // ヘッダーの少し下のライン（見出しがここまで来たら、その項目に入ったとみなす）
   var firstEl=document.getElementById("sec-"+allSecIds[0]);
   var lastEl=document.getElementById("sec-"+allSecIds[allSecIds.length-1]);
   if(!firstEl||!lastEl) return;
@@ -1423,7 +1456,7 @@ function paintAdult(){ var c=document.getElementById("f-adult-ck"); if(c) c.chec
   restore();
   if(KPCFG && KPCFG.t && !val("f-session")) setV("f-session", KPCFG.t);
   setupTime();
-  setupToc();
+  setupToc(); setupSideToc();
   setupImport(); paintAdult();
   refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderPreview();
   updateLegendBar();
