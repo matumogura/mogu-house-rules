@@ -262,6 +262,15 @@ footer .f2{font-size:13px}
 .opts label{font-size:14px}
 #timeagg div[style*="font-size:12"]{font-size:14px!important}
 #matrix table{font-size:13.5px!important}
+
+.askpre{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.tpl{display:inline-flex;align-items:center;font:inherit;font-size:14px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--line2);border-radius:999px;padding:6px 14px;cursor:pointer;box-shadow:none}
+.tpl.my{padding:0 4px 0 0;gap:2px}
+.tpl.my button{font:inherit;color:inherit;background:transparent;border:0;cursor:pointer;padding:6px 6px 6px 14px;box-shadow:none}
+.tpl.my .rm{width:24px;height:24px;padding:0;border-radius:50%;color:var(--ink-soft);font-size:15px;line-height:1}
+.tpl.on{background:var(--s-love);color:var(--s-love-t);border-color:#f3c3d7}
+.asksave{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.asksave input{flex:1;min-width:200px;font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
 </style>
 </head>
 <body>
@@ -795,6 +804,18 @@ document.getElementById("btn-clear").addEventListener("click",function(){
   var KEY="mogu-jirai-ask-v1", box=document.getElementById("askbox"); if(!box) return;
   var A; try{ A=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ A=null; }
   if(!A||A.v!==1) A={v:1,t:"",m:"",x:[],fx:[],tm:1,q:[]};
+  // ひな形：決まったもの（聞く項目のカテゴリ）と、自分で保存したもの（聞く項目・自由記入・時間・自分の質問）
+  var TKEY="mogu-jirai-ask-tpl-v1", MY; try{ MY=JSON.parse(localStorage.getItem(TKEY)||"[]"); }catch(e){ MY=[]; } if(!Array.isArray(MY)) MY=[];
+  var PRESETS=[["all","全部聞く",null],["basic","よく聞く項目",["play","session","mastering","wants","media","erogro","policy","theme","lost","kp","table"]],["depict","描写の確認",["theme","erogro","pcdo","pcreceive","lost"]]];
+  function xFor(secs){ var x=[]; if(!secs) return x; window.JIRAI_SECTIONS.forEach(function(s){ if(secs.indexOf(s.id)<0) s.items.forEach(function(it){ x.push(it.id); }); }); return x; }
+  function sig(o, full){ var r={x:(o.x||[]).slice().sort()}; if(full){ r.fx=(o.fx||[]).slice().sort(); r.tm=o.tm?1:0; r.q=(o.q||[]).map(function(x){ return [x.l||"",x.t,x.os||""]; }); } return JSON.stringify(r); }
+  function saveMy(){ try{ localStorage.setItem(TKEY, JSON.stringify(MY)); }catch(e){} }
+  function tplHtml(){
+    var cur=sig(A), curF=sig(A,true);
+    return '<div class="askh">ひな形</div><div class="askpre">'+
+      PRESETS.map(function(p){ return '<button type="button" class="tpl'+(sig({x:xFor(p[2])})===cur?' on':'')+'" data-pre="'+p[0]+'">'+esc(p[1])+'</button>'; }).join("")+
+      MY.map(function(m,i){ return '<span class="tpl my'+(sig(m,true)===curF?' on':'')+'"><button type="button" data-my="'+i+'">'+esc(m.n)+'</button><button type="button" class="rm" data-myrm="'+i+'" aria-label="ひな形「'+esc(m.n)+'」を消す">×</button></span>'; }).join("")+
+      '</div><div class="asksave"><input type="text" data-tplname maxlength="30" placeholder="ひな形の名前（例：秘匿HOあり）"><button type="button" class="btn ghost sm" data-tplsave>今の選び方を保存</button></div>'; }
   var TYPES=[["scale","◎〇△××"],["one","選択肢から1つ"],["multi","選択肢から複数"],["free","自由記述"]];
   function has(L,id){ return (L||[]).indexOf(id)>=0; }
   function cfg(){ var c={v:1}; if(A.t) c.t=A.t; if(A.m) c.m=A.m; if(A.x.length) c.x=A.x; if(A.fx.length) c.fx=A.fx; if(!A.tm) c.tm=0;
@@ -802,20 +823,23 @@ document.getElementById("btn-clear").addEventListener("click",function(){
     if(q.length) c.q=q; return c; }
   function link(){ var base=/^https?:$/.test(location.protocol) ? new URL("check.html", location.href).href.split("#")[0] : "https://matumogura.github.io/mogu-house-rules/check.html";   // ファイルで開いたときは、PLが開ける公開ページにする
     return base+"#c="+window.JIRAI.cfgEncode(cfg()); }
-  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(A)); }catch(e){} var o=document.getElementById("asklink"); if(o) o.value=link(); var n=document.getElementById("askn"); if(n) n.textContent=count(); }
+  function markTpl(){ var cur=sig(A), curF=sig(A,true);
+    box.querySelectorAll("[data-pre]").forEach(function(b){ var P=PRESETS.filter(function(p){ return p[0]===b.dataset.pre; })[0]; b.classList.toggle("on", sig({x:xFor(P[2])})===cur); });
+    box.querySelectorAll(".tpl.my").forEach(function(el){ var M=MY[+el.querySelector("[data-my]").dataset.my]; el.classList.toggle("on", !!M && sig(M,true)===curF); }); }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(A)); }catch(e){} markTpl(); var o=document.getElementById("asklink"); if(o) o.value=link(); var n=document.getElementById("askn"); if(n) n.textContent=count(); }
   function count(){ var n=0, all=0; window.JIRAI_SECTIONS.forEach(function(s){ s.items.forEach(function(it){ all++; if(!has(A.x,it.id)) n++; }); }); return "聞く項目 "+n+" / "+all+"・自分の質問 "+A.q.filter(function(x){return String(x.l||"").trim();}).length; }
   function draw(){
     var h='<div class="askrow"><label class="f">卓名・シナリオ名<input type="text" data-a="t" value="'+esc(A.t)+'" placeholder="例：〇〇卓"></label>'+
       '<label class="f">PLへのひとこと<textarea data-a="m" rows="2" placeholder="例：〇日までに提出してください">'+esc(A.m)+'</textarea></label></div>'+
       '<div class="askopt"><label><input type="checkbox" data-tm'+(A.tm?' checked':'')+'> 参加可能時間を聞く</label>'+window.JIRAI_FREE.map(function(f){ return '<label><input type="checkbox" data-fx="'+esc(f.id)+'"'+(has(A.fx,f.id)?'':' checked')+'> 「'+esc(f.label)+'」</label>'; }).join("")+'</div>'+
-      '<div class="askh">聞く項目</div><div class="asksecs">'+window.JIRAI_SECTIONS.map(function(sec){ var on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
+      tplHtml()+'<div class="askh">聞く項目</div><div class="asksecs">'+window.JIRAI_SECTIONS.map(function(sec){ var on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
         return '<details class="asksec"><summary><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===sec.items.length?' checked':'')+(on&&on<sec.items.length?' data-some="1"':'')+'>'+esc(sec.title)+'<span class="n">'+on+' / '+sec.items.length+'</span></summary><div class="askitems">'+
           sec.items.map(function(it){ return '<label><input type="checkbox" data-it="'+esc(it.id)+'"'+(has(A.x,it.id)?'':' checked')+'> '+esc(it.label)+'</label>'; }).join("")+'</div></details>'; }).join("")+'</div>'+
       '<div class="askh">自分の質問</div><div class="askqs">'+A.q.map(function(x,i){
         return '<div class="askq" data-qi="'+i+'"><input type="text" data-q="l" value="'+esc(x.l||"")+'" placeholder="質問文（例：PCの口調は？）"><select data-q="t">'+TYPES.map(function(t){ return '<option value="'+t[0]+'"'+(x.t===t[0]?' selected':'')+'>'+t[1]+'</option>'; }).join("")+'</select><button type="button" class="rm" data-qrm title="この質問を消す">×</button>'+
           (x.t==="one"||x.t==="multi"?'<textarea data-q="os" placeholder="選択肢を 1 行に 1 つ">'+esc(x.os||"")+'</textarea>':'')+'</div>'; }).join("")+'</div>'+
       '<button type="button" class="btn ghost sm" data-qadd>＋ 質問を足す</button>'+
-      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">開いて確かめる</a><button type="button" class="btn ghost sm" data-areset>すべて聞く（元に戻す）</button></div>'+
+      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">開いて確かめる</a></div>'+
       '<div class="vnote" style="margin-top:8px"><span id="askn">'+count()+'</span></div>';
     box.innerHTML=h; box.querySelectorAll('[data-some]').forEach(function(c){ c.indeterminate=true; }); document.getElementById("askopen").href=link(); }
   box.addEventListener("input", function(e){ var t=e.target;
@@ -833,6 +857,15 @@ document.getElementById("btn-clear").addEventListener("click",function(){
     if(t.closest("[data-qadd]")){ A.q.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), l:"", t:"scale"}); save(); draw(); var L=box.querySelectorAll('[data-q="l"]'); if(L.length) L[L.length-1].focus(); return; }
     var rm=t.closest("[data-qrm]"); if(rm){ A.q.splice(+rm.closest("[data-qi]").dataset.qi,1); save(); draw(); return; }
     if(t.closest("[data-acopy]")){ var v=link(); (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){ t.textContent="コピーしました"; setTimeout(function(){ t.textContent="リンクをコピー"; },1500); }, function(){ var i=document.getElementById("asklink"); i.select(); document.execCommand("copy"); }); return; }
+    var pre=t.closest("[data-pre]"); if(pre){ var P=PRESETS.filter(function(p){ return p[0]===pre.dataset.pre; })[0]; A.x=xFor(P[2]); save(); draw(); return; }
+    var my=t.closest("[data-my]"); if(my){ var M=MY[+my.dataset.my]; if(M){ A.x=(M.x||[]).slice(); A.fx=(M.fx||[]).slice(); A.tm=M.tm?1:0; A.q=JSON.parse(JSON.stringify(M.q||[])); save(); draw(); } return; }
+    var myrm=t.closest("[data-myrm]"); if(myrm){ var R=MY[+myrm.dataset.myrm]; if(R && confirm("ひな形「"+R.n+"」を消しますか？")){ MY.splice(+myrm.dataset.myrm,1); saveMy(); draw(); } return; }
+    if(t.closest("[data-tplsave]")){ var inp=box.querySelector("[data-tplname]"), n=String(inp.value||"").trim();
+      if(!n){ inp.focus(); inp.placeholder="ひな形の名前を入れてください"; return; }
+      var o={n:n, x:A.x.slice(), fx:A.fx.slice(), tm:A.tm?1:0, q:JSON.parse(JSON.stringify(A.q))}, at=-1;
+      MY.forEach(function(m,i){ if(m.n===n) at=i; });
+      if(at>=0){ if(!confirm("ひな形「"+n+"」を今の選び方で上書きしますか？")) return; MY[at]=o; } else MY.push(o);
+      saveMy(); draw(); return; }
     if(t.closest("[data-areset]")){ if(!confirm("聞く項目を、すべて聞くに戻しますか？（自分の質問・卓名・ひとことは残します）")) return; A.x=[]; A.fx=[]; A.tm=1; save(); draw(); } });
   draw();
 })();
