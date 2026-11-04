@@ -406,6 +406,10 @@ input.short{max-width:320px}
 /* 入力済みの文字ははっきり、見本（placeholder）は薄く */
 input[type=text],textarea{color:var(--ink);font-weight:500}
 input::placeholder,textarea::placeholder{color:#bcb8c8;font-weight:400;opacity:1}
+
+.nrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.nrow input.short{flex:1 1 220px}
+.field .nrow .adultck{flex:none}
 </style>
 </head>
 <body>
@@ -451,8 +455,7 @@ input::placeholder,textarea::placeholder{color:#bcb8c8;font-weight:400;opacity:1
 
   <div class="card" id="card-basic">
     <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>基本情報</span>
-    <div class="field"><label for="f-name">アカウント名<span style="color:var(--coral)">（必須）</span></label><input type="text" id="f-name" class="short" placeholder="例：ハル" maxlength="40"></div>
-    <div class="field"><label class="adultck"><input type="checkbox" id="f-adult-ck"><span>成人済みです</span></label></div>
+    <div class="field"><label for="f-name">アカウント名<span style="color:var(--coral)">（必須）</span></label><div class="nrow"><input type="text" id="f-name" class="short" placeholder="例：ハル" maxlength="40"><label class="adultck"><input type="checkbox" id="f-adult-ck"><span>成人済みです</span></label></div></div>
     <div class="field"><label for="f-session">卓名・シナリオ名</label><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
     <div class="field"><span class="flab">前に保存したファイルから読み込む</span><label class="filedrop" id="importdrop"><input type="file" id="importfile" accept=".html,.htm,.json,text/html,application/json" hidden><span class="fdi"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span><span class="fdt">ファイルを選ぶか、ここへドロップ</span></label></div>
   </div>
@@ -496,7 +499,7 @@ input::placeholder,textarea::placeholder{color:#bcb8c8;font-weight:400;opacity:1
 
 <canvas id="cv"></canvas>
 
-<script src="check-schema.js?v=20261104f"></script>
+<script src="check-schema.js?v=20261104g"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
 // KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
