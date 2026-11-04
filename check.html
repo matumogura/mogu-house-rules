@@ -386,6 +386,10 @@ input[type=text],textarea{font-size:16px}
 .legendbar .lbsec{font-size:15px}
 .legendbar .lbtitle{font-size:12px}
 .legendbar .lg{font-size:14px;padding:3px 10px}
+
+.field .adultck{display:inline-flex;align-items:center;gap:10px;margin:0;padding:10px 16px;border:1px solid var(--line2);border-radius:999px;background:#fff;font-size:16px;font-weight:700;cursor:pointer}
+.field .adultck input{width:20px;height:20px;margin:0;accent-color:#2f8a5c;cursor:pointer}
+.field .adultck:has(input:checked){background:#e3f4ea;border-color:#9fd6b6;color:#2f8a5c}
 </style>
 </head>
 <body>
@@ -431,7 +435,7 @@ input[type=text],textarea{font-size:16px}
   <div class="card" id="card-basic">
     <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>基本情報</span>
     <div class="field"><label for="f-name">アカウント名<span style="color:var(--coral)">（必須）</span></label><input type="text" id="f-name" placeholder="例：ハル" maxlength="40"></div>
-    <div class="field"><span class="flab" id="adult-lab">成人していますか</span><div class="adultsel choices" id="f-adult" role="radiogroup" aria-labelledby="adult-lab"><button type="button" class="cbtn" data-adult="yes" role="radio" aria-checked="false">成人している（18歳以上）</button><button type="button" class="cbtn" data-adult="no" role="radio" aria-checked="false">未成年（18歳未満）</button></div></div>
+    <div class="field"><label class="adultck"><input type="checkbox" id="f-adult-ck"><span>成人済みです</span></label></div>
     <div class="field"><label for="f-session">卓名・シナリオ名</label><input type="text" id="f-session" placeholder="例：〇〇卓／シナリオ名" maxlength="80"></div>
     <div class="field"><span class="flab">前に保存したファイルから読み込む</span><label class="filedrop" id="importdrop"><input type="file" id="importfile" accept=".html,.htm,.json,text/html,application/json" hidden><span class="fdi"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span><span class="fdt">ファイルを選ぶか、ここへドロップ</span></label></div>
   </div>
@@ -475,7 +479,7 @@ input[type=text],textarea{font-size:16px}
 
 <canvas id="cv"></canvas>
 
-<script src="check-schema.js?v=20261104b"></script>
+<script src="check-schema.js?v=20261104c"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
 // KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
@@ -731,7 +735,7 @@ function restore(){
   try{
     var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
     var d=JSON.parse(raw);
-    setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult||"";
+    setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult==="yes"?"yes":"";
     if(d.scale) state.scale=d.scale; if(d.loveN) state.loveN=d.loveN; if(d.choice) state.choice=d.choice; if(d.reason) state.reason=d.reason;
     if(d.multi) state.multi=d.multi;
     if(d.time) state.time=Object.assign(defaultTime(), d.time);
@@ -882,7 +886,7 @@ function buildSubmissionHTML(d){
   '<div class="topbar"></div>'+
   '<div class="body">'+
   '<div class="sheettop"><div class="stitle"><h1>'+esc(d.name||'無名')+' の事前チェックシート</h1>'+
-  '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日：'+esc(d.date||d.createdAt)+'</div>'+(d.adult?'<div class="adult '+(d.adult==='no'?'minor':'')+'">'+(d.adult==='no'?'未成年（18歳未満）':'成人（18歳以上）')+'</div>':'')+'</div>'+
+  '<div class="meta">'+(d.session?esc(d.session)+' ／ ':'')+'記入日：'+esc(d.date||d.createdAt)+'</div>'+(d.adult==='yes'?'<div class="adult">✅ 成人済み</div>':'')+'</div>'+
   '<div class="brand">事前<span class="cc">チェックシート</span></div></div>'+
   '<div class="legend">'+legend+'<span class="lp plain">〇（ふつう）の項目は省いています</span></div>'+
   timelineHTML(d.time)+
@@ -1372,7 +1376,7 @@ document.getElementById("sections").addEventListener("toggle", updateLegendBar, 
 // ---- 提出HTML/JSONの読み込み（部分修正用）----
 function applySheet(d){
   if(!d || d._type!=="mogu-jirai-sheet"){ alert("このファイルには、事前チェックの答えが入っていませんでした。"); return; }
-  setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult||""; paintAdult();
+  setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult==="yes"?"yes":""; paintAdult();
   state.scale=d.scale||{}; state.loveN=d.loveN||{}; state.choice=d.choice||{}; state.multi=d.multi||{}; state.reason=d.reason||{};
   state.time = d.time ? Object.assign(defaultTime(), d.time) : defaultTime();
   FREE.forEach(function(f){ setV(f.id, (d.free&&d.free[f.id])||""); });
@@ -1408,9 +1412,8 @@ function setupImport(){
 }
 
 // ---- 成人しているか（成人／未成年。もう一度押すと外す） ----
-function paintAdult(){ document.querySelectorAll("#f-adult [data-adult]").forEach(function(b){ var on=b.dataset.adult===state.adult; b.classList.toggle("on",on); b.setAttribute("aria-checked",on?"true":"false"); }); }
-(function(){ var w=document.getElementById("f-adult"); if(!w) return;
-  w.addEventListener("click",function(e){ var b=e.target.closest("[data-adult]"); if(!b) return; state.adult = state.adult===b.dataset.adult ? "" : b.dataset.adult; paintAdult(); onChange(); }); })();
+function paintAdult(){ var c=document.getElementById("f-adult-ck"); if(c) c.checked=state.adult==="yes"; }
+(function(){ var c=document.getElementById("f-adult-ck"); if(!c) return; c.addEventListener("change",function(){ state.adult=c.checked?"yes":""; onChange(); }); })();
 // ---- 質問の項目をまとめて開く・閉じる ----
 (function(){ function all(on){ document.querySelectorAll("#sections details.jsec").forEach(function(d){ d.open=on; }); if(typeof updateLegendBar==="function") updateLegendBar(); }
   var o=document.getElementById("sec-open"), c=document.getElementById("sec-close"); if(o) o.addEventListener("click",function(){ all(true); }); if(c) c.addEventListener("click",function(){ all(false); });
