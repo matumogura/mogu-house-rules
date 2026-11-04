@@ -432,6 +432,9 @@ window.JIRAI_FREE = [
   { id: "free_likes",   label: "好きな要素など",       ph: "こういうPC・RP・描写が来ると嬉しい、という要素" }
 ];
 
+/* 項目の並び（短いリンクのビット列の順番）。新しい項目は必ず最後に足す */
+window.JIRAI_ORDER = "play_role play_method tool_use brk_end brk_mid rp_pace sched mst_gmset mst_norp mst_negative dif_flags media_art media_log img_flags eg_ero eg_gro coop_pvp coop_lost dif_guide gore gore_media horror_media jumpscare cannibal vomit cluster insect confinement r18 sexviolence incest pregnancy minor_sex gendershift homosexual lowneta fetish crime minorcruel minorcrime bully animalabuse animaldeath drug suicide mental lifeethics war disaster gendernorm realcase realperson realperson_crime realreligion realdisease fakedisease fixed_dice fixed_set tr_ntr tr_forcedlose tr_filler tr_realint tr_realidea_block tr_realidea_be tr_realedu tr_mindread tr_trick tr_realtime tr_customrule tr_inconsistent tr_npcvague tr_adlib w_mythos w_nyaru w_othermyth w_lesscoc w_fakeworld tr_classic w_canon horror_occult horror_folk horror_urban horror_psycho horror_found tr_romance tr_emo tr_rp tr_uchiyoso tr_taiman tr_solo tr_many tr_gag tr_sanrecover lost_none lost_pc_norescue lost_kpc_norescue lost_pc_rescue lost_kpc_rescue tr_battle tr_pvp w_child w_police w_yakuza w_fantasy w_steampunk w_sf w_future w_postworld w_nichiasa w_parallel w_erajp w_eraworld meta_contained meta_charaware meta_pl w_original npc_imposter kpc_alt npc_death npc_wasteddeath npc_kill npc_sacrifice npc_many npc_denounce npc_overshadow frp_violence pcdo_crime pcdo_bully pcdo_animal pcdo_child pcdo_sexviol pcdo_gore pcdo_suicideurge pcdo_killurge pcdo_torture pcdo_harass pcdo_dead pcdo_nonhuman pcdo_denounce frp_insane frp_psycho pcdo_madness pcdo_madness_hidden frp_love_h frp_love_s frp_sensitive pcdo_sex_npc pcdo_sex_pc pcdo_love_nf pcdo_love_pf pcdo_love_ns pcdo_love_ps frp_emotion frp_emo frp_farewell frp_persuade pcdo_clone pcdo_forced_emotion pcdo_forced_mythos pcdo_forced_speech pcdo_detailedchar pcdo_zoning pcdo_ability_human pcdo_ability_super pcdo_ability_limited frp_child frp_hetero rcv_amnesia rcv_bully rcv_abuse rcv_harass rcv_torture rcv_sexviol rcv_petcruel rcv_denounced rcv_ganged rcv_love_nf rcv_love_pf rcv_love_ns rcv_love_ps sh_lowfree sh_highfree lost_ho_pc ho_pre_crime ho_pre_blood ho_pre_dear ho_mid_crime ho_mid_blood ho_mid_dear emo_in_obsess emo_in_crime emo_out_obsess emo_out_crime sh_amnesia sh_falsemem sh_hostile sh_sex sh_age sh_look sh_character sh_mastermind sh_addlater sh_dummy sh_reveal sh_surprise sh_common sh_unequal sh_pivotal sh_psycho sh_knownby sh_guess sh_hide sh_special pvp_verbal pvp_physical pvp_decide pvp_forced lost_fixed lost_high lost_mid lost_high_end lost_instadeath lost_san0 lost_body lost_dice lost_choice lost_known lost_noallsurv lost_revive_pc lost_revive_npc lost_permanent lost_aftereffect lost_effective_death lost_limb lost_sense lost_organ ed_epilogue ed_sparse ed_norp ed_single ed_inconsistent ed_point ed_multidice ed_onedice ed_choice ed_kp ed_dream ed_bad ed_merrybad ed_multibad ed_bitter ed_forcedhappy ed_timeback ed_parallel ed_memloss ed_meta ed_sequel kp_preinfo kp_advise_lost kp_advise_reco kp_diff_up kp_diff_down kp_rprush kp_continue kp_replay kp_replay_pl kp_uncleared_cont kp_alter_scene kp_alter_setting kp_alter_npc kp_alter_crossover kp_alter_ending kp_mercy_early kp_mercy_late kp_preshare tbl_eatweet tbl_pldiscuss tbl_longrp tbl_fixedrp tbl_selflost tbl_sexual tbl_gossip tbl_strong tbl_weak tbl_unreal tbl_crime tbl_age tbl_bgm tbl_record";
+
 /* ---- 共有ヘルパ ---- */
 window.JIRAI = {
   scaleMap: function () {
@@ -455,16 +458,44 @@ window.JIRAI = {
      設定：{ v:1, t:"卓名", m:"KPからのひとこと", x:[聞かない項目の id], fx:[聞かない自由記入の id], tm:0（参加可能時間を聞かないとき）,
             q:[{ id:"1", l:"質問文", t:"scale"|"one"|"multi"|"free", o:["選択肢", …] }] }
      提出データには、足した質問（q）を kpq として入れる（KP用ページ・キパビューは kpq から項目を作って読む） */
+  /* リンクを短くする（v2）：聞かない項目は「項目の並び（JIRAI_ORDER）」のビット列にし、文字だけ UTF-8 で詰める。
+     先頭 1 バイトが 2 なら v2、"{" なら前の JSON の形（v1。前に配ったリンクもそのまま開ける）。
+     項目を足したときは JIRAI_ORDER の「最後に」足す（途中に入れると、前に配ったリンクの聞く・聞かないがずれる） */
+  order: function () {
+    var o = window.JIRAI_ORDER.split(" "), seen = {}; o.forEach(function (i) { seen[i] = 1; });
+    window.JIRAI_SECTIONS.forEach(function (s) { s.items.forEach(function (i) { if (!seen[i.id]) { seen[i.id] = 1; o.push(i.id); } }); });
+    return o;
+  },
   cfgEncode: function (c) {
-    var b = unescape(encodeURIComponent(JSON.stringify(c)));
+    var out = [], u8 = function (str) { var b = unescape(encodeURIComponent(String(str || ""))); var a = []; for (var i = 0; i < b.length; i++) a.push(b.charCodeAt(i)); return a; };
+    var num = function (n) { while (n > 127) { out.push((n & 127) | 128); n >>>= 7; } out.push(n); };
+    var str = function (t) { var a = u8(t); num(a.length); for (var i = 0; i < a.length; i++) out.push(a[i]); };
+    var bits = function (list, ex) { var h = {}; (ex || []).forEach(function (i) { h[i] = 1; }); var n = list.length; while (n && !h[list[n - 1]]) n--; num(n);
+      for (var i = 0; i < n; i += 8) { var v = 0; for (var k = 0; k < 8 && i + k < n; k++) if (h[list[i + k]]) v |= 1 << k; out.push(v); } };
+    var q = c.q || [];
+    out.push(2); out.push((c.tm === 0 ? 1 : 0) | (c.t ? 2 : 0) | (c.m ? 4 : 0) | (q.length ? 8 : 0));
+    bits(this.order(), c.x); bits(window.JIRAI_FREE.map(function (f) { return f.id; }), c.fx);
+    if (c.t) str(c.t); if (c.m) str(c.m);
+    if (q.length) { num(q.length); q.forEach(function (x) { str(x.id); str(x.l); out.push({ scale: 0, one: 1, multi: 2, free: 3 }[x.t] || 0); var o = x.o || []; num(o.length); o.forEach(str); }); }
+    var b = ""; for (var i = 0; i < out.length; i++) b += String.fromCharCode(out[i]);
     return btoa(b).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   },
   cfgDecode: function (h) {
     try {
       var m = String(h || "").match(/[#&?]c=([A-Za-z0-9_-]+)/); if (!m) return null;
       var b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "=";
-      var c = JSON.parse(decodeURIComponent(escape(atob(b))));
-      return c && c.v === 1 ? c : null;
+      var raw = atob(b);
+      if (raw.charCodeAt(0) !== 2) { var c1 = JSON.parse(decodeURIComponent(escape(raw))); return c1 && c1.v === 1 ? c1 : null; }
+      var p = 1, B = function () { if (p >= raw.length) throw new Error("short"); return raw.charCodeAt(p++); };
+      var num = function () { var n = 0, s = 0, v; do { v = B(); n += (v & 127) * Math.pow(2, s); s += 7; } while (v & 128); return n; };
+      var str = function () { var n = num(), t = raw.substr(p, n); if (t.length < n) throw new Error("short"); p += n; return decodeURIComponent(escape(t)); };
+      var bits = function (list) { var n = num(), x = []; for (var i = 0; i < n; i += 8) { var v = B(); for (var k = 0; k < 8 && i + k < n; k++) if (v & (1 << k) && list[i + k]) x.push(list[i + k]); } return x; };
+      var f = B(), c = { v: 1 };
+      var x = bits(this.order()), fx = bits(window.JIRAI_FREE.map(function (o) { return o.id; }));
+      if (x.length) c.x = x; if (fx.length) c.fx = fx; if (f & 1) c.tm = 0;
+      if (f & 2) c.t = str(); if (f & 4) c.m = str();
+      if (f & 8) { var n = num(), q = []; for (var i = 0; i < n; i++) { var o = { id: str(), l: str(), t: ["scale", "one", "multi", "free"][B()] || "scale" }, k = num(); if (k) { o.o = []; for (var j = 0; j < k; j++) o.o.push(str()); } q.push(o); } c.q = q; }
+      return c;
     } catch (e) { return null; }
   },
   // 足した質問を、セクション（◎〇△×× ／1つ選ぶ／複数選ぶ）と自由記入の形にする。id は kq_<番号>
