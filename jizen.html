@@ -23,15 +23,18 @@
 <meta name="twitter:image" content="https://matumogura.github.io/mogu-house-rules/ogp-check.png?v=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=WDXL+Lubrifont+JP+N&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#eceae4;--paper-2:#e3e0d7;--ink:#161513;--ink-soft:#4a463f;--white:#fbfaf6;
-  --green:#27c05a;--blue:#2f6bff;--yellow:#ffce1c;--coral:#ff5533;--pink:#ff77aa;
+  --paper:#f7f5fa;--paper-2:#f0edf6;--ink:#3a3848;--ink-soft:#6c6879;--white:#ffffff;
+  --green:#4fb98a;--blue:#4b93d4;--yellow:#f3c25b;--coral:#e8709f;--pink:#f6a8c7;
+  --line:#e8e4ef;--line2:#d9d4e4;--sh:0 4px 18px rgba(60,50,90,.06);--sh2:0 8px 26px rgba(60,50,90,.09);--ring:0 0 0 3px rgba(232,112,159,.18);
+  --grad:linear-gradient(135deg,#e8709f,#f2a07b);
+  --s-love:#fbe0ec;--s-love-t:#c2457b;--s-normal:#e3f4ea;--s-normal-t:#2f8a5c;--s-meh:#eeecf2;--s-meh-t:#6c6879;--s-weak:#fdf0cf;--s-weak-t:#9a6a05;--s-never:#fbe1e3;--s-never-t:#c8394f;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Zen Kaku Gothic New',sans-serif;color:var(--ink);background:var(--paper);
+body{font-family:'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--paper);
   line-height:1.85;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:radial-gradient(var(--paper-2) 1.3px,transparent 1.4px);background-size:22px 22px;opacity:.6}
@@ -39,52 +42,52 @@ img{display:block}
 mark{background:var(--yellow);color:var(--ink);border-radius:3px;padding:0 2px}
 
 /* HEADER */
-header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:3px solid var(--ink)}
+header{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line)}
 .hbar{max-width:1180px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:12px}
-.hamburger{width:44px;height:38px;flex-shrink:0;border:2.5px solid var(--ink);background:var(--yellow);
-  border-radius:11px;box-shadow:3px 3px 0 var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;cursor:pointer}
+.hamburger{width:44px;height:38px;flex-shrink:0;border:1px solid var(--line);background:var(--yellow);
+  border-radius:11px;box-shadow:var(--sh);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;cursor:pointer}
 .hamburger span{display:block;width:19px;height:2.5px;background:var(--ink);border-radius:2px;transition:.2s}
 .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
 .menuhint{font-weight:700;font-size:12px;color:var(--ink-soft);letter-spacing:.06em}
-.logo{font-family:'WDXL Lubrifont JP N',sans-serif;font-size:21px;line-height:1;white-space:nowrap;margin-left:2px}
+.logo{font-family:'Zen Maru Gothic',sans-serif;font-size:21px;line-height:1;white-space:nowrap;margin-left:2px}
 .logo b{color:var(--coral)}
 .pillnav{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
-.pill{font-weight:700;font-size:13px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;background:var(--white);box-shadow:2px 2px 0 var(--ink);white-space:nowrap;text-decoration:none}
+.pill{font-weight:700;font-size:13px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 13px;background:var(--white);box-shadow:var(--sh);white-space:nowrap;text-decoration:none}
 .pill:hover{background:var(--yellow)}
-.pill .n{font-family:'Archivo Black';font-size:10px;color:var(--coral);margin-right:5px}
-.current{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--ink);background:var(--white);border:2.5px solid var(--ink);border-radius:999px;padding:5px 13px;box-shadow:2px 2px 0 var(--ink);white-space:nowrap}
-.current .n{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
+.pill .n{font-weight:700;font-size:10px;color:var(--coral);margin-right:5px}
+.current{margin-left:auto;display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--ink);background:var(--white);border:1px solid var(--line);border-radius:999px;padding:5px 13px;box-shadow:var(--sh);white-space:nowrap}
+.current .n{font-weight:700;font-size:10px;color:var(--coral)}
 
 /* NAV */
-nav{position:sticky;top:54px;z-index:49;background:var(--paper);border-bottom:3px solid var(--ink);display:none}
+nav{position:sticky;top:54px;z-index:49;background:var(--paper);border-bottom:1px solid var(--line);display:none}
 nav.open{display:block}
 .pageswitch{max-width:1180px;margin:0 auto;padding:12px 18px 0;display:flex;gap:9px;flex-wrap:wrap}
-.psbtn{white-space:nowrap;font-weight:900;font-size:14px;text-decoration:none;color:var(--ink);border:2.5px solid var(--ink);border-radius:12px;padding:8px 18px;background:var(--white);box-shadow:3px 3px 0 var(--ink);display:flex;align-items:center;gap:7px}
-.psbtn .pi{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
+.psbtn{white-space:nowrap;font-weight:900;font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 18px;background:var(--white);box-shadow:var(--sh);display:flex;align-items:center;gap:7px}
+.psbtn .pi{font-weight:700;font-size:10px;color:var(--coral)}
 .psbtn:hover{background:var(--yellow)}
 .psbtn.on{background:var(--coral);color:#fff}
 .psbtn.on .pi{color:#fff}
 .navwrap{max-width:1180px;margin:0 auto;padding:12px 18px;display:flex;flex-wrap:wrap;gap:8px}
 .navwrap a{white-space:nowrap;font-weight:700;font-size:13px;text-decoration:none;color:var(--ink);
-  border:2.5px solid var(--ink);border-radius:999px;padding:6px 14px;background:var(--white);transition:.12s;display:flex;align-items:center;gap:7px}
-.navwrap a .n{font-family:'Archivo Black';font-size:10px;color:var(--coral)}
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:var(--white);transition:.12s;display:flex;align-items:center;gap:7px}
+.navwrap a .n{font-weight:700;font-size:10px;color:var(--coral)}
 .navwrap a:hover{background:var(--yellow)}
 
 /* marquee */
-.marquee{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;border-bottom:3px solid var(--ink);padding:8px 0}
-.mtrack{display:inline-block;font-family:'Archivo Black';font-size:15px;letter-spacing:.06em;animation:march 26s linear infinite}
+.marquee{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--line);padding:8px 0}
+.mtrack{display:inline-block;font-weight:700;font-size:15px;letter-spacing:.06em;animation:march 26s linear infinite}
 .mtrack span{margin:0 14px}.mtrack .q{color:var(--yellow)}
 @keyframes march{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 40px}
 .sec{padding:40px 0 18px}
 .sechead{display:flex;align-items:center;gap:15px;margin-bottom:24px;flex-wrap:wrap}
-.secnum{font-family:'Archivo Black';font-size:15px;color:#fff;background:var(--coral);border:3px solid var(--ink);
-  border-radius:12px;padding:6px 12px;transform:rotate(-4deg);box-shadow:4px 4px 0 var(--ink)}
-.sectitle .en{font-family:'Archivo Black';font-size:12px;letter-spacing:.16em;color:var(--ink-soft)}
-.sectitle h2{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:29px;line-height:1.1;margin-top:2px}
+.secnum{font-weight:700;font-size:15px;color:#fff;background:var(--coral);border:1px solid var(--line);
+  border-radius:12px;padding:6px 12px;transform:rotate(-4deg);box-shadow:var(--sh)}
+.sectitle .en{font-weight:700;font-size:12px;letter-spacing:.16em;color:var(--ink-soft)}
+.sectitle h2{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:29px;line-height:1.1;margin-top:2px}
 
 .lead{font-size:15px;color:var(--ink-soft);margin:-6px 0 20px;max-width:760px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
@@ -92,22 +95,22 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 4
 .grid.two .card{display:flex;flex-direction:column}
 .grid.two .card .pills{margin-top:auto;margin-bottom:0}
 @media(max-width:720px){.grid.two{grid-template-columns:1fr}}
-.card{background:var(--white);border:3px solid var(--ink);border-radius:16px;padding:18px 20px;box-shadow:5px 5px 0 var(--ink);position:relative}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--sh);position:relative}
 .card.wide{grid-column:1/-1}
 .card-h{display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap}
-.card h3{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:17px;line-height:1.3}
+.card h3{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:17px;line-height:1.3}
 .card p{font-size:14.5px;color:var(--ink-soft)}
 .card p+p{margin-top:7px}
 .card strong{color:var(--ink);font-weight:700}
-.small{font-size:12.5px;color:#8a857a;margin-top:7px}
-.tag{font-weight:700;font-size:11.5px;color:var(--ink);border:2.5px solid var(--ink);border-radius:999px;padding:2px 11px;flex-shrink:0}
+.small{font-size:12.5px;color:var(--ink-soft);margin-top:7px}
+.tag{font-weight:700;font-size:11.5px;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex-shrink:0}
 .t-green{background:var(--green);color:#063d17}.t-blue{background:var(--blue);color:#fff}
 .t-yellow{background:var(--yellow)}.t-coral{background:var(--coral);color:#fff}.t-pink{background:var(--pink);color:#4a0f28}
-code{font-family:'DM Mono',monospace;font-size:13px;background:var(--paper-2);border:2px solid var(--ink);border-radius:6px;padding:1px 7px;font-weight:500}
+code{font-family:inherit;font-size:13px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-weight:500}
 
 .pills{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 2px}
-.chip{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:14px;text-decoration:none;background:var(--white);border:2.5px solid var(--ink);
-  border-radius:11px;padding:9px 16px;box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:.1s;display:inline-flex;align-items:center;gap:8px}
+.chip{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:14px;text-decoration:none;background:var(--white);border:1px solid var(--line);
+  border-radius:11px;padding:9px 16px;box-shadow:var(--sh);cursor:pointer;transition:.1s;display:inline-flex;align-items:center;gap:8px}
 .chip:hover{background:var(--yellow)}
 .chip:active{transform:translate(3px,3px);box-shadow:none}
 .chip.coral{background:var(--coral);color:#fff}
@@ -115,18 +118,104 @@ code{font-family:'DM Mono',monospace;font-size:13px;background:var(--paper-2);bo
 .chip svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 .steps{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 8px}
-.step{flex:1;min-width:210px;background:var(--white);border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);padding:14px 16px}
-.step .sn{font-family:'Archivo Black';font-size:11px;background:var(--ink);color:var(--yellow);padding:2px 8px;border-radius:6px}
+.step{flex:1;min-width:210px;background:var(--white);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);padding:14px 16px}
+.step .sn{font-weight:700;font-size:11px;background:var(--ink);color:var(--yellow);padding:2px 8px;border-radius:6px}
 .step b{display:block;font-weight:900;font-size:15px;margin-top:8px}
 .step p{font-size:13px;color:var(--ink-soft);margin-top:2px}
 
-footer{background:var(--ink);color:var(--paper);text-align:center;padding:40px 20px;border-top:3px solid var(--ink)}
-footer .f1{font-family:'WDXL Lubrifont JP N';font-size:24px}
+footer{background:var(--ink);color:var(--paper);text-align:center;padding:40px 20px;border-top:1px solid var(--line)}
+footer .f1{font-family:'Zen Maru Gothic',sans-serif;font-size:24px}
 footer .f1 b{color:var(--coral)}
-footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-top:8px}
+footer .f2{font-family:inherit;font-size:12px;color:var(--ink-soft);margin-top:8px}
 footer a{color:var(--yellow);font-weight:700;text-decoration:none}
 @media(max-width:820px){.sectitle h2{font-size:23px}}
 @media(max-width:640px){.logo{font-size:18px}.menuhint{display:none}}
+
+/* ---- やわらかい見た目（キパビュー寄せ）：ここから下が上書き ---- */
+body{font-family:'Zen Maru Gothic',sans-serif;background:var(--paper);color:var(--ink);letter-spacing:.02em}
+body::before{display:none}
+a{color:var(--blue)}
+header,.stickytop{background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
+.logo{font-weight:900;letter-spacing:.04em}
+.card,.jsec,.previewsheet,.step{border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh)}
+.card{padding:22px 24px}
+.card>.lab{background:var(--s-love);color:var(--s-love-t);font-size:13px;letter-spacing:.06em;padding:3px 12px;border-radius:999px}
+.phead{padding:36px 0 8px}
+.phead .kick{font-size:12px;letter-spacing:.16em;color:var(--coral)}
+.phead h1{font-weight:900;letter-spacing:.02em}
+.phead h1 .cc{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.phead .lead{font-size:15px;line-height:1.9;color:var(--ink-soft)}
+input[type=text],input[type=url],textarea,select{border:1px solid var(--line2);border-radius:12px;background:#fff}
+input[type=text]:focus,textarea:focus,select:focus{box-shadow:var(--ring);border-color:var(--coral)}
+.btn{border:0;border-radius:999px;background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(232,112,159,.25);font-weight:700;padding:12px 22px;transition:transform .12s, box-shadow .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(232,112,159,.3)}
+.btn:active{transform:translateY(1px);box-shadow:0 3px 10px rgba(232,112,159,.2)}
+.btn.blue{background:var(--blue);box-shadow:0 6px 16px rgba(75,147,212,.22)}
+.btn.dark{background:#5d596f;box-shadow:0 6px 16px rgba(60,50,90,.18)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2);box-shadow:none}
+.btn.sm{padding:8px 16px;font-size:13.5px}
+.pill,.tocbtn,.toc a{border:1px solid var(--line2);box-shadow:none;background:#fff}
+.pill.y{background:var(--s-love);border-color:transparent;color:var(--s-love-t)}
+.toc a:hover,.pill:hover{background:var(--paper-2)}
+.tocbtn[aria-expanded="true"]{background:var(--ink);color:#fff}
+.jsec>summary{background:#fff;font-weight:700;padding:16px 20px}
+.jsec[open]>summary{border-bottom:1px solid var(--line)}
+.jsec>summary::before{color:var(--coral)}
+.jsec>summary .cnt{border:0;background:var(--s-love);color:var(--s-love-t);font-weight:700}
+.jsec>summary .cnt:empty{display:none}
+.jbody{padding:8px 20px 16px}
+.sbtn{border:1px solid var(--line2);border-radius:12px;min-width:42px;padding:7px 6px;font-weight:700;color:var(--ink-soft);background:#fff}
+.sbtn:hover{background:var(--paper-2)}
+.sbtn.on{box-shadow:none!important}
+.sbtn.on.s-love{background:var(--s-love);color:var(--s-love-t);border-color:var(--pink)}
+.sbtn.on.s-normal{background:var(--s-normal);color:var(--s-normal-t);border-color:#9fd8b8}
+.sbtn.on.s-meh{background:var(--s-meh);color:var(--s-meh-t);border-color:var(--line2)}
+.sbtn.on.s-weak{background:var(--s-weak);color:var(--s-weak-t);border-color:#f0d27f}
+.sbtn.on.s-never{background:var(--s-never);color:var(--s-never-t);border-color:#f0a3ae}
+.sym{border-radius:8px;font-weight:700}
+.sym.love,.pchip.love{background:var(--s-love);color:var(--s-love-t)}
+.sym.normal,.pchip.normal{background:var(--s-normal);color:var(--s-normal-t)}
+.sym.meh,.pchip.meh{background:var(--s-meh);color:var(--s-meh-t)}
+.sym.weak,.pchip.weak{background:var(--s-weak);color:var(--s-weak-t)}
+.sym.never,.pchip.never{background:var(--s-never);color:var(--s-never-t)}
+.legend .lg,.legendbar .lg{border:1px solid var(--line);border-radius:999px;background:#fff}
+.legendbar{background:rgba(255,255,255,.95);border-bottom:1px solid var(--line)}
+.cbtn{border:1px solid var(--line2);font-weight:500;font-size:13.5px;padding:6px 14px;color:var(--ink)}
+.cbtn.on{background:#e3eefa;color:#2d6fae;border-color:#a9cbec;box-shadow:none}
+.cbtn.on.att{background:var(--s-never);color:var(--s-never-t);border-color:#f0a3ae}
+.pchip{border:0;border-radius:999px;padding:3px 12px}
+.pchip.choice{background:#e3eefa;color:#2d6fae}
+.iname{font-size:15px}
+.iname .rmark{color:var(--ink-soft)}
+.iname:hover,.iname.hasreason{color:var(--coral)}
+.reasonbox{border:1px solid var(--line2);border-radius:12px;background:#fff}
+.qfill{border:1px solid var(--line2);border-radius:999px;padding:3px 12px;font-size:13px}
+.callout{border:0;border-radius:16px;background:var(--s-weak);color:var(--ink)}
+.ttrack{border:1px solid var(--line2);border-radius:14px;background:repeating-linear-gradient(90deg,#fbfafd,#fbfafd calc(100%/7 - 1px),var(--line) calc(100%/7 - 1px),var(--line) calc(100%/7))}
+.tfill{background:var(--blue);opacity:.28}
+.tfill.night{background:#5c78d4}
+.tfill.flex{border:1.5px dashed var(--line2)}
+.thnd{border:2px solid var(--blue);box-shadow:0 2px 6px rgba(60,50,90,.15)}
+.thnd.flex{border:2px dashed var(--line2)}
+.thnd:focus{background:var(--s-weak)}
+.tbrk{border:0;background:var(--coral);box-shadow:0 2px 6px rgba(60,50,90,.15)}
+.tsummary{border:0;background:var(--paper-2);border-radius:14px}
+footer{background:transparent;color:var(--ink-soft);border-top:1px solid var(--line)}
+footer .f1{font-weight:900;color:var(--ink)}
+footer .f2{font-size:14px;color:var(--ink-soft)}
+.kpbanner{border:1px solid var(--pink);background:linear-gradient(180deg,#fff7fb,#fff)}
+
+.lead{font-size:15px;line-height:1.9}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.step{display:flex;align-items:center;gap:12px;padding:16px 18px;border-radius:18px}
+.step .sn{flex:none;display:grid;place-items:center;width:30px;height:30px;padding:0;border-radius:50%;background:var(--grad);color:#fff;font-size:15px}
+.step b{margin:0;font-size:15px}
+.pill .n,.current .n,.psbtn .pi,.navwrap a .n{font-size:12px}
+.sectitle .en{font-size:12px}
+.card p{font-size:15px;line-height:1.85}
+@media(max-width:640px){.steps{grid-template-columns:1fr}}
+footer a{color:var(--coral)}
+.steps{margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -142,34 +231,32 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
   </div>
 </header>
 
-<div class="marquee"><div class="mtrack" id="mq1"></div></div>
 
 <main>
   <section class="sec" id="top">
     <div class="sechead"><span class="secnum">✦</span><div class="sectitle"><div class="en">JIZEN CHECK SHEET</div><h2>事前チェックシート</h2></div></div>
-    <p class="lead">自分の苦手・NG要素（地雷）や好きな要素を <code>◎〇△××</code> でまとめ、卓に提出するファイルとSNS共有用の画像・テキストを作れます。KPは受け取ったファイルをまとめて確認し、周知が必要な項目を注意文としてPLに共有できます。入力データは各自のブラウザ内にのみ保存され、外部には送信されません。</p>
+    <p class="lead">苦手なことや好きなことを、卓のまえにKPへ伝えるためのページです。<br>入力した内容はそれぞれのブラウザの中だけに保存され、どこにも送られません。</p>
 
     <div class="steps">
-      <div class="step"><span class="sn">STEP 1</span><b>PLが記入</b><p>各項目を ◎〇△×× で回答。項目名クリックで理由も書けます。</p></div>
-      <div class="step"><span class="sn">STEP 2</span><b>提出・共有</b><p>提出用HTMLをKPへ。SNS用の画像・テキストも作れます。</p></div>
-      <div class="step"><span class="sn">STEP 3</span><b>KPが集約</b><p>提出ファイルをまとめて確認し、注意文をコピーして周知。</p></div>
+      <div class="step"><span class="sn">1</span><b>PLが答える</b></div>
+      <div class="step"><span class="sn">2</span><b>ファイルをKPに渡す</b></div>
+      <div class="step"><span class="sn">3</span><b>KPがまとめて確かめる</b></div>
     </div>
 
     <div class="grid two">
-      <div class="card wide"><div class="card-h"><span class="tag t-coral">ABOUT</span><h3>安心して卓を囲むための事前共有</h3></div>
-        <p>「地雷」は人によって本当にさまざまです。事前に共有しておくことで、みんなが安心して物語を楽しめます。答えたくない項目は空欄（〇）のままでも大丈夫です。</p>
-        <p class="small">※ このシートは配慮のための任意ツールです。すべてに答える義務はありません。</p></div>
+      <div class="card wide"><div class="card-h"><h3>安心して遊ぶために</h3></div>
+        <p>苦手なことは人によってさまざまです。まえもって伝えておくと、みんなが安心して物語を楽しめます。答えたくない項目は、そのままで大丈夫です。</p></div>
 
-      <div class="card"><div class="card-h"><span class="tag t-blue">PLAYER</span><h3>事前チェックを入力する（PL）</h3></div>
-        <p>各項目に回答して、<strong>提出用HTML</strong>・<strong>SNS画像</strong>・<strong>コピー用テキスト</strong>を作成します。</p>
-        <div class="pills"><a class="chip coral" href="check.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>入力ページを開く</a></div></div>
+      <div class="card"><div class="card-h"><span class="tag t-blue">PL</span><h3>答える</h3></div>
+        <p>項目に答えて、KPに渡すファイルを作ります。共有用の画像も作れます。</p>
+        <div class="pills"><a class="chip coral" href="check.html"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>答えるページを開く</a></div></div>
 
-      <div class="card"><div class="card-h"><span class="tag t-green">KEEPER</span><h3>提出を集約する（KP）</h3></div>
-        <p>PLの提出ファイルをまとめて読み込み、要注意項目を<strong>注意文</strong>としてコピーできます。</p>
-        <div class="pills"><a class="chip blue" href="check-kp.html"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>集約ページを開く</a></div></div>
+      <div class="card"><div class="card-h"><span class="tag t-green">KP</span><h3>まとめる</h3></div>
+        <p>PLに聞く項目を選んでリンクを作ったり、届いたファイルをまとめて見たりできます。</p>
+        <div class="pills"><a class="chip blue" href="check-kp.html"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>KP用のページを開く</a></div></div>
 
-      <div class="card wide"><div class="card-h"><span class="tag t-coral">DOWNLOAD</span><h3>ダウンロードして単体で使う</h3></div>
-        <p>この事前チェック機能一式を<strong>ダウンロード</strong>できます。保存したフォルダ内の <code>check.html</code>（PL）／<code>check-kp.html</code>（KP）を開けば、<strong>このサイトが無くても・オフラインでも</strong>そのまま使えます。入力データは各自のブラウザ内のみに保存されます。</p>
+      <div class="card wide"><div class="card-h"><h3>ダウンロードして使う</h3></div>
+        <p>一式をダウンロードすると、このサイトが無くても使えます。フォルダの中の <code>check.html</code>（PL用）か <code>check-kp.html</code>（KP用）を開いてください。</p>
         <div class="pills"><a class="chip coral" href="jizen-check.zip" download><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>ZIPをダウンロード</a></div></div>
     </div>
   </section>
@@ -177,17 +264,8 @@ footer a{color:var(--yellow);font-weight:700;text-decoration:none}
 
 <footer>
   <div class="f1">モグ<b>卓</b> 事前チェックシート</div>
-  <div class="f2">入力データはブラウザ内のみに保存されます ／ <a href="index.html">ハウスルールに戻る</a></div>
+  <div class="f2"><a href="index.html">ハウスルールに戻る</a></div>
 </footer>
 
-<script>
-// marquee
-(function(){
-  var mq='JIZEN CHECK ✦ JIZEN CHECK ✦ JIZEN CHECK ✦ JIZEN CHECK ✦ ';
-  var unit=mq.split('✦').join('<span class=q>✦</span>');
-  var s="";for(var i=0;i<8;i++){s+='<span>'+unit+'</span>';}
-  document.getElementById('mq1').innerHTML=s;
-})();
-</script>
 </body>
 </html>
