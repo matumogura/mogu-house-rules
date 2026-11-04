@@ -64,7 +64,7 @@ window.JIRAI_SECTIONS = [
     items: [
       { id: "media_art", label: "立ち絵・作成画像の保存およびSNS投稿", options: ["自由にしてOK", "事後報告があれば可", "事前相談を希望", "個人保存のみ可（投稿不可）"] },
       { id: "media_log", label: "ログ・スクショを第三者に見せる（SNS含む）", options: ["問題なし", "報告があれば可", "事前に相談を希望", "完全非公開を希望"] },
-      { id: "img_flags", type: "multi", label: "使用画像の扱い", options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
+      { id: "img_flags", type: "multi", label: "使用画像の扱い", okOpts: [0], options: ["セッション関連の使用はOK（部屋/演出/スチル/マカパネ等）", "SNSへの投稿はNG", "トリミング・色変更等はNG", "二次使用はNG", "加筆はNG"] }
     ]
   },
   {
@@ -79,7 +79,7 @@ window.JIRAI_SECTIONS = [
     items: [
       { id: "coop_pvp", label: "協力／PvP", options: ["PvPが発生する方が面白い", "PvPになってもいい", "基本的に協力したい", "協力しやすいよう仲介してほしい"] },
       { id: "coop_lost", label: "ロストの許容", options: ["途中ロストしてもいい", "クライマックスのロストが望ましい", "全生還したい"] },
-      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導", options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
+      { id: "dif_guide", type: "multi", label: "難易度：結果への誘導", okOpts: [0], options: ["必ずしも良い結果にならなくてもいい", "良い結果になるよう誘導してほしい", "悪い結果には誘導しないで欲しい"] }
     ]
   },
   {
@@ -441,6 +441,7 @@ window.JIRAI = {
     var m = {}; window.JIRAI_SCALE.forEach(function (s) { m[s.v] = s; }); return m;
   },
   // 全 scale 項目をフラットに
+  /* okOpts（multi の項目）：気にしないことを表す選択肢の番号。集計ページの「要注意」には入れない（個人カード・一覧表には出る） */
   scaleItems: function () {
     var out = [];
     window.JIRAI_SECTIONS.forEach(function (sec) {

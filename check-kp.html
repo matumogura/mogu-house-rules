@@ -172,6 +172,9 @@ footer .f2{font-family:inherit;font-size:12px;color:var(--ink-soft);margin-top:6
 .askq{display:grid;grid-template-columns:1fr 150px auto;gap:8px;align-items:start;padding:10px;border:1.5px dashed var(--line2);border-radius:12px;background:#fff}
 .askq textarea{grid-column:1/3;min-height:60px}
 .askq .rm{border:0;background:none;font-size:18px;cursor:pointer;color:var(--ink-soft)}
+.asktpl{margin-top:12px;border:1px solid var(--line);border-radius:12px;background:var(--white);padding:8px 12px}.asktpl summary{cursor:pointer;font-weight:700;font-size:13.5px}
+.asktpl textarea{width:100%;box-sizing:border-box;margin-top:8px;font:inherit;font-size:13.5px;line-height:1.7;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);resize:vertical}
+.asktplf{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:6px}
 .askout{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
 .askout input{flex:1;min-width:240px;font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
 .askh{font-size:13px;font-weight:900;margin:14px 0 4px}
@@ -443,6 +446,7 @@ input[type=checkbox]::before{border-left-width:2.5px;border-bottom-width:2.5px;b
         <div class="opts">
           <label><input type="checkbox" id="op-names" checked>PLの名前を載せる（苦手な項目には名前を出しません）</label>
           <label><input type="checkbox" id="op-meh">△（微妙）も含める</label>
+          <label><input type="checkbox" id="op-reason" checked>補足（備考）も載せる</label>
           <label><input type="checkbox" id="op-notice" checked>お知らせ・自衛も載せる</label>
         </div>
         <div class="btnrow" style="margin-bottom:10px">
@@ -484,7 +488,7 @@ input[type=checkbox]::before{border-left-width:2.5px;border-bottom-width:2.5px;b
   <div class="f2">読み込んだ内容は、どこにも送られません。</div>
 </footer>
 
-<script src="check-schema.js?v=20261104i"></script>
+<script src="check-schema.js?v=20261104j"></script>
 <script>
 var ICONS={"save": "<path d=\"M12 4v11M7 10l5 5 5-5\"/><path d=\"M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5M12 8h.01\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "pen": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "mail": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/>", "dice": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8.5 8.5h.01M15.5 15.5h.01M12 12h.01M15.5 8.5h.01M8.5 15.5h.01\"/>", "calendar": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15\" rx=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "sparkle": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\"/><path d=\"M19 17v4M17 19h4\"/>", "image": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"2\"/><path d=\"m21 16-5-5-9 9\"/>", "alert": "<path d=\"M12 4 2.5 20h19z\"/><path d=\"M12 10v4M12 17h.01\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5\"/>", "book": "<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z\"/><path d=\"M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5\"/>", "route": "<circle cx=\"6\" cy=\"18\" r=\"2.5\"/><circle cx=\"18\" cy=\"6\" r=\"2.5\"/><path d=\"M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5\"/>", "star": "<path d=\"m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "mask": "<path d=\"M4 5h16v6a8 8 0 0 1-16 0z\"/><path d=\"M8.5 10h.01M15.5 10h.01M9 14.5a4 4 0 0 0 6 0\"/>", "hand": "<path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V11M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L3.5 15a1.6 1.6 0 0 1 2.6-1.8L7 14.5\"/>", "shield": "<path d=\"M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z\"/>", "lock": "<rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"/><path d=\"M8 10.5V7a4 4 0 0 1 8 0v3.5\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M16 7l3 3M14 9l2 2\"/>", "swords": "<path d=\"M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2\"/><path d=\"M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l-2 2 3 3 2-2\"/>", "heart": "<path d=\"M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z\"/>", "flag": "<path d=\"M5 21V4M5 4h11l-2 4 2 4H5\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3\"/>", "chat": "<path d=\"M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.6A8 8 0 1 1 21 12z\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01\"/>", "expand": "<path d=\"m7 15 5 5 5-5M7 9l5-5 5 5\"/>", "collapse": "<path d=\"m7 20 5-5 5 5M7 4l5 5 5-5\"/>"}, SEC_ICON={"play": "dice", "session": "calendar", "mastering": "sparkle", "wants": "dice", "media": "image", "erogro": "alert", "policy": "users", "theme": "book", "develop": "route", "quality": "star", "genre": "globe", "npc": "mask", "pcdo": "hand", "pcreceive": "shield", "hocontent": "lock", "hoproc": "key", "pvp": "swords", "lost": "heart", "ending": "flag", "kp": "mic", "table": "chat", "kpq": "help"};
 function ICO(k){ return ICONS[k]?'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[k]+'</svg>':''; }
@@ -652,6 +656,7 @@ function aggUnits(levels){
     if(itype==="multi"){
       var mCnt=sec.items.filter(function(x){return (x.type||sec.type)==="multi";}).length; // 同一セクションに複数のmulti項目がある場合は項目名を付ける
       it.options.forEach(function(opt,idx){
+        if((it.okOpts||[]).indexOf(idx)>=0) return;   // 「必ずしも良い結果にならなくてもいい」など、気にしないことを表す選択肢は要注意に入れない
         var ents=[];
         people.forEach(function(p){ var arr=(p.multi&&p.multi[it.id])||[]; if(arr.indexOf(idx)>=0) ents.push({name:p.name,v:"choice",sym:"✓",reason:(p.reason&&p.reason[it.id])||""}); });
         if(ents.length) units.push({kind:"multi", secId:sec.id, secTitle:sec.title, key:sec.id+"::"+it.id+"#"+idx, label:(mCnt>1?it.label+"："+opt:opt), entries:ents});
@@ -754,7 +759,7 @@ document.getElementById("ck-all").addEventListener("click",function(){
   renderAgg(); buildOutput();
 });
 document.getElementById("ck-none").addEventListener("click",function(){ checked={}; renderAgg(); buildOutput(); });
-["op-names","op-meh","op-notice"].forEach(function(id){ document.getElementById(id).addEventListener("change",buildOutput); });
+["op-names","op-meh","op-notice","op-reason"].forEach(function(id){ document.getElementById(id).addEventListener("change",buildOutput); });
 
 // ---- 個人カード ----
 function renderPeople(){
@@ -820,6 +825,7 @@ function buildOutput(){
   var withNames=document.getElementById("op-names").checked;
   var withMeh=document.getElementById("op-meh").checked;
   var withNotice=document.getElementById("op-notice").checked;
+  var withReason=document.getElementById("op-reason").checked;   // 配慮する項目の「／ 補足：…」を載せるか
   var L=[];
   L.push("【卓の事前共有・お願い】");
   L.push("提出いただいた事前チェックをもとに、本卓では以下に配慮します。");
@@ -830,7 +836,7 @@ function buildOutput(){
     if(!checked[u.key]) return;
     // 名前は伏せる。程度（記号）と補足のみ匿名で載せる
     var sev = u.kind==="multi" ? "" : uniq(u.entries.map(function(e){return e.sym;})).join("・");
-    var reasons = uniq(u.entries.map(function(e){return e.reason;}));
+    var reasons = withReason ? uniq(u.entries.map(function(e){return e.reason;})) : [];
     lines.push("・"+u.label+(sev?"："+sev:"")+(reasons.length?" ／ 補足："+reasons.join("／"):""));
   });
   noteUnits().forEach(function(u){
@@ -919,6 +925,12 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
   var A, AQOPEN={}; try{ A=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ A=null; }
   if(!A||A.v!==1) A={v:1,t:"",m:"",x:[],fx:[],tm:1,q:[]};
   // ひな形：決まったもの（聞く項目のカテゴリ）と、自分で保存したもの（聞く項目・自由記入・時間・自分の質問）
+  // PL に送る案内文（リンクを添えてコピーする）。自分で直した文はこのブラウザに残す
+  var MKEY="mogu-jirai-ask-msg-v1", TPLOPEN=false;
+  var TPLDEF="【事前チェックのお願い】{卓名}\n{ひとこと}\n下のリンクから、事前チェックに答えてください。\n{リンク}\n\n・気になる項目だけ選べば大丈夫です（選ばなかった項目は「〇（ふつう）」になります）。\n・答えたら、いちばん下の「KPに渡すファイルを保存」で保存して、KPに送ってください。\n・入力した内容はブラウザの中だけに保存され、どこにも送られません。";
+  function tplGet(){ try{ var v=localStorage.getItem(MKEY); if(v!=null) return v; }catch(e){} return TPLDEF; }
+  function tplText(){ var V={"卓名":String(A.t||"").trim(), "ひとこと":String(A.m||"").trim(), "リンク":link()};
+    return tplGet().split("\n").map(function(l){ var empty=false; var r=l.replace(/\{(卓名|ひとこと|リンク)\}/g, function(_,k){ if(!V[k]) empty=true; return V[k]; }); return empty && !r.replace(/[【】「」()（）\s]/g,"") ? null : r; }).filter(function(l){ return l!==null; }).join("\n").replace(/\n{3,}/g,"\n\n").trim(); }
   var TKEY="mogu-jirai-ask-tpl-v1", MY; try{ MY=JSON.parse(localStorage.getItem(TKEY)||"[]"); }catch(e){ MY=[]; } if(!Array.isArray(MY)) MY=[];
   var PRESETS=[["all","全部聞く",null],["basic","よく聞く項目",["play","session","mastering","wants","media","erogro","policy","theme","lost","kp","table"]],["depict","描写の確認",["theme","erogro","pcdo","pcreceive","lost"]]];
   function xFor(secs){ var x=[]; if(!secs) return x; window.JIRAI_SECTIONS.forEach(function(s){ if(secs.indexOf(s.id)<0) s.items.forEach(function(it){ x.push(it.id); }); }); return x; }
@@ -959,12 +971,15 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
         return '<div class="askq" data-qi="'+i+'"><input type="text" data-q="l" value="'+esc(x.l||"")+'" placeholder="質問文（例：PCの口調は？）"><select data-q="t">'+TYPES.map(function(t){ return '<option value="'+t[0]+'"'+(x.t===t[0]?' selected':'')+'>'+t[1]+'</option>'; }).join("")+'</select><button type="button" class="rm" data-qrm title="この質問を消す">×</button>'+
           (x.t==="one"||x.t==="multi"?'<textarea data-q="os" placeholder="選択肢を 1 行に 1 つ">'+esc(x.os||"")+'</textarea>':'')+'</div>'; }).join("")+'</div>'+
       '<button type="button" class="btn ghost sm" data-qadd>＋ 質問を足す</button>'+
-      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><button type="button" class="btn ghost sm" data-apv>プレビュー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">新しいタブで開く</a></div>'+
-      '<div class="vnote" style="margin-top:8px"><span id="askn">'+count()+'</span></div>';
+      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><button type="button" class="btn sm" data-acopyt>案内文つきでコピー</button><button type="button" class="btn ghost sm" data-apv>プレビュー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">新しいタブで開く</a></div>'+
+      '<div class="vnote" style="margin-top:8px"><span id="askn">'+count()+'</span></div>'+
+      '<details class="asktpl"'+(TPLOPEN?' open':'')+'><summary>PLに送る案内文</summary><textarea data-tpl rows="8">'+esc(tplGet())+'</textarea>'+
+      '<div class="asktplf"><span class="vnote">{卓名}・{ひとこと}・{リンク} は、その場の内容に置き換わります（中身が空の行は消えます）。</span><button type="button" class="btn ghost sm" data-tplreset>元の文に戻す</button></div></details>';
     var sc0=box.querySelector('.asksecs'), st0=sc0?sc0.scrollTop:0, sn0=box.querySelector('.aqnav'), sn1=sn0?sn0.scrollTop:0;
     box.innerHTML=h; { var sc1=box.querySelector('.asksecs'); if(sc1) sc1.scrollTop=st0; var sn2=box.querySelector('.aqnav'); if(sn2) sn2.scrollTop=sn1; }
     box.querySelectorAll('[data-some]').forEach(function(c){ c.indeterminate=true; }); document.getElementById("askopen").href=link(); }
   box.addEventListener("input", function(e){ var t=e.target;
+    if(t.hasAttribute("data-tpl")){ try{ localStorage.setItem(MKEY, t.value); }catch(err){} return; }
     if(t.dataset.a){ A[t.dataset.a]=t.value; save(); document.getElementById("askopen").href=link(); return; }
     var q=t.closest("[data-qi]"); if(q && t.dataset.q && t.dataset.q!=="t"){ A.q[+q.dataset.qi][t.dataset.q]=t.value; save(); document.getElementById("askopen").href=link(); } });
   box.addEventListener("change", function(e){ var t=e.target;
@@ -975,7 +990,7 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
     else { var q=t.closest("[data-qi]"); if(q && t.dataset.q==="t"){ A.q[+q.dataset.qi].t=t.value; save(); draw(); return; } }
     save(); });
   // 見出しを開いた・閉じたを覚える（描き直しても、そのまま）
-  box.addEventListener("toggle", function(e){ var d=e.target; if(d && d.classList && d.classList.contains("asksec")) AQOPEN[d.id.slice(3)]=d.open; }, true);
+  box.addEventListener("toggle", function(e){ var d=e.target; if(d && d.classList && d.classList.contains("asksec")) AQOPEN[d.id.slice(3)]=d.open; if(d && d.classList && d.classList.contains("asktpl")) TPLOPEN=d.open; }, true);
   // プレビュー：PL が見る画面を、その場で開く
   var PV=document.createElement("div"); PV.className="aqpv"; PV.hidden=true;
   PV.innerHTML='<div class="aqpvb"><div class="aqpvh"><b>プレビュー（PL が見る画面）</b><span class="sp"></span><a class="btn ghost sm" id="aqpvtab" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="btn ghost sm" data-apvx>閉じる</button></div><iframe id="aqpvf" title="プレビュー"></iframe></div>';
@@ -988,6 +1003,8 @@ document.getElementById("goread").addEventListener("click",function(e){ e.preven
     var go=t.closest("[data-aqgo]"); if(go){ e.preventDefault(); var d=document.getElementById("aq-"+go.dataset.aqgo); if(!d) return; d.open=true; AQOPEN[go.dataset.aqgo]=true; var sc=box.querySelector(".asksecs"); if(sc) sc.scrollTo({top:d.offsetTop-6, behavior:"smooth"}); return; }
     if(t.closest("[data-qadd]")){ A.q.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), l:"", t:"scale"}); save(); draw(); var L=box.querySelectorAll('[data-q="l"]'); if(L.length) L[L.length-1].focus(); return; }
     var rm=t.closest("[data-qrm]"); if(rm){ A.q.splice(+rm.closest("[data-qi]").dataset.qi,1); save(); draw(); return; }
+    if(t.closest("[data-acopyt]")){ var bt=t.closest("[data-acopyt]"), tx=tplText(); (navigator.clipboard?navigator.clipboard.writeText(tx):Promise.reject()).then(function(){ bt.textContent="コピーしました"; setTimeout(function(){ bt.textContent="案内文つきでコピー"; },1500); }, function(){ var ta=document.createElement("textarea"); ta.value=tx; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }); return; }
+    if(t.closest("[data-tplreset]")){ if(!confirm("案内文を元の文に戻しますか？")) return; try{ localStorage.removeItem(MKEY); }catch(err){} var ta2=box.querySelector("[data-tpl]"); if(ta2) ta2.value=TPLDEF; return; }
     if(t.closest("[data-acopy]")){ var v=link(); (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){ t.textContent="コピーしました"; setTimeout(function(){ t.textContent="リンクをコピー"; },1500); }, function(){ var i=document.getElementById("asklink"); i.select(); document.execCommand("copy"); }); return; }
     var pre=t.closest("[data-pre]"); if(pre){ var P=PRESETS.filter(function(p){ return p[0]===pre.dataset.pre; })[0]; A.x=xFor(P[2]); save(); draw(); return; }
     var my=t.closest("[data-my]"); if(my){ var M=MY[+my.dataset.my]; if(M){ A.x=(M.x||[]).slice(); A.fx=(M.fx||[]).slice(); A.tm=M.tm?1:0; A.q=JSON.parse(JSON.stringify(M.q||[])); save(); draw(); } return; }
