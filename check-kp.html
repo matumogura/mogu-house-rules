@@ -275,6 +275,44 @@ footer .f2{font-size:13px}
 .agec{display:inline-block;vertical-align:middle;margin-left:10px;font-size:13px;font-weight:700;border-radius:999px;padding:1px 10px;background:#e3f4ea;color:#2f8a5c}
 .agec.minor,.agem{background:#fbe1e3;color:#c8394f}
 .agem{font-style:normal;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px}
+
+/* 右上の「回答を確認」 */
+.pill.ans{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* 聞く項目：実際の質問（選択肢）を見ながら選ぶ。左に見出し */
+svg.ico{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.18em}
+.aqh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.aqh .sp{flex:1}
+.aqwrap{display:block}
+.aqnav{display:none}
+@media (min-width:1100px){
+  .aqwrap{display:grid;grid-template-columns:240px 1fr;gap:18px;align-items:start}
+  .aqnav{display:flex;flex-direction:column;gap:2px;position:sticky;top:160px;max-height:calc(100vh - 180px);overflow-y:auto;padding:4px;scrollbar-width:thin}
+  .aqnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;font-size:14px;line-height:1.45;color:var(--ink);text-decoration:none;cursor:pointer}
+  .aqnav a:hover{background:var(--paper)}
+  .aqnav a svg.ico{color:var(--coral);width:16px;height:16px}
+  .aqnav a span{flex:1;min-width:0}
+  .aqnav a em{font-style:normal;font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .aqnav a.none{color:var(--ink-soft)}.aqnav a.none svg.ico{color:var(--ink-soft)}
+  .aqnav a.some em{color:var(--coral);font-weight:700}
+}
+.asksec>summary{font-size:16px;padding:12px 14px;gap:10px}
+.asksec>summary .sico{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--s-love);color:var(--coral);flex:none}
+.asksec>summary .stt{flex:1;min-width:0}
+.aqitems{display:flex;flex-direction:column;padding:0 14px 10px}
+.aqit{display:flex;align-items:flex-start;gap:12px;padding:12px 4px;border-top:1px solid var(--line);cursor:pointer}
+.aqit input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--coral)}
+.aqb{display:flex;flex-direction:column;gap:6px;min-width:0}
+.aql{font-size:15px;font-weight:500;line-height:1.55}
+.aqo{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.aqo i{font-style:normal;font-size:13px;line-height:1.5;padding:2px 10px;border:1px solid var(--line2);border-radius:999px;background:#fff;color:var(--ink-soft)}
+.aqo i.aqs{min-width:30px;text-align:center;font-weight:700}
+.aqm{font-size:13px;color:var(--ink-soft)}
+.aqit.off .aql{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+.aqit.off .aqo{opacity:.45}
+.aqpv{position:fixed;inset:0;z-index:200;background:rgba(40,36,60,.45);display:flex;align-items:center;justify-content:center;padding:20px}
+.aqpv[hidden]{display:none}
+.aqpvb{width:min(1100px,100%);height:min(900px,100%);background:#fff;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.aqpvh{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}.aqpvh .sp{flex:1}
+.aqpvb iframe{flex:1;width:100%;border:0}
 </style>
 </head>
 <body>
@@ -283,6 +321,7 @@ footer .f2{font-size:13px}
     <div class="logo">モグ<b>卓</b></div>
     <span class="kpbadge">KP</span>
     <div class="pillnav">
+      <a class="pill ans" href="#card-read" id="goread">回答を確認</a>
       <a class="pill y" href="check.html">PL用</a>
       <a class="pill" href="jizen.html">事前チェック</a>
       <a class="pill" href="index.html">ハウスルール</a>
@@ -313,7 +352,7 @@ footer .f2{font-size:13px}
     <div id="askbox"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="card-read">
     <span class="lab">読み込み</span>
     <div class="drop" id="drop">
       <div class="big">ここにファイルをドロップ</div>
@@ -383,8 +422,10 @@ footer .f2{font-size:13px}
   <div class="f2">読み込んだ内容は、どこにも送られません。</div>
 </footer>
 
-<script src="check-schema.js?v=20261104e"></script>
+<script src="check-schema.js?v=20261104f"></script>
 <script>
+var ICONS={"save": "<path d=\"M12 4v11M7 10l5 5 5-5\"/><path d=\"M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5M12 8h.01\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "pen": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "mail": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m3 7 9 6 9-6\"/>", "dice": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M8.5 8.5h.01M15.5 15.5h.01M12 12h.01M15.5 8.5h.01M8.5 15.5h.01\"/>", "calendar": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15\" rx=\"2\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "sparkle": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\"/><path d=\"M19 17v4M17 19h4\"/>", "image": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><circle cx=\"9\" cy=\"10\" r=\"2\"/><path d=\"m21 16-5-5-9 9\"/>", "alert": "<path d=\"M12 4 2.5 20h19z\"/><path d=\"M12 10v4M12 17h.01\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5\"/>", "book": "<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z\"/><path d=\"M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5\"/>", "route": "<circle cx=\"6\" cy=\"18\" r=\"2.5\"/><circle cx=\"18\" cy=\"6\" r=\"2.5\"/><path d=\"M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5\"/>", "star": "<path d=\"m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "mask": "<path d=\"M4 5h16v6a8 8 0 0 1-16 0z\"/><path d=\"M8.5 10h.01M15.5 10h.01M9 14.5a4 4 0 0 0 6 0\"/>", "hand": "<path d=\"M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V11M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L3.5 15a1.6 1.6 0 0 1 2.6-1.8L7 14.5\"/>", "shield": "<path d=\"M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z\"/>", "lock": "<rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"/><path d=\"M8 10.5V7a4 4 0 0 1 8 0v3.5\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"m11 12 9-9M16 7l3 3M14 9l2 2\"/>", "swords": "<path d=\"M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2\"/><path d=\"M9.5 6.5 14 2h3v3l-4.5 4.5M5 14l-2 2 3 3 2-2\"/>", "heart": "<path d=\"M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z\"/>", "flag": "<path d=\"M5 21V4M5 4h11l-2 4 2 4H5\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3\"/>", "chat": "<path d=\"M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.6A8 8 0 1 1 21 12z\"/>", "help": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01\"/>", "expand": "<path d=\"m7 15 5 5 5-5M7 9l5-5 5 5\"/>", "collapse": "<path d=\"m7 20 5-5 5 5M7 4l5 5 5-5\"/>"}, SEC_ICON={"play": "dice", "session": "calendar", "mastering": "sparkle", "wants": "dice", "media": "image", "erogro": "alert", "policy": "users", "theme": "book", "develop": "route", "quality": "star", "genre": "globe", "npc": "mask", "pcdo": "hand", "pcreceive": "shield", "hocontent": "lock", "hoproc": "key", "pvp": "swords", "lost": "heart", "ending": "flag", "kp": "mic", "table": "chat", "kpq": "help"};
+function ICO(k){ return ICONS[k]?'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[k]+'</svg>':''; }
 var SCALE=window.JIRAI_SCALE, SECTIONS=window.JIRAI_SECTIONS, SMAP=window.JIRAI.scaleMap(), esc=window.JIRAI.esc;
 var CFREE=[];   // PLの提出に入っていた「KPからの質問」の自由記入
 // 読み込んだ提出の「KPからの質問」（kpq）を、項目として足す（check-schema.js の JIRAI.customParts）
@@ -803,10 +844,12 @@ document.getElementById("btn-clear").addEventListener("click",function(){
   people=[]; checked={}; render();
 });
 
+// ---- 右上の「回答を確認」：読み込みへ ----
+document.getElementById("goread").addEventListener("click",function(e){ e.preventDefault(); var el=document.getElementById("card-read"); if(!el) return; var hh=(document.querySelector("header")||{}).offsetHeight||0; window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-hh-12, behavior:"smooth"}); });
 // ---- PL に聞く項目を選ぶ（PL用リンク：check.html#c=…） ----
 (function(){
   var KEY="mogu-jirai-ask-v1", box=document.getElementById("askbox"); if(!box) return;
-  var A; try{ A=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ A=null; }
+  var A, AQOPEN={}; try{ A=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ A=null; }
   if(!A||A.v!==1) A={v:1,t:"",m:"",x:[],fx:[],tm:1,q:[]};
   // ひな形：決まったもの（聞く項目のカテゴリ）と、自分で保存したもの（聞く項目・自由記入・時間・自分の質問）
   var TKEY="mogu-jirai-ask-tpl-v1", MY; try{ MY=JSON.parse(localStorage.getItem(TKEY)||"[]"); }catch(e){ MY=[]; } if(!Array.isArray(MY)) MY=[];
@@ -836,14 +879,20 @@ document.getElementById("btn-clear").addEventListener("click",function(){
     var h='<div class="askrow"><label class="f">卓名・シナリオ名<input type="text" data-a="t" value="'+esc(A.t)+'" placeholder="例：〇〇卓"></label>'+
       '<label class="f">PLへのひとこと<textarea data-a="m" rows="2" placeholder="例：〇日までに提出してください">'+esc(A.m)+'</textarea></label></div>'+
       '<div class="askopt"><label><input type="checkbox" data-tm'+(A.tm?' checked':'')+'> 参加可能時間を聞く</label>'+window.JIRAI_FREE.map(function(f){ return '<label><input type="checkbox" data-fx="'+esc(f.id)+'"'+(has(A.fx,f.id)?'':' checked')+'> 「'+esc(f.label)+'」</label>'; }).join("")+'</div>'+
-      tplHtml()+'<div class="askh">聞く項目</div><div class="asksecs">'+window.JIRAI_SECTIONS.map(function(sec){ var on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
-        return '<details class="asksec"><summary><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===sec.items.length?' checked':'')+(on&&on<sec.items.length?' data-some="1"':'')+'>'+esc(sec.title)+'<span class="n">'+on+' / '+sec.items.length+'</span></summary><div class="askitems">'+
-          sec.items.map(function(it){ return '<label><input type="checkbox" data-it="'+esc(it.id)+'"'+(has(A.x,it.id)?'':' checked')+'> '+esc(it.label)+'</label>'; }).join("")+'</div></details>'; }).join("")+'</div>'+
+      tplHtml()+'<div class="askh aqh">聞く項目<span class="sp"></span><button type="button" class="btn ghost sm" data-aqall="1">すべて開く</button><button type="button" class="btn ghost sm" data-aqall="0">すべて閉じる</button></div>'+
+      '<div class="aqwrap"><nav class="aqnav" aria-label="聞く項目の見出し">'+window.JIRAI_SECTIONS.map(function(sec){ var n=sec.items.length, on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
+          return '<a href="#aq-'+esc(sec.id)+'" data-aqgo="'+esc(sec.id)+'" class="'+(on===0?'none':on<n?'some':'all')+'">'+ICO(SEC_ICON[sec.id]||'help')+'<span>'+esc(sec.title)+'</span><em>'+on+'/'+n+'</em></a>'; }).join("")+'</nav>'+
+        '<div class="asksecs">'+window.JIRAI_SECTIONS.map(function(sec){ var on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
+        return '<details class="asksec" id="aq-'+esc(sec.id)+'"'+(AQOPEN[sec.id]?' open':'')+'><summary><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===sec.items.length?' checked':'')+(on&&on<sec.items.length?' data-some="1"':'')+' aria-label="「'+esc(sec.title)+'」をまとめて聞く・外す"><span class="sico">'+ICO(SEC_ICON[sec.id]||'help')+'</span><span class="stt">'+esc(sec.title)+'</span><span class="n">'+on+' / '+sec.items.length+'</span></summary><div class="aqitems">'+
+          sec.items.map(function(it){ var ty=it.type||sec.type, off=has(A.x,it.id);
+            var opts = ty==="scale" ? window.JIRAI_SCALE.map(function(x){ return '<i class="aqs s-'+esc(x.v)+'">'+esc(x.sym)+'</i>'; }).join("")
+              : (it.options||[]).map(function(o){ return '<i>'+esc(o)+'</i>'; }).join("")+(ty==="multi"?'<span class="aqm">いくつでも選べる</span>':'');
+            return '<label class="aqit'+(off?' off':'')+'"><input type="checkbox" data-it="'+esc(it.id)+'"'+(off?'':' checked')+'><span class="aqb"><span class="aql">'+esc(it.label)+'</span><span class="aqo">'+opts+'</span></span></label>'; }).join("")+'</div></details>'; }).join("")+'</div></div>'+
       '<div class="askh">自分の質問</div><div class="askqs">'+A.q.map(function(x,i){
         return '<div class="askq" data-qi="'+i+'"><input type="text" data-q="l" value="'+esc(x.l||"")+'" placeholder="質問文（例：PCの口調は？）"><select data-q="t">'+TYPES.map(function(t){ return '<option value="'+t[0]+'"'+(x.t===t[0]?' selected':'')+'>'+t[1]+'</option>'; }).join("")+'</select><button type="button" class="rm" data-qrm title="この質問を消す">×</button>'+
           (x.t==="one"||x.t==="multi"?'<textarea data-q="os" placeholder="選択肢を 1 行に 1 つ">'+esc(x.os||"")+'</textarea>':'')+'</div>'; }).join("")+'</div>'+
       '<button type="button" class="btn ghost sm" data-qadd>＋ 質問を足す</button>'+
-      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">開いて確かめる</a></div>'+
+      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><button type="button" class="btn ghost sm" data-apv>プレビュー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">新しいタブで開く</a></div>'+
       '<div class="vnote" style="margin-top:8px"><span id="askn">'+count()+'</span></div>';
     box.innerHTML=h; box.querySelectorAll('[data-some]').forEach(function(c){ c.indeterminate=true; }); document.getElementById("askopen").href=link(); }
   box.addEventListener("input", function(e){ var t=e.target;
@@ -852,12 +901,22 @@ document.getElementById("btn-clear").addEventListener("click",function(){
   box.addEventListener("change", function(e){ var t=e.target;
     if(t.matches("[data-tm]")){ A.tm=t.checked?1:0; }
     else if(t.dataset.fx){ A.fx=A.fx.filter(function(i){return i!==t.dataset.fx;}); if(!t.checked) A.fx.push(t.dataset.fx); }
-    else if(t.dataset.it){ A.x=A.x.filter(function(i){return i!==t.dataset.it;}); if(!t.checked) A.x.push(t.dataset.it); var d=t.closest("details"); save(); draw(); var d2=box.querySelector('[data-sec="'+(d&&d.querySelector('[data-sec]').dataset.sec)+'"]'); if(d2) d2.closest("details").open=true; return; }
+    else if(t.dataset.it){ A.x=A.x.filter(function(i){return i!==t.dataset.it;}); if(!t.checked) A.x.push(t.dataset.it); save(); draw(); return; }
     else if(t.dataset.sec){ var sec=window.JIRAI_SECTIONS.filter(function(s){return s.id===t.dataset.sec;})[0]; var ids=sec.items.map(function(it){return it.id;}); A.x=A.x.filter(function(i){return ids.indexOf(i)<0;}); if(!t.checked) A.x=A.x.concat(ids); save(); draw(); return; }
     else { var q=t.closest("[data-qi]"); if(q && t.dataset.q==="t"){ A.q[+q.dataset.qi].t=t.value; save(); draw(); return; } }
     save(); });
+  // 見出しを開いた・閉じたを覚える（描き直しても、そのまま）
+  box.addEventListener("toggle", function(e){ var d=e.target; if(d && d.classList && d.classList.contains("asksec")) AQOPEN[d.id.slice(3)]=d.open; }, true);
+  // プレビュー：PL が見る画面を、その場で開く
+  var PV=document.createElement("div"); PV.className="aqpv"; PV.hidden=true;
+  PV.innerHTML='<div class="aqpvb"><div class="aqpvh"><b>プレビュー（PL が見る画面）</b><span class="sp"></span><a class="btn ghost sm" id="aqpvtab" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="btn ghost sm" data-apvx>閉じる</button></div><iframe id="aqpvf" title="プレビュー"></iframe></div>';
+  document.body.appendChild(PV);
+  PV.addEventListener("click", function(e){ if(e.target===PV || e.target.closest("[data-apvx]")){ PV.hidden=true; document.getElementById("aqpvf").src="about:blank"; } });
   box.addEventListener("click", function(e){ var t=e.target;
     if(t.matches('summary input[type=checkbox]')) e.stopPropagation();
+    if(t.closest("[data-apv]")){ var u=link(); document.getElementById("aqpvf").src=u; document.getElementById("aqpvtab").href=u; PV.hidden=false; return; }
+    var al=t.closest("[data-aqall]"); if(al){ var on=al.dataset.aqall==="1"; window.JIRAI_SECTIONS.forEach(function(sec){ AQOPEN[sec.id]=on; }); box.querySelectorAll("details.asksec").forEach(function(d){ d.open=on; }); return; }
+    var go=t.closest("[data-aqgo]"); if(go){ e.preventDefault(); var d=document.getElementById("aq-"+go.dataset.aqgo); if(!d) return; d.open=true; AQOPEN[go.dataset.aqgo]=true; var hh=(document.querySelector("header")||{}).offsetHeight||0; window.scrollTo({top:d.getBoundingClientRect().top+window.pageYOffset-hh-14, behavior:"smooth"}); return; }
     if(t.closest("[data-qadd]")){ A.q.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), l:"", t:"scale"}); save(); draw(); var L=box.querySelectorAll('[data-q="l"]'); if(L.length) L[L.length-1].focus(); return; }
     var rm=t.closest("[data-qrm]"); if(rm){ A.q.splice(+rm.closest("[data-qi]").dataset.qi,1); save(); draw(); return; }
     if(t.closest("[data-acopy]")){ var v=link(); (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){ t.textContent="コピーしました"; setTimeout(function(){ t.textContent="リンクをコピー"; },1500); }, function(){ var i=document.getElementById("asklink"); i.select(); document.execCommand("copy"); }); return; }

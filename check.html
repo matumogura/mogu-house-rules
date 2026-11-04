@@ -446,7 +446,7 @@ input::placeholder,textarea::placeholder{color:#bcb8c8;font-weight:400;opacity:1
 
   <div class="card">
     <span class="lab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>使い方</span>
-    <ul class="howto"><li>選ばなかった項目は「〇（ふつう）」になります。気になる項目だけ選べば大丈夫です。</li><li>◎ は押すたびに ◎◎、◎◎◎ と増えます。</li><li>項目の名前を押すと、理由や補足を書けます。</li></ul>
+    <ul class="howto"><li>選ばなかった項目は「〇（ふつう）」になります。気になる項目だけ選べば大丈夫です。</li><li>◎ は押すたびに ◎◎、◎◎◎ と増えます。</li><li>項目の名前を押すと、理由や補足を書けます。</li><li>前に保存したファイルを読み込むと、その答えを使えます（KPが項目を絞ったシートでも使えます）。</li></ul>
   </div>
 
   <div class="card" id="card-basic">
@@ -496,7 +496,7 @@ input::placeholder,textarea::placeholder{color:#bcb8c8;font-weight:400;opacity:1
 
 <canvas id="cv"></canvas>
 
-<script src="check-schema.js?v=20261104e"></script>
+<script src="check-schema.js?v=20261104f"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
 // KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
@@ -626,7 +626,7 @@ SECTIONS.forEach(function(sec){
 if(KPCFG){
   var kb=document.createElement("div"); kb.className="card kpbanner"; var nAll=0; SECTIONS.forEach(function(sec){ nAll+=sec.items.length; });
   kb.innerHTML='<span class="lab">'+ICO('mail')+'KPからのお願い</span><b class="kpbt">'+esc(KPCFG.t||"この卓")+' の事前チェック</b>'+(KPCFG.m?'<p class="kpbm">'+esc(KPCFG.m).replace(/\n/g,"<br>")+'</p>':'')+
-    '<p class="kpbn">KPが聞きたい項目だけを出しています。答えたら、いちばん下の「KPに渡すファイルを保存」で保存して、KPに渡してください。</p>';
+    '<p class="kpbn">KPが聞きたい項目だけを出しています。前にこのブラウザで答えた内容は、そのまま入っています。答えたら、いちばん下の「KPに渡すファイルを保存」で保存して、KPに渡してください。</p>';
   var ph=document.querySelector("main .phead"); if(ph) ph.after(kb);
   if(!KPTIME){ var tc=document.getElementById("timecard"); if(tc) tc.style.display="none"; var ta=document.querySelector('[data-target="timecard"]'); if(ta) ta.style.display="none"; }
   if(!FREE.length){ var ff=document.getElementById("freefields"); if(ff && ff.closest(".card")) ff.closest(".card").style.display="none"; }
@@ -728,26 +728,29 @@ document.querySelectorAll(".qfill").forEach(function(q){
 });
 
 // ---- データ ----
-function collect(){
+// full：この端末に覚えておく分。KP のリンクで絞っていても、ほかの項目の答え（前に入れたもの）を消さずに持っておく
+var STORED_FREE={};
+function collect(full){
+  var pick=function(o){ return full ? JSON.parse(JSON.stringify(o||{})) : askedOnly(o); };
   return {
     _type:"mogu-jirai-sheet", _version:2,
     name:val("f-name"), session:val("f-session"), adult:state.adult||undefined, date:new Date().toISOString().slice(0,10),
-    scale:askedOnly(state.scale),
-    loveN:askedOnly(state.loveN),
-    choice:askedOnly(state.choice),
-    multi:askedOnly(state.multi),
-    time:KPTIME ? JSON.parse(JSON.stringify(state.time)) : undefined,
-    reason:askedOnly(state.reason),
+    scale:pick(state.scale),
+    loveN:pick(state.loveN),
+    choice:pick(state.choice),
+    multi:pick(state.multi),
+    time:(KPTIME||full) ? JSON.parse(JSON.stringify(state.time)) : undefined,
+    reason:pick(state.reason),
     kpq:KPCFG && KPCFG.q && KPCFG.q.length ? KPCFG.q : undefined,
     kpTitle:KPCFG && KPCFG.t ? KPCFG.t : undefined,
-    free:(function(){ var o={}; FREE.forEach(function(f){ o[f.id]=val(f.id); }); return o; })(),
+    free:(function(){ var o=full ? JSON.parse(JSON.stringify(STORED_FREE)) : {}; FREE.forEach(function(f){ o[f.id]=val(f.id); }); return o; })(),
     createdAt:new Date().toISOString().slice(0,10)
   };
 }
 function val(id){ var e=document.getElementById(id); return e?e.value.trim():""; }
 
 // ---- 保存/復元 ----
-function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(collect())); }catch(e){} }
+function save(){ try{ var d=collect(true); STORED_FREE=d.free||{}; localStorage.setItem(STORE_KEY, JSON.stringify(d)); }catch(e){} }
 function restore(){
   try{
     var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
@@ -756,7 +759,7 @@ function restore(){
     if(d.scale) state.scale=d.scale; if(d.loveN) state.loveN=d.loveN; if(d.choice) state.choice=d.choice; if(d.reason) state.reason=d.reason;
     if(d.multi) state.multi=d.multi;
     if(d.time) state.time=Object.assign(defaultTime(), d.time);
-    if(d.free){ FREE.forEach(function(f){ setV(f.id, d.free[f.id]); }); }
+    if(d.free){ STORED_FREE=JSON.parse(JSON.stringify(d.free)); FREE.forEach(function(f){ setV(f.id, d.free[f.id]); }); }
   }catch(e){}
 }
 function setV(id,v){ var e=document.getElementById(id); if(e&&v!=null) e.value=v; }
@@ -1414,9 +1417,10 @@ document.getElementById("sections").addEventListener("toggle", updateLegendBar, 
 function applySheet(d){
   if(!d || d._type!=="mogu-jirai-sheet"){ alert("このファイルには、事前チェックの答えが入っていませんでした。"); return; }
   setV("f-name",d.name); setV("f-session",d.session); state.adult=d.adult==="yes"?"yes":""; paintAdult();
-  state.scale=d.scale||{}; state.loveN=d.loveN||{}; state.choice=d.choice||{}; state.multi=d.multi||{}; state.reason=d.reason||{};
-  state.time = d.time ? Object.assign(defaultTime(), d.time) : defaultTime();
-  FREE.forEach(function(f){ setV(f.id, (d.free&&d.free[f.id])||""); });
+  // KP が絞ったシートの答えも使えるよう、ファイルにある項目だけ入れ替える（ファイルに無い項目の答えはそのまま）
+  ["scale","loveN","choice","multi","reason"].forEach(function(k){ state[k]=Object.assign({}, state[k]||{}, d[k]||{}); });
+  if(d.time) state.time=Object.assign(defaultTime(), d.time);
+  if(d.free){ Object.keys(d.free).forEach(function(k){ if(String(d.free[k]||"").trim()){ STORED_FREE[k]=d.free[k]; setV(k, d.free[k]); } }); }
   syncTimeControls(); refreshScale(); refreshChoice(); refreshMulti(); applyReasons(); renderTime(); renderPreview(); save();
   document.getElementById("savednote").textContent="ファイルから読み込みました。";
 }
@@ -1433,7 +1437,7 @@ function setupImport(){
           else{ var doc=new DOMParser().parseFromString(text,"text/html"); var s=doc.getElementById("mogu-jirai-data"); if(s) d=JSON.parse(s.textContent); } }
       }catch(err){ alert("このファイルは読み込めませんでした。保存したファイルか確かめてください。"); inp.value=""; return; }
       if(d && d._type==="mogu-jirai-sheet"){
-        if(confirm("いま入力している内容を、このファイルの内容に置きかえます。よろしいですか？")){ applySheet(d); var t=drop&&drop.querySelector(".fdt"); if(t) t.textContent="読み込みました："+f.name; }
+        if(confirm("このファイルの答えを読み込みます。ファイルにある項目は上書きし、ほかの項目の答えはそのまま残します。よろしいですか？")){ applySheet(d); var t=drop&&drop.querySelector(".fdt"); if(t) t.textContent="読み込みました："+f.name; }
       } else { alert("このファイルには、事前チェックの答えが入っていませんでした。"); }
       inp.value="";
     };
