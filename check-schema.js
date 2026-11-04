@@ -448,5 +448,43 @@ window.JIRAI = {
   esc: function (s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  },
+
+  /* ---- KP が聞く項目を選ぶ（PL用リンク） ----
+     KP用ページで聞く項目を選び、自分の質問を足すと、check.html#c=<設定> のリンクができる。PL はそのリンクを開くと、選ばれた項目だけに答える。
+     設定：{ v:1, t:"卓名", m:"KPからのひとこと", x:[聞かない項目の id], fx:[聞かない自由記入の id], tm:0（参加可能時間を聞かないとき）,
+            q:[{ id:"1", l:"質問文", t:"scale"|"one"|"multi"|"free", o:["選択肢", …] }] }
+     提出データには、足した質問（q）を kpq として入れる（KP用ページ・キパビューは kpq から項目を作って読む） */
+  cfgEncode: function (c) {
+    var b = unescape(encodeURIComponent(JSON.stringify(c)));
+    return btoa(b).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  },
+  cfgDecode: function (h) {
+    try {
+      var m = String(h || "").match(/[#&?]c=([A-Za-z0-9_-]+)/); if (!m) return null;
+      var b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "=";
+      var c = JSON.parse(decodeURIComponent(escape(atob(b))));
+      return c && c.v === 1 ? c : null;
+    } catch (e) { return null; }
+  },
+  // 足した質問を、セクション（◎〇△×× ／1つ選ぶ／複数選ぶ）と自由記入の形にする。id は kq_<番号>
+  customParts: function (q) {
+    var items = [], free = [];
+    (q || []).forEach(function (x) {
+      if (!x || !x.id || !x.l) return; var id = "kq_" + x.id, o = (x.o || []).filter(function (v) { return String(v).trim(); });
+      if (x.t === "free") free.push({ id: id, label: x.l, ph: "", kpq: true });
+      else if (x.t === "one" && o.length) items.push({ id: id, label: x.l, type: "choice", options: o });
+      else if (x.t === "multi" && o.length) items.push({ id: id, label: x.l, type: "multi", options: o });
+      else items.push({ id: id, label: x.l, type: "scale" });
+    });
+    return { section: items.length ? { id: "kpq", title: "KPからの質問", type: "scale", items: items } : null, free: free };
+  },
+  // 設定で、聞く項目だけのセクション・自由記入にする（足した質問は最後に「KPからの質問」として足す）
+  applyCfg: function (c, sections, free) {
+    var x = {}, fx = {}; (c.x || []).forEach(function (i) { x[i] = 1; }); (c.fx || []).forEach(function (i) { fx[i] = 1; });
+    var S = sections.map(function (s) { var it = s.items.filter(function (i) { return !x[i.id]; }); if (!it.length) return null; var o = {}; for (var k in s) o[k] = s[k]; o.items = it; return o; }).filter(Boolean);
+    var F = free.filter(function (f) { return !fx[f.id]; });
+    var cp = this.customParts(c.q); if (cp.section) S.push(cp.section);
+    return { sections: S, free: F.concat(cp.free), time: c.tm !== 0 };
   }
 };

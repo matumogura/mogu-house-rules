@@ -200,6 +200,10 @@ canvas{display:none}
   .scale,.choices{width:100%;flex-shrink:1} /* 選択ボタンを全幅にして折り返す（右端切れ防止）*/
   input[type=text],textarea,.reasonbox{font-size:16px} /* タップ時の自動ズーム防止 */
 }
+.kpbanner{border:2.5px solid var(--coral,#ff5533)}
+.kpbanner .kpbt{display:block;font-size:18px;margin:2px 0 6px}
+.kpbanner .kpbm{font-size:14px;margin:0 0 6px;white-space:normal}
+.kpbanner .kpbn{font-size:12.5px;color:var(--ink-soft,#4a463f);margin:0}
 </style>
 </head>
 <body>
@@ -313,6 +317,11 @@ canvas{display:none}
 <script src="check-schema.js"></script>
 <script>
 var SCALE = window.JIRAI_SCALE, SECTIONS = window.JIRAI_SECTIONS, FREE = window.JIRAI_FREE;
+// KP から届いたリンク（#c=…）なら、KP が選んだ項目と、KP が足した質問だけにする（check-schema.js の JIRAI.applyCfg）
+var KPCFG = window.JIRAI.cfgDecode(location.hash), KPTIME = true, ASKED = null;
+if(KPCFG){ var _ap = window.JIRAI.applyCfg(KPCFG, SECTIONS, FREE); SECTIONS = _ap.sections; FREE = _ap.free; KPTIME = _ap.time;
+  ASKED = {}; SECTIONS.forEach(function(sec){ sec.items.forEach(function(it){ ASKED[it.id] = 1; }); }); }
+function askedOnly(o){ var r = {}; Object.keys(o || {}).forEach(function(k){ if(!ASKED || ASKED[k]) r[k] = o[k]; }); return JSON.parse(JSON.stringify(r)); }
 var SMAP = window.JIRAI.scaleMap(), esc = window.JIRAI.esc;
 var STORE_KEY = "mogu-jirai-input-v2";
 var DEFAULT = window.JIRAI_SCALE_DEFAULT;
@@ -369,7 +378,7 @@ function timelineHTML(t){
 // ---- セクション描画 ----
 var secWrap = document.getElementById("sections");
 SECTIONS.forEach(function(sec){
-  var det=document.createElement("details"); det.className="jsec"; det.open=["play","session","mastering","wants","policy","erogro","media"].indexOf(sec.id)>=0;
+  var det=document.createElement("details"); det.className="jsec"; det.open=["play","session","mastering","wants","policy","erogro","media","kpq"].indexOf(sec.id)>=0;
   det.id="sec-"+sec.id; det.dataset.type=sec.type;
   var sum=document.createElement("summary");
   sum.innerHTML=esc(sec.title)+'<span class="cnt" id="cnt-'+sec.id+'"></span>';
@@ -429,6 +438,15 @@ SECTIONS.forEach(function(sec){
   det.appendChild(body); secWrap.appendChild(det);
 });
 
+// ---- KP から届いたリンクのとき：上に案内を出し、参加可能時間を聞かないなら隠す ----
+if(KPCFG){
+  var kb=document.createElement("div"); kb.className="card kpbanner"; var nAll=0; SECTIONS.forEach(function(sec){ nAll+=sec.items.length; });
+  kb.innerHTML='<span class="lab">KPからのおねがい</span><b class="kpbt">'+esc(KPCFG.t||"この卓")+' の事前チェック</b>'+(KPCFG.m?'<p class="kpbm">'+esc(KPCFG.m).replace(/\n/g,"<br>")+'</p>':'')+
+    '<p class="kpbn">KPが聞きたい項目だけを出しています（'+nAll+' 項目'+(FREE.length?'・自由記入 '+FREE.length:'')+(KPTIME?'・参加可能時間':'')+'）。答えたら「提出用HTMLを保存」でKPに渡してください。</p>';
+  var ph=document.querySelector("main .phead"); if(ph) ph.after(kb);
+  if(!KPTIME){ var tc=document.getElementById("timecard"); if(tc) tc.style.display="none"; var ta=document.querySelector('[data-target="timecard"]'); if(ta) ta.style.display="none"; }
+  if(!FREE.length){ var ff=document.getElementById("freefields"); if(ff && ff.closest(".card")) ff.closest(".card").style.display="none"; }
+}
 // ---- 自由記入 ----
 (function(){
   var F=document.getElementById("freefields");
@@ -520,7 +538,7 @@ function refreshMulti(){
 document.querySelectorAll(".qfill").forEach(function(q){
   q.addEventListener("click",function(){
     var sec=SECTIONS.filter(function(s){return s.id===q.dataset.sec;})[0];
-    sec.items.forEach(function(it){ state.scale[it.id]=q.dataset.v; delete state.loveN[it.id]; });
+    sec.items.forEach(function(it){ if((it.type||sec.type)!=="scale") return; state.scale[it.id]=q.dataset.v; delete state.loveN[it.id]; });
     refreshScale(); onChange();
   });
 });
@@ -530,12 +548,14 @@ function collect(){
   return {
     _type:"mogu-jirai-sheet", _version:2,
     name:val("f-name"), session:val("f-session"), date:new Date().toISOString().slice(0,10),
-    scale:JSON.parse(JSON.stringify(state.scale)),
-    loveN:JSON.parse(JSON.stringify(state.loveN)),
-    choice:JSON.parse(JSON.stringify(state.choice)),
-    multi:JSON.parse(JSON.stringify(state.multi)),
-    time:JSON.parse(JSON.stringify(state.time)),
-    reason:JSON.parse(JSON.stringify(state.reason)),
+    scale:askedOnly(state.scale),
+    loveN:askedOnly(state.loveN),
+    choice:askedOnly(state.choice),
+    multi:askedOnly(state.multi),
+    time:KPTIME ? JSON.parse(JSON.stringify(state.time)) : undefined,
+    reason:askedOnly(state.reason),
+    kpq:KPCFG && KPCFG.q && KPCFG.q.length ? KPCFG.q : undefined,
+    kpTitle:KPCFG && KPCFG.t ? KPCFG.t : undefined,
     free:(function(){ var o={}; FREE.forEach(function(f){ o[f.id]=val(f.id); }); return o; })(),
     createdAt:new Date().toISOString().slice(0,10)
   };
@@ -860,7 +880,7 @@ function drawImage(d){
 
   var blocks=[];
   blocks.push(tagSectionBlock("プレイスタイル", profileTags));
-  blocks.push(timeBlock(d.time));
+  if(d.time) blocks.push(timeBlock(d.time));
   blocks.push(tagSectionBlock("好きなシナリオ傾向", likeScene));
   blocks.push(tagSectionBlock("好き・得意な要素（◎）", likeOther));
   blocks.push(tagSectionBlock("苦手・NGな要素（×＝黄／××＝赤）", dislike));
@@ -1155,6 +1175,7 @@ function setupImport(){
 // ---- 初期化 ----
 (function(){
   restore();
+  if(KPCFG && KPCFG.t && !val("f-session")) setV("f-session", KPCFG.t);
   setupTime();
   setupToc();
   setupImport();

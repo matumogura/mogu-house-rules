@@ -146,6 +146,27 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
   .toc-inner{padding:8px 14px;gap:6px}
   .toc a{font-size:11.5px;padding:4px 9px}
 }
+.askintro{font-size:13px;color:var(--ink-soft);margin:0 0 12px}
+.askrow{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:12px}
+.askrow label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700}
+.askrow input[type=text],.askrow textarea,.askq input[type=text],.askq select,.askq textarea{font:inherit;font-size:14px;font-weight:400;padding:8px 10px;border:2px solid var(--ink);border-radius:10px;background:#fff}
+.asksecs{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.asksec{border:2px solid var(--ink);border-radius:12px;background:#fff}
+.asksec>summary{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;font-weight:700;list-style:none}
+.asksec>summary::-webkit-details-marker{display:none}
+.asksec>summary .n{margin-left:auto;font-size:12px;color:var(--ink-soft);font-weight:400}
+.asksec input[type=checkbox],.askopt input[type=checkbox]{width:18px;height:18px;accent-color:var(--coral)}
+.askitems{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 14px;padding:4px 12px 12px}
+.askitems label,.askopt label{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.askopt{display:flex;flex-wrap:wrap;gap:8px 18px;margin:8px 0}
+.askqs{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.askq{display:grid;grid-template-columns:1fr 150px auto;gap:8px;align-items:start;padding:10px;border:2px dashed var(--ink);border-radius:12px;background:#fff}
+.askq textarea{grid-column:1/3;min-height:60px}
+.askq .rm{border:0;background:none;font-size:18px;cursor:pointer;color:var(--ink-soft)}
+.askout{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.askout input{flex:1;min-width:240px;font:inherit;font-size:13px;padding:8px 10px;border:2px solid var(--ink);border-radius:10px;background:var(--paper)}
+.askh{font-size:13px;font-weight:900;margin:14px 0 4px}
+@media (max-width:640px){ .askq{grid-template-columns:1fr} .askq textarea{grid-column:1} }
 </style>
 </head>
 <body>
@@ -160,6 +181,7 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
     </div>
   </div>
   <nav class="toc" id="kptoc"><div class="toc-inner">
+    <a data-target="card-ask"><span class="n">00</span>聞く項目</a>
     <a data-target="drop"><span class="n">01</span>読み込み</a>
     <a data-target="card-notice"><span class="n">02</span>おしらせ出力</a>
     <a data-target="timeagg-card"><span class="n">03</span>参加可能時間</a>
@@ -175,6 +197,12 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
     <div class="kick">JIZEN CHECK SHEET — FOR KEEPERS</div>
     <h1>事前チェック<span class="cc">集約</span>シート</h1>
     <p class="lead">PLから受け取った提出ファイル（HTML／JSON）を読み込むと、全員の地雷を横断で確認できます。周知が必要な項目にチェックを入れ、PL共有用のおしらせ出力をまとめてコピーできます。読み込んだデータは外部に送信されません。</p>
+  </div>
+
+  <div class="card" id="card-ask">
+    <span class="lab">きくこうもく</span>
+    <p class="askintro">PLに答えてほしい項目を選び、自分の質問も足して「PL用リンク」を作れます。PLはリンクを開くと、選んだ項目だけに答えます（提出ファイルはいつもどおりここで読み込めます）。</p>
+    <div id="askbox"></div>
   </div>
 
   <div class="card">
@@ -250,6 +278,10 @@ footer .f2{font-family:'DM Mono',monospace;font-size:12px;color:#9a958a;margin-t
 <script src="check-schema.js"></script>
 <script>
 var SCALE=window.JIRAI_SCALE, SECTIONS=window.JIRAI_SECTIONS, SMAP=window.JIRAI.scaleMap(), esc=window.JIRAI.esc;
+var CFREE=[];   // PLの提出に入っていた「KPからの質問」の自由記入
+// 読み込んだ提出の「KPからの質問」（kpq）を、項目として足す（check-schema.js の JIRAI.customParts）
+function rebuildSections(){ var seen={}, q=[]; people.forEach(function(p){ (p.kpq||[]).forEach(function(x){ if(x&&x.id&&!seen[x.id]){ seen[x.id]=1; q.push(x); } }); });
+  var cp=window.JIRAI.customParts(q); SECTIONS=window.JIRAI_SECTIONS.concat(cp.section?[cp.section]:[]); CFREE=cp.free; }
 var DEFAULT=window.JIRAI_SCALE_DEFAULT;
 var MAX=30;
 function fmtHour(h){ var hh=Math.floor(h); return hh+":"+((h-hh)===0.5?"30":"00"); }
@@ -319,6 +351,7 @@ function render(){
   roster.querySelectorAll(".rm").forEach(function(b){ b.addEventListener("click",function(){ people.splice(parseInt(b.dataset.i,10),1); render(); }); });
   document.getElementById("counter").textContent = people.length? (people.length+" / "+MAX+" 人 読み込み済み") : "";
   document.getElementById("workspace").style.display = people.length? "block":"none";
+  rebuildSections();
   if(people.length){ renderTimeAgg(); renderAgg(); renderPeople(); renderMatrix(); buildOutput(); }
 }
 
@@ -537,7 +570,7 @@ function renderPeople(){
       h+='</div></div>';
     });
     if(!groups.length) h+='<div class="pln" style="color:#8a857a;font-size:13px">特筆項目なし（すべて〇）</div>';
-    [["苦手なことメモ",p.free.free_dislike],["お知らせしたい事項",p.free.free_notice],["好きな要素など",p.free.free_likes]].forEach(function(f){
+    [["苦手なことメモ",p.free.free_dislike],["お知らせしたい事項",p.free.free_notice],["好きな要素など",p.free.free_likes]].concat(CFREE.map(function(f){ return [f.label, p.free[f.id]]; })).forEach(function(f){
       if(f[1]) h+='<div class="pln"><div class="plt">'+esc(f[0])+'</div><div class="fb">'+esc(f[1])+'</div></div>';
     });
     card.innerHTML=h; g.appendChild(card);
@@ -661,6 +694,52 @@ document.getElementById("btn-clear").addEventListener("click",function(){
   if(!confirm("読み込んだファイルをすべてクリアします。よろしいですか？")) return;
   people=[]; checked={}; render();
 });
+
+// ---- PL に聞く項目を選ぶ（PL用リンク：check.html#c=…） ----
+(function(){
+  var KEY="mogu-jirai-ask-v1", box=document.getElementById("askbox"); if(!box) return;
+  var A; try{ A=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(e){ A=null; }
+  if(!A||A.v!==1) A={v:1,t:"",m:"",x:[],fx:[],tm:1,q:[]};
+  var TYPES=[["scale","◎〇△××"],["one","選択肢から1つ"],["multi","選択肢から複数"],["free","自由記述"]];
+  function has(L,id){ return (L||[]).indexOf(id)>=0; }
+  function cfg(){ var c={v:1}; if(A.t) c.t=A.t; if(A.m) c.m=A.m; if(A.x.length) c.x=A.x; if(A.fx.length) c.fx=A.fx; if(!A.tm) c.tm=0;
+    var q=A.q.filter(function(x){ return String(x.l||"").trim(); }).map(function(x){ var o={id:x.id, l:String(x.l).trim(), t:x.t}; if(x.t==="one"||x.t==="multi") o.o=String(x.os||"").split(/\n+/).map(function(v){return v.trim();}).filter(Boolean); return o; });
+    if(q.length) c.q=q; return c; }
+  function link(){ return new URL("check.html", location.href).href.split("#")[0]+"#c="+window.JIRAI.cfgEncode(cfg()); }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(A)); }catch(e){} var o=document.getElementById("asklink"); if(o) o.value=link(); var n=document.getElementById("askn"); if(n) n.textContent=count(); }
+  function count(){ var n=0, all=0; window.JIRAI_SECTIONS.forEach(function(s){ s.items.forEach(function(it){ all++; if(!has(A.x,it.id)) n++; }); }); return "聞く項目 "+n+" / "+all+"・自分の質問 "+A.q.filter(function(x){return String(x.l||"").trim();}).length; }
+  function draw(){
+    var h='<div class="askrow"><label class="f">卓名（PLのシートの上に出ます・任意）<input type="text" data-a="t" value="'+esc(A.t)+'" placeholder="例：〇〇卓"></label>'+
+      '<label class="f">KPからのひとこと（任意）<textarea data-a="m" rows="2" placeholder="例：〇日までに提出してください">'+esc(A.m)+'</textarea></label></div>'+
+      '<div class="askopt"><label><input type="checkbox" data-tm'+(A.tm?' checked':'')+'> 参加可能時間を聞く</label>'+window.JIRAI_FREE.map(function(f){ return '<label><input type="checkbox" data-fx="'+esc(f.id)+'"'+(has(A.fx,f.id)?'':' checked')+'> 自由記入「'+esc(f.label)+'」</label>'; }).join("")+'</div>'+
+      '<div class="askh">チェックの項目（外した項目は、PLのシートに出ません）</div><div class="asksecs">'+window.JIRAI_SECTIONS.map(function(sec){ var on=sec.items.filter(function(it){ return !has(A.x,it.id); }).length;
+        return '<details class="asksec"><summary><input type="checkbox" data-sec="'+esc(sec.id)+'"'+(on===sec.items.length?' checked':'')+(on&&on<sec.items.length?' data-some="1"':'')+'>'+esc(sec.title)+'<span class="n">'+on+' / '+sec.items.length+'</span></summary><div class="askitems">'+
+          sec.items.map(function(it){ return '<label><input type="checkbox" data-it="'+esc(it.id)+'"'+(has(A.x,it.id)?'':' checked')+'> '+esc(it.label)+'</label>'; }).join("")+'</div></details>'; }).join("")+'</div>'+
+      '<div class="askh">自分の質問（「KPからの質問」としてシートの最後に出ます）</div><div class="askqs">'+A.q.map(function(x,i){
+        return '<div class="askq" data-qi="'+i+'"><input type="text" data-q="l" value="'+esc(x.l||"")+'" placeholder="質問文（例：PCの口調は？）"><select data-q="t">'+TYPES.map(function(t){ return '<option value="'+t[0]+'"'+(x.t===t[0]?' selected':'')+'>'+t[1]+'</option>'; }).join("")+'</select><button type="button" class="rm" data-qrm title="この質問を消す">×</button>'+
+          (x.t==="one"||x.t==="multi"?'<textarea data-q="os" placeholder="選択肢を 1 行に 1 つ">'+esc(x.os||"")+'</textarea>':'')+'</div>'; }).join("")+'</div>'+
+      '<button type="button" class="btn ghost sm" data-qadd>＋ 質問を足す</button>'+
+      '<div class="askout"><input id="asklink" readonly value="'+esc(link())+'"><button type="button" class="btn blue sm" data-acopy>リンクをコピー</button><a class="btn ghost sm" id="askopen" target="_blank" rel="noopener">開いて確かめる</a><button type="button" class="btn ghost sm" data-areset>すべて聞く（元に戻す）</button></div>'+
+      '<div style="font-size:12.5px;color:var(--ink-soft);margin-top:6px"><span id="askn">'+count()+'</span>。選んだ内容はこの端末に覚えておきます。</div>';
+    box.innerHTML=h; box.querySelectorAll('[data-some]').forEach(function(c){ c.indeterminate=true; }); document.getElementById("askopen").href=link(); }
+  box.addEventListener("input", function(e){ var t=e.target;
+    if(t.dataset.a){ A[t.dataset.a]=t.value; save(); document.getElementById("askopen").href=link(); return; }
+    var q=t.closest("[data-qi]"); if(q && t.dataset.q && t.dataset.q!=="t"){ A.q[+q.dataset.qi][t.dataset.q]=t.value; save(); document.getElementById("askopen").href=link(); } });
+  box.addEventListener("change", function(e){ var t=e.target;
+    if(t.matches("[data-tm]")){ A.tm=t.checked?1:0; }
+    else if(t.dataset.fx){ A.fx=A.fx.filter(function(i){return i!==t.dataset.fx;}); if(!t.checked) A.fx.push(t.dataset.fx); }
+    else if(t.dataset.it){ A.x=A.x.filter(function(i){return i!==t.dataset.it;}); if(!t.checked) A.x.push(t.dataset.it); var d=t.closest("details"); save(); draw(); var d2=box.querySelector('[data-sec="'+(d&&d.querySelector('[data-sec]').dataset.sec)+'"]'); if(d2) d2.closest("details").open=true; return; }
+    else if(t.dataset.sec){ var sec=window.JIRAI_SECTIONS.filter(function(s){return s.id===t.dataset.sec;})[0]; var ids=sec.items.map(function(it){return it.id;}); A.x=A.x.filter(function(i){return ids.indexOf(i)<0;}); if(!t.checked) A.x=A.x.concat(ids); save(); draw(); return; }
+    else { var q=t.closest("[data-qi]"); if(q && t.dataset.q==="t"){ A.q[+q.dataset.qi].t=t.value; save(); draw(); return; } }
+    save(); });
+  box.addEventListener("click", function(e){ var t=e.target;
+    if(t.matches('summary input[type=checkbox]')) e.stopPropagation();
+    if(t.closest("[data-qadd]")){ A.q.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), l:"", t:"scale"}); save(); draw(); var L=box.querySelectorAll('[data-q="l"]'); if(L.length) L[L.length-1].focus(); return; }
+    var rm=t.closest("[data-qrm]"); if(rm){ A.q.splice(+rm.closest("[data-qi]").dataset.qi,1); save(); draw(); return; }
+    if(t.closest("[data-acopy]")){ var v=link(); (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(function(){ t.textContent="コピーしました"; setTimeout(function(){ t.textContent="リンクをコピー"; },1500); }, function(){ var i=document.getElementById("asklink"); i.select(); document.execCommand("copy"); }); return; }
+    if(t.closest("[data-areset]")){ if(!confirm("聞く項目を、すべて聞くに戻しますか？（自分の質問・卓名・ひとことは残します）")) return; A.x=[]; A.fx=[]; A.tm=1; save(); draw(); } });
+  draw();
+})();
 </script>
 </body>
 </html>
