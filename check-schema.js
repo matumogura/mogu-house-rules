@@ -200,7 +200,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "npc", title: "NPC・KPCについて", type: "scale",
+    id: "npc", title: "NPC・KPC", type: "scale",
     items: [
       { id: "npc_imposter", label: "NPC・KPC本人だと思っていたら別人（成り代わりなど）" },
       { id: "kpc_alt", label: "別世界軸のKPC（もしくはPC）の存在" },
@@ -322,7 +322,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "pvp", title: "PvP内容について", type: "scale",
+    id: "pvp", title: "PvP内容", type: "scale",
     items: [
       { id: "pvp_verbal", label: "口論・議論、レスバ" },
       { id: "pvp_physical", label: "PC同士の肉体的被害を伴う争い" },
@@ -331,7 +331,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "lost", title: "ロスト・後遺症・欠損について", type: "scale",
+    id: "lost", title: "ロスト・後遺症・欠損", type: "scale",
     items: [
 
       { id: "lost_fixed", label: "確定ロスト" },
@@ -356,7 +356,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "ending", title: "ED・分岐について", type: "scale",
+    id: "ending", title: "ED・分岐", type: "scale",
     items: [
       { id: "ed_epilogue", label: "PLがエピローグを考えて自由描写" },
       { id: "ed_sparse", label: "極端に描写の少ないED" },
@@ -382,7 +382,7 @@ window.JIRAI_SECTIONS = [
     ]
   },
   {
-    id: "kp", title: "KPの采配・進行について", type: "scale",
+    id: "kp", title: "KPの采配・進行", type: "scale",
     items: [
       { id: "kp_preinfo", label: "PC視点では知っているはずの情報をKPが事前に伝える（知人NPC・町のマップ等）" },
       { id: "kp_advise_lost", label: "極端にロスト率が上がる能力/技能値の場合、KPが助言する" },
